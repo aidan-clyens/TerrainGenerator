@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
 
-    public Renderer textureRenderer;
-
     public int mapWidth;
     public int mapHeight;
+    public int mapDepth;
     public float noiseScale;
     public int mapOffsetX;
     public int mapOffsetY;
 
     void Start() {
+        Terrain terrain = GetComponent<Terrain>();
+
         float[,] noiseMap = GenerateNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY);
-        DrawHeightMap(noiseMap);
+        terrain.terrainData = GenerateTerrainData(terrain.terrainData, noiseMap, mapWidth, mapHeight, mapDepth);
     }
 
     public float[,] GenerateNoiseMap(int width, int height, float scale, int offsetX, int offsetY) {
@@ -22,8 +23,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                float sampleX = (float)x / scale + offsetX;
-                float sampleY = (float)y / scale + offsetY;
+                float sampleX = (float)x / (float)width * scale + offsetX;
+                float sampleY = (float)y / (float)height * scale + offsetY;
 
                 noiseMap[x, y] = Mathf.PerlinNoise(sampleX, sampleY);
             }   
@@ -32,21 +33,11 @@ public class TerrainMapGenerator : MonoBehaviour {
         return noiseMap;
     }
 
-    
-    public void DrawHeightMap(float[,] noiseMap) {
-        Texture2D texture = new Texture2D(mapWidth, mapHeight);
+    public TerrainData GenerateTerrainData(TerrainData terrainData, float[,] noise, int width, int height, int depth) {
+        terrainData.heightmapResolution = width + 1;
+        terrainData.size = new Vector3(width, depth, height);
+        terrainData.SetHeights(0, 0, noise);
 
-        Color[] colorMap = new Color[mapWidth * mapHeight];
-        for (int y = 0; y < mapHeight; y++) {
-            for (int x = 0; x < mapWidth; x++) {
-                colorMap[y*mapWidth + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
-            }
-        }
-
-        texture.SetPixels(colorMap);
-        texture.Apply();
-    
-        textureRenderer.sharedMaterial.mainTexture = texture;
-        textureRenderer.transform.localScale = new Vector3(mapWidth, 1, mapHeight);
+        return terrainData;
     }
 }
