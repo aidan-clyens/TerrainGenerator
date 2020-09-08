@@ -1,8 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
+
+    public GameObject forest;
 
     public int mapWidth;
     public int mapHeight;
@@ -16,9 +18,12 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     void Start() {
         Terrain terrain = GetComponent<Terrain>();
+        ForestGenerator forestGenerator = forest.GetComponent<ForestGenerator>();
 
         float[,] noiseMap = GenerateNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
         terrain.terrainData = GenerateTerrainData(terrain.terrainData, noiseMap, mapWidth, mapHeight, mapDepth);
+    
+        forestGenerator.Generate(terrain.terrainData);
     }
 
     public float[,] GenerateNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity) {
