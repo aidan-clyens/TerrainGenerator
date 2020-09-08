@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapOffsetX;
     public int mapOffsetY;
 
-    void Update() {
+    void Start() {
         Terrain terrain = GetComponent<Terrain>();
 
         float[,] noiseMap = GenerateNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
