@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,8 +25,8 @@ public class MeshGenerator : MonoBehaviour {
         vertices = new Vector3[(meshWidth + 1) * (meshHeight + 1)];
 
         int index = 0;
-        for (int x = 0; x <= meshWidth; x++) {
-            for (int z = 0; z <= meshHeight; z++) {
+        for (int z = 0; z <= meshHeight; z++) {
+            for (int x = 0; x <= meshWidth; x++) {
                 vertices[index] = new Vector3(x, 0, z);
                 index++;
             }
@@ -41,11 +41,12 @@ public class MeshGenerator : MonoBehaviour {
         for (int z = 0; z < meshHeight; z++) {
             for (int x = 0; x < meshWidth; x++) {
                 triangles[index] = vertex;
-                triangles[index + 1] = vertex + 1;
-                triangles[index + 2] = vertex + meshWidth + 1;
+                triangles[index + 1] = vertex + meshWidth + 1;
+                triangles[index + 2] = vertex + 1;
+
                 triangles[index + 3] = vertex + 1;
-                triangles[index + 4] = vertex + meshWidth + 2;
-                triangles[index + 5] = vertex + meshWidth + 1;
+                triangles[index + 4] = vertex + meshWidth + 1;
+                triangles[index + 5] = vertex + meshWidth + 2;
 
                 index += 6;
                 vertex++;
