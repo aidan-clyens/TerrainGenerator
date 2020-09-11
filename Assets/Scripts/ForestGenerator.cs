@@ -12,9 +12,9 @@ public class ForestGenerator : MonoBehaviour {
 
     public void Generate(float[,] heightMap) {
         for (int i = 0; i < numTrees; i++) {
-            float x = Random.Range(0f, mapWidth);
-            float z = Random.Range(0f, mapHeight);
-            float y = heightMap[(int)x, (int)z] - 1;
+            int x = Random.Range(0, mapWidth);
+            int z = Random.Range(0, mapHeight);
+            float y = heightMap[z, x] - 1;
             Debug.Log(x + " " + y + " " + z);
 
             Vector3 position = new Vector3(x, y, z);

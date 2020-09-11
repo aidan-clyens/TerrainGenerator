@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
 
-    public GameObject forest;
-
     public int mapWidth;
     public int mapHeight;
     public int mapDepth;
@@ -16,25 +14,39 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapOffsetX;
     public int mapOffsetY;
 
-    void Update() {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth+1, mapHeight+1, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
-    
-        CreateMesh(noiseMap);
+    MeshGenerator meshGenerator;
+    ForestGenerator forestGenerator;
 
-        if (forest != null) {
-            CreateForest(noiseMap);
-        }
+    void Update() {
+        float[,] heightMap = CreateHeightMap();
+
+        CreateMesh(heightMap);
+        CreateForest(heightMap);
     }
 
-    void CreateMesh(float[,] noiseMap) {
-        MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+    void CreateMesh(float[,] heightMap) {
+        meshGenerator = GetComponent<MeshGenerator>();
 
         meshGenerator.Generate(mapWidth, mapHeight);
-        meshGenerator.SetHeights(noiseMap, mapDepth);
+        meshGenerator.SetHeights(heightMap);
     }
 
-    void CreateForest(float[,] noiseMap) {
-        ForestGenerator forestGenerator = forest.GetComponent<ForestGenerator>();
-        forestGenerator.Generate(noiseMap);
+    void CreateForest(float[,] heightMap) {
+        forestGenerator = GetComponent<ForestGenerator>();
+
+        forestGenerator.Generate(heightMap);
+    }
+
+    float[,] CreateHeightMap() {
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth + 1, mapHeight + 1, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
+        float[,] heightMap = new float[mapWidth + 1, mapHeight + 1];
+
+        for (int z = 0; z <= mapHeight; z++) {
+            for (int x = 0; x <= mapWidth; x++) {
+                heightMap[x, z] = noiseMap[x, z] * mapDepth;
+            }
+        }
+
+        return heightMap;
     }
 }

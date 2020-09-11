@@ -16,7 +16,7 @@ public class MeshGenerator : MonoBehaviour {
         meshHeight = height;
 
         mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;        
+        GetComponent<MeshFilter>().mesh = mesh;
     
         CreateVertices();
         CreateTriangles();
@@ -24,11 +24,11 @@ public class MeshGenerator : MonoBehaviour {
         UpdateMesh();
     }
 
-    public void SetHeights(float[,] heightMap, float depth) {
+    public void SetHeights(float[,] heightMap) {
         int index = 0;
         for (int x = 0; x <= meshWidth; x++) {
             for (int z = 0; z <= meshHeight; z++) {
-                vertices[index].y = heightMap[x, z] * depth;
+                vertices[index].y = heightMap[x, z];
                 index++;
             }
         }
