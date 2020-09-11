@@ -78,5 +78,7 @@ public class MeshGenerator : MonoBehaviour {
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
+
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 }
