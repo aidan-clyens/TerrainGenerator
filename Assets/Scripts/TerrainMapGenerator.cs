@@ -6,6 +6,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public GameObject forest;
 
+    public int mapWidth;
+    public int mapHeight;
     public int mapDepth;
     public float noiseScale;
     public int noiseOctaves;
@@ -13,21 +15,26 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float lacunarity;
     public int mapOffsetX;
     public int mapOffsetY;
-    
-    int mapWidth;
-    int mapHeight;
 
     void Update() {
-        MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
-        mapWidth = meshGenerator.meshWidth;
-        mapHeight = meshGenerator.meshHeight;
-
-        ForestGenerator forestGenerator = forest.GetComponent<ForestGenerator>();
-
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth+1, mapHeight+1, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
     
-        meshGenerator.SetHeights(noiseMap, mapDepth);
+        CreateMesh(noiseMap);
 
+        if (forest != null) {
+            CreateForest(noiseMap);
+        }
+    }
+
+    void CreateMesh(float[,] noiseMap) {
+        MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+
+        meshGenerator.Generate(mapWidth, mapHeight);
+        meshGenerator.SetHeights(noiseMap, mapDepth);
+    }
+
+    void CreateForest(float[,] noiseMap) {
+        ForestGenerator forestGenerator = forest.GetComponent<ForestGenerator>();
         forestGenerator.Generate(noiseMap);
     }
 }

@@ -3,20 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour {
-    
-    public int meshWidth;
-    public int meshHeight;
+
+    int meshWidth;
+    int meshHeight;
 
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
 
-    void Start() {
+    public void Generate(int width, int height) {
+        meshWidth = width;
+        meshHeight = height;
+
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;        
     
         CreateVertices();
         CreateTriangles();
+
+        UpdateMesh();
+    }
+
+    public void SetHeights(float[,] heightMap, float depth) {
+        int index = 0;
+        for (int x = 0; x <= meshWidth; x++) {
+            for (int z = 0; z <= meshHeight; z++) {
+                vertices[index].y = heightMap[x, z] * depth;
+                index++;
+            }
+        }
 
         UpdateMesh();
     }
@@ -63,17 +78,5 @@ public class MeshGenerator : MonoBehaviour {
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
-    }
-
-    public void SetHeights(float[,] heightMap, float depth) {
-        int index = 0;
-        for (int x = 0; x <= meshWidth; x++) {
-            for (int z = 0; z <= meshHeight; z++) {
-                vertices[index].y = heightMap[x, z] * depth;
-                index++;
-            }
-        }
-
-        UpdateMesh();
     }
 }
