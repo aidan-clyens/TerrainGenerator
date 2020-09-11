@@ -1,21 +1,20 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ForestGenerator : MonoBehaviour {
 
     public GameObject treePrefab;
-    public TerrainMapGenerator terrainMapGenerator;
 
     public int mapWidth;
     public int mapHeight;
     public int numTrees;
 
-    public void Generate(TerrainData terrainData) {
+    public void Generate(float[,] heightMap) {
         for (int i = 0; i < numTrees; i++) {
             float x = Random.Range(0f, mapWidth);
             float z = Random.Range(0f, mapHeight);
-            float y = terrainData.GetHeight((int)x, (int)z) - 1;
+            float y = heightMap[(int)x, (int)z] - 1;
             Debug.Log(x + " " + y + " " + z);
 
             Vector3 position = new Vector3(x, y, z);
