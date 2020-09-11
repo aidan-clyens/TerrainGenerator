@@ -17,7 +17,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     MeshGenerator meshGenerator;
     ForestGenerator forestGenerator;
 
-    void Update() {
+    void Start() {
         float[,] heightMap = CreateHeightMap();
 
         CreateMesh(heightMap);
