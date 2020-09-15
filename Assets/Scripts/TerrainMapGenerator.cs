@@ -13,6 +13,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float lacunarity;
     public int mapOffsetX;
     public int mapOffsetY;
+    public float waterLevel;
 
     MeshGenerator meshGenerator;
     ForestGenerator forestGenerator;
@@ -47,7 +48,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         forestGenerator = GetComponent<ForestGenerator>();
 
         forestGenerator.Clear();
-        forestGenerator.Generate(heightMap);
+        forestGenerator.Generate(heightMap, waterLevel);
     }
 
     float[,] CreateHeightMap() {

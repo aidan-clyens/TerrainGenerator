@@ -12,20 +12,22 @@ public class ForestGenerator : MonoBehaviour {
 
     ArrayList trees = new ArrayList();
 
-    public void Generate(float[,] heightMap) {
+    public void Generate(float[,] heightMap, float waterLevel) {
         for (int i = 0; i < numTrees; i++) {
             int x = Random.Range(0, mapWidth);
             int z = Random.Range(0, mapHeight);
             float y = heightMap[z, x] - 1;
             Debug.Log(x + " " + y + " " + z);
 
-            Vector3 position = new Vector3(x, y, z);
-            GameObject tree = Instantiate(treePrefab, position, Quaternion.identity);
+            if (y > waterLevel) {
+                Vector3 position = new Vector3(x, y, z);
+                GameObject tree = Instantiate(treePrefab, position, Quaternion.identity);
 
-            float scale = Random.Range(1.5f, 2.5f);
-            tree.transform.localScale = new Vector3(scale, scale, scale);
-        
-            trees.Add(tree);
+                float scale = Random.Range(1.5f, 2.5f);
+                tree.transform.localScale = new Vector3(scale, scale, scale);
+            
+                trees.Add(tree);
+            }
         }
     }
 
