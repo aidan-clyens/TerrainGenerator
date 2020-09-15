@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,10 +18,22 @@ public class TerrainMapGenerator : MonoBehaviour {
     ForestGenerator forestGenerator;
 
     void Start() {
+        Generate();
+    }
+
+    void OnDestroy() {
+        Clear();    
+    }
+
+    public void Generate() {
         float[,] heightMap = CreateHeightMap();
 
         CreateMesh(heightMap);
         CreateForest(heightMap);
+    }
+
+    public void Clear() {
+        forestGenerator.Clear();
     }
 
     void CreateMesh(float[,] heightMap) {
@@ -34,6 +46,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     void CreateForest(float[,] heightMap) {
         forestGenerator = GetComponent<ForestGenerator>();
 
+        forestGenerator.Clear();
         forestGenerator.Generate(heightMap);
     }
 

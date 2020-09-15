@@ -10,6 +10,8 @@ public class ForestGenerator : MonoBehaviour {
     public int mapHeight;
     public int numTrees;
 
+    ArrayList trees = new ArrayList();
+
     public void Generate(float[,] heightMap) {
         for (int i = 0; i < numTrees; i++) {
             int x = Random.Range(0, mapWidth);
@@ -22,6 +24,16 @@ public class ForestGenerator : MonoBehaviour {
 
             float scale = Random.Range(1.5f, 2.5f);
             tree.transform.localScale = new Vector3(scale, scale, scale);
+        
+            trees.Add(tree);
         }
+    }
+
+    public void Clear() {
+        foreach (GameObject tree in trees) {
+            DestroyImmediate(tree, true);
+        }
+
+        trees.Clear();
     }
 }
