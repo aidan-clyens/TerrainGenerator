@@ -1,8 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour {
+
+    public Gradient gradient;
 
     int meshWidth;
     int meshHeight;
@@ -10,6 +12,10 @@ public class MeshGenerator : MonoBehaviour {
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
+    Color[] colours;
+
+    float minDepth = float.MaxValue;
+    float maxDepth = float.MinValue;
 
     public void Generate(int width, int height) {
         meshWidth = width;
@@ -20,19 +26,34 @@ public class MeshGenerator : MonoBehaviour {
     
         CreateVertices();
         CreateTriangles();
+        CreateColours();
 
         UpdateMesh();
     }
 
     public void SetHeights(float[,] heightMap) {
         int index = 0;
+
+        minDepth = float.MaxValue;
+        maxDepth = float.MinValue;
+
         for (int x = 0; x <= meshWidth; x++) {
             for (int z = 0; z <= meshHeight; z++) {
                 vertices[index].y = heightMap[x, z];
                 index++;
+
+                if (heightMap[x, z] < minDepth) {
+                    minDepth = heightMap[x, z];
+                }
+
+                
+                if (heightMap[x, z] > maxDepth) {
+                    maxDepth = heightMap[x, z];
+                }
             }
         }
 
+        CreateColours();
         UpdateMesh();
     }
 
@@ -71,11 +92,25 @@ public class MeshGenerator : MonoBehaviour {
         }
     }
 
+    void CreateColours() {
+        colours = new Color[vertices.Length];
+
+        int index = 0;
+        for (int z = 0; z <= meshHeight; z++) {
+            for (int x = 0; x <= meshWidth; x++) {
+                float y = Mathf.InverseLerp(minDepth, maxDepth, vertices[index].y);
+                colours[index] = gradient.Evaluate(y);
+                index++;
+            }
+        }    
+    }
+
     void UpdateMesh() {
         mesh.Clear();
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.colors = colours;
 
         mesh.RecalculateNormals();
 
