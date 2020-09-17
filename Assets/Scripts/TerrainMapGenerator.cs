@@ -40,7 +40,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     void CreateMesh(float[,] heightMap) {
         meshGenerator = GetComponent<MeshGenerator>();
 
-        meshGenerator.Generate(heightMap);
+        MeshData meshData = meshGenerator.Generate(heightMap);
+
+        Mesh mesh = meshData.CreateMesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     void CreateForest(float[,] heightMap) {
