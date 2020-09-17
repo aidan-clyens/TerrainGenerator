@@ -14,12 +14,16 @@ public class MeshGenerator : MonoBehaviour {
     int[] triangles;
     Color[] colours;
 
+    float[,] heightMap;
+
     float minDepth = float.MaxValue;
     float maxDepth = float.MinValue;
 
-    public void Generate(int width, int height) {
-        meshWidth = width;
-        meshHeight = height;
+    public void Generate(float[,] heights) {
+        heightMap = heights;
+
+        meshWidth = heightMap.GetLength(0);
+        meshHeight = heightMap.GetLength(1);
 
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
@@ -31,15 +35,19 @@ public class MeshGenerator : MonoBehaviour {
         UpdateMesh();
     }
 
-    public void SetHeights(float[,] heightMap) {
-        int index = 0;
+    void CreateVertices() {
+        vertices = new Vector3[meshWidth * meshHeight];
 
         minDepth = float.MaxValue;
         maxDepth = float.MinValue;
 
-        for (int x = 0; x <= meshWidth; x++) {
-            for (int z = 0; z <= meshHeight; z++) {
-                vertices[index].y = heightMap[x, z];
+        float topLeftX = (meshWidth - 1) / -2f;
+        float topLeftZ = (meshHeight - 1) / 2f;
+
+        int index = 0;
+        for (int z = 0; z < meshHeight; z++) {
+            for (int x = 0; x < meshWidth; x++) {
+                vertices[index] = new Vector3(topLeftX + x, heightMap[x, z], topLeftZ - z);
                 index++;
 
                 if (heightMap[x, z] < minDepth) {
@@ -52,39 +60,24 @@ public class MeshGenerator : MonoBehaviour {
                 }
             }
         }
-
-        CreateColours();
-        UpdateMesh();
-    }
-
-    void CreateVertices() {
-        vertices = new Vector3[(meshWidth + 1) * (meshHeight + 1)];
-
-        int index = 0;
-        for (int z = 0; z <= meshHeight; z++) {
-            for (int x = 0; x <= meshWidth; x++) {
-                vertices[index] = new Vector3(x, 0, z);
-                index++;
-            }
-        }
     }
 
     void CreateTriangles() {
-        triangles = new int[meshWidth * meshHeight * 6];
+        triangles = new int[(meshWidth - 1) * (meshHeight - 1) * 6];
 
-        int index = 0;
+        int triangleIndex = 0;
         int vertex = 0;
-        for (int z = 0; z < meshHeight; z++) {
-            for (int x = 0; x < meshWidth; x++) {
-                triangles[index] = vertex;
-                triangles[index + 1] = vertex + meshWidth + 1;
-                triangles[index + 2] = vertex + 1;
+        for (int z = 0; z < meshHeight - 1; z++) {
+            for (int x = 0; x < meshWidth - 1; x++) {
+                triangles[triangleIndex] = vertex;
+                triangles[triangleIndex + 1] = vertex + meshWidth + 1;
+                triangles[triangleIndex + 2] = vertex + meshWidth;
 
-                triangles[index + 3] = vertex + 1;
-                triangles[index + 4] = vertex + meshWidth + 1;
-                triangles[index + 5] = vertex + meshWidth + 2;
+                triangles[triangleIndex + 3] = vertex + meshWidth + 1;
+                triangles[triangleIndex + 4] = vertex;
+                triangles[triangleIndex + 5] = vertex + 1;
 
-                index += 6;
+                triangleIndex += 6;
                 vertex++;
             }
 
@@ -96,8 +89,8 @@ public class MeshGenerator : MonoBehaviour {
         colours = new Color[vertices.Length];
 
         int index = 0;
-        for (int z = 0; z <= meshHeight; z++) {
-            for (int x = 0; x <= meshWidth; x++) {
+        for (int z = 0; z < meshHeight; z++) {
+            for (int x = 0; x < meshWidth; x++) {
                 float y = Mathf.InverseLerp(minDepth, maxDepth, vertices[index].y);
                 colours[index] = gradient.Evaluate(y);
                 index++;

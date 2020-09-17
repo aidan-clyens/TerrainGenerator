@@ -40,8 +40,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     void CreateMesh(float[,] heightMap) {
         meshGenerator = GetComponent<MeshGenerator>();
 
-        meshGenerator.Generate(mapWidth, mapHeight);
-        meshGenerator.SetHeights(heightMap);
+        meshGenerator.Generate(heightMap);
     }
 
     void CreateForest(float[,] heightMap) {
@@ -52,11 +51,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     float[,] CreateHeightMap() {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth + 1, mapHeight + 1, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
-        float[,] heightMap = new float[mapWidth + 1, mapHeight + 1];
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
+        float[,] heightMap = new float[mapWidth, mapHeight];
 
-        for (int z = 0; z <= mapHeight; z++) {
-            for (int x = 0; x <= mapWidth; x++) {
+        for (int z = 0; z < mapHeight; z++) {
+            for (int x = 0; x < mapWidth; x++) {
                 heightMap[x, z] = noiseMap[x, z] * mapDepth;
             }
         }
