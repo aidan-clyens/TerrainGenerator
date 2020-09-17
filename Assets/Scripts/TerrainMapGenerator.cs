@@ -15,7 +15,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapOffsetY;
     public float waterLevel;
 
-    MeshGenerator meshGenerator;
+    public Gradient terrainColourGradient;
+
     ForestGenerator forestGenerator;
 
     void Start() {
@@ -38,9 +39,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     void CreateMesh(float[,] heightMap) {
-        meshGenerator = GetComponent<MeshGenerator>();
-
-        MeshData meshData = meshGenerator.Generate(heightMap);
+        MeshData meshData = MeshGenerator.Generate(heightMap, terrainColourGradient);
 
         Mesh mesh = meshData.CreateMesh();
         GetComponent<MeshFilter>().mesh = mesh;

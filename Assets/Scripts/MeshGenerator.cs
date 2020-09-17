@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshGenerator : MonoBehaviour {
-    
-    public Gradient gradient;
+public static class MeshGenerator {
 
-    public MeshData Generate(float[,] heightMap) {
+    public static MeshData Generate(float[,] heightMap, Gradient gradient) {
         int meshWidth = heightMap.GetLength(0);
         int meshHeight = heightMap.GetLength(1);
 
