@@ -13,6 +13,7 @@ public class MeshGenerator : MonoBehaviour {
     Vector3[] vertices;
     int[] triangles;
     Color[] colours;
+    Vector2[] uvs;
 
     float[,] heightMap;
 
@@ -31,6 +32,7 @@ public class MeshGenerator : MonoBehaviour {
         CreateVertices();
         CreateTriangles();
         CreateColours();
+        CreateUVs();
 
         UpdateMesh();
     }
@@ -98,12 +100,25 @@ public class MeshGenerator : MonoBehaviour {
         }    
     }
 
+    void CreateUVs() {
+        uvs = new Vector2[meshWidth * meshHeight];
+
+        int index = 0;
+        for (int z = 0; z < meshHeight; z++) {
+            for (int x = 0; x < meshWidth; x++) {
+                uvs[index] = new Vector2(x / (float)meshWidth, z / (float)meshHeight);
+                index++;
+            }
+        }
+    }
+
     void UpdateMesh() {
         mesh.Clear();
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.colors = colours;
+        mesh.uv = uvs;
 
         mesh.RecalculateNormals();
 
