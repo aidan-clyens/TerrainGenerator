@@ -20,7 +20,6 @@ public class ForestGenerator : MonoBehaviour {
             int x = Random.Range(0, mapWidth);
             int z = Random.Range(0, mapHeight);
             float y = heightMap[x, z] - 1;
-            Debug.Log(x + " " + y + " " + z);
 
             x = (int)topLeftX + x;
             z = (int)topLeftZ - z;
