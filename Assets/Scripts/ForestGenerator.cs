@@ -6,19 +6,20 @@ public class ForestGenerator : MonoBehaviour {
 
     public GameObject treePrefab;
 
-    public int mapWidth;
-    public int mapHeight;
     public int numTrees;
 
     ArrayList trees = new ArrayList();
 
     public void Generate(float[,] heightMap, float waterLevel) {
-        float topLeftX = (heightMap.GetLength(0) - 1) / -2f;
-        float topLeftZ = (heightMap.GetLength(1) - 1) / 2f;
+        int width = heightMap.GetLength(0);
+        int height = heightMap.GetLength(1);
+
+        float topLeftX = (width - 1) / -2f;
+        float topLeftZ = (height - 1) / 2f;
 
         for (int i = 0; i < numTrees; i++) {
-            int x = Random.Range(0, mapWidth);
-            int z = Random.Range(0, mapHeight);
+            int x = Random.Range(0, width);
+            int z = Random.Range(0, height);
             float y = heightMap[x, z] - 1;
 
             x = (int)topLeftX + x;
