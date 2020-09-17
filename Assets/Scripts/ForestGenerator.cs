@@ -13,11 +13,17 @@ public class ForestGenerator : MonoBehaviour {
     ArrayList trees = new ArrayList();
 
     public void Generate(float[,] heightMap, float waterLevel) {
+        float topLeftX = (heightMap.GetLength(0) - 1) / -2f;
+        float topLeftZ = (heightMap.GetLength(1) - 1) / 2f;
+
         for (int i = 0; i < numTrees; i++) {
             int x = Random.Range(0, mapWidth);
             int z = Random.Range(0, mapHeight);
-            float y = heightMap[z, x] - 1;
+            float y = heightMap[x, z] - 1;
             Debug.Log(x + " " + y + " " + z);
+
+            x = (int)topLeftX + x;
+            z = (int)topLeftZ - z;
 
             if (y > waterLevel) {
                 Vector3 position = new Vector3(x, y, z);
