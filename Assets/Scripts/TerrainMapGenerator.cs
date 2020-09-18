@@ -16,8 +16,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float waterLevel;
 
     public Gradient terrainColourGradient;
+    public Material terrainMaterial;
 
     ForestGenerator forestGenerator;
+
+    GameObject terrainGameObject;
 
     void Start() {
         Generate();
@@ -30,20 +33,27 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void Generate() {
         float[,] heightMap = CreateHeightMap();
 
-        CreateMesh(heightMap);
+        CreateTerrain(heightMap);
         CreateForest(heightMap);
     }
 
     public void Clear() {
+        DestroyImmediate(terrainGameObject, true);
         forestGenerator.Clear();
     }
 
-    void CreateMesh(float[,] heightMap) {
-        MeshData meshData = MeshGenerator.Generate(heightMap, terrainColourGradient);
+    void CreateTerrain(float[,] heightMap) {
+        terrainGameObject = new GameObject("Terrain");
+        terrainGameObject.AddComponent<MeshFilter>();
+        terrainGameObject.AddComponent<MeshRenderer>();
+        terrainGameObject.AddComponent<MeshCollider>();
 
+        MeshData meshData = MeshGenerator.Generate(heightMap, terrainColourGradient);
         Mesh mesh = meshData.CreateMesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-        GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
+        terrainGameObject.GetComponent<MeshFilter>().mesh = mesh;
+        terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     void CreateForest(float[,] heightMap) {
