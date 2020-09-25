@@ -12,27 +12,28 @@ public static class Pathfinding {
 
         Dictionary<Vector2, Vector2> previousNodes = new Dictionary<Vector2, Vector2>();
 
-        // Initialize values of all nodes to negative infinity
+        // Initialize values of all nodes to infinity
         for (int z = 0; z < map.GetLength(1); z++) {
             for (int x = 0; x < map.GetLength(0); x++) {
-                gcosts.Add(new Vector2(x, z), -Mathf.Infinity);
-                fcosts.Add(new Vector2(x, z), -Mathf.Infinity);
+                gcosts.Add(new Vector2(x, z), Mathf.Infinity);
+                fcosts.Add(new Vector2(x, z), Mathf.Infinity);
             }
         }
 
         gcosts[start] = 0f;
         fcosts[start] = Heuristic(map, start, goal);
 
-        // Search attempts to maximize the height difference at each step in the path
+        // Search attempts to minimize the cost difference at each step in the path
         openList.Add(start);
+        Vector2 node = start;
         while (openList.Count > 0) {
-            // Get current node from with greatest positive height difference in openList
-            Vector2 node = openList[0];
-            float maxScore = 0f;
+            // Get current node from with least difference in openList
+            node = openList[0];
+            float minScore = float.MaxValue;
             foreach (Vector2 n in openList) {
-                if (fcosts[n] > maxScore) {
+                if (fcosts[n] < minScore) {
                     node = n;
-                    maxScore = fcosts[n];
+                    minScore = fcosts[n];
                 }
             }
 
@@ -44,9 +45,9 @@ public static class Pathfinding {
 
             // Loop through neighbours of current node
             foreach (Vector2 neighbour in GetNeighbours(map, node)) {
-                // If g(node) + cost(node, neighbour) > g(neighbour), selected neighbour node is improving
+                // If g(node) + cost(node, neighbour) < g(neighbour), selected neighbour node is improving
                 float score = gcosts[node] + Cost(map, node, neighbour);
-                if (score > gcosts[neighbour]) {
+                if (score < gcosts[neighbour]) {
                     gcosts[neighbour] = score;
                     fcosts[neighbour] = score + Heuristic(map, neighbour, goal);
 
@@ -54,12 +55,13 @@ public static class Pathfinding {
 
                     if (!openList.Contains(neighbour)) {
                         openList.Add(neighbour);
+                        Debug.Log(score);
                     }
                 }
             }
         }
 
-        return new List<Vector2>();
+        return GetPath(previousNodes, node);
     }
 
     private static List<Vector2> GetNeighbours(float[,] map, Vector2 node) {
@@ -89,11 +91,23 @@ public static class Pathfinding {
     }
 
     private static float Cost(float[,] map, Vector2 point, Vector2 candidate) {
-        return map[(int)point.x, (int)point.y] - map[(int)candidate.x, (int)candidate.y];
+        float cost = map[(int)point.x, (int)point.y] - map[(int)candidate.x, (int)candidate.y];
+        if (cost > 0f) {
+            return cost;
+        }
+        else {
+            return Mathf.Infinity;
+        }
     }
 
     private static float Heuristic(float[,] map, Vector2 candidate, Vector2 goal) {
-        return map[(int)candidate.x, (int)candidate.y] - map[(int)goal.x, (int)goal.y];
+        float cost = map[(int)candidate.x, (int)candidate.y] - map[(int)goal.x, (int)goal.y];
+        if (cost > 0f) {
+            return cost;
+        }
+        else {
+            return Mathf.Infinity;
+        }
     }
 
     private static List<Vector2> GetPath(Dictionary<Vector2, Vector2> previousNodes, Vector2 node) {
