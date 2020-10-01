@@ -15,6 +15,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapOffsetY;
     public float waterLevel;
 
+    public bool useHydraulicErosion;
+
     public Gradient terrainColourGradient;
     public Gradient waterColourGradient;
     public Material terrainMaterial;
@@ -90,6 +92,11 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     float[,] CreateHeightMap() {
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
+        
+        if (useHydraulicErosion) {
+            noiseMap = HydraulicErosion.ErodeTerrain(noiseMap, 30);
+        }
+
         float[,] heightMap = new float[mapWidth, mapHeight];
 
         for (int z = 0; z < mapHeight; z++) {
