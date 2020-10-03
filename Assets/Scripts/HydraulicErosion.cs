@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class HydraulicErosion : MonoBehaviour {
     public int iterations = 50000;
+    [Range (0, 1)]
     public float inertia = 0.1f;
     public float gravity = 4f;
     public float minSlope = 0.01f;
     public float capacityFactor = 8f;
+    [Range(0, 1)]
     public float depositionFactor = 0.1f;
+    [Range(0, 1)]
     public float erosionFactor = 0.1f;
+    [Range(0, 1)]
     public float evaporationFactor = 0.05f;
     public float erosionRadius = 5f;
     public int dropletLifetime = 30;
