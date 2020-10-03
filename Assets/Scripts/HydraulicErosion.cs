@@ -42,8 +42,8 @@ public static class HydraulicErosion {
             mapHeight = heightMap.GetLength(1);
 
             position = new Vector2(
-                Mathf.FloorToInt(Random.Range(0, mapWidth - 1)),
-                Mathf.FloorToInt(Random.Range(0, mapHeight - 1))
+                Random.Range(0, mapWidth - 1),
+                Random.Range(0, mapHeight - 1)
             );
 
             direction = new Vector2(0f, 0f).normalized;
