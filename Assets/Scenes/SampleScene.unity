@@ -152,6 +152,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d15f74b50c26f347a44d1ee306d3129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iterations: 100000
+  inertia: 0.2
+  gravity: 4
+  minSlope: 0.01
+  capacityFactor: 4
+  depositionFactor: 0.1
+  erosionFactor: 0.1
+  evaporationFactor: 0.1
+  erosionRadius: 5
+  dropletLifetime: 20
 --- !u!4 &495154785
 Transform:
   m_ObjectHideFlags: 0
@@ -181,7 +191,7 @@ MonoBehaviour:
   mapWidth: 256
   mapHeight: 256
   mapDepth: 60
-  noiseScale: 3
+  noiseScale: 2
   noiseOctaves: 4
   persistence: 0.5
   lacunarity: 1.6
