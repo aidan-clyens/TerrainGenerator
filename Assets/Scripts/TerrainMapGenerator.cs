@@ -1,8 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
+    public int seed = 1;
 
     public int mapWidth;
     public int mapHeight;
@@ -102,7 +103,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         
         if (useHydraulicErosion) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
-            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap);
+            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
 
         float[,] heightMap = new float[mapWidth, mapHeight];

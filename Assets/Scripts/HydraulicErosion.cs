@@ -21,7 +21,15 @@ public class HydraulicErosion : MonoBehaviour {
     ErosionInfo erosionInfo;
     ErosionBrush erosionBrush;
 
+    System.Random rng;
+    int currentSeed;
+
     public float[,] ErodeTerrain(float[,] heightMap) {
+        if (rng == null || seed != currentSeed) {
+            rng = new System.Random(seed);
+            currentSeed = seed;
+        }
+
         erosionInfo = InitializeErosionInfo();
 
         if (erosionBrush == null) {
@@ -110,6 +118,7 @@ public class HydraulicErosion : MonoBehaviour {
         erosionInfo.evaporationFactor = evaporationFactor;
         erosionInfo.erosionRadius = erosionRadius;
         erosionInfo.dropletLifetime = dropletLifetime;
+        erosionInfo.rng = rng;
 
         return erosionInfo;
     }
@@ -139,8 +148,8 @@ public class HydraulicErosion : MonoBehaviour {
             mapHeight = heightMap.GetLength(1);
 
             position = new Vector2(
-                Random.Range(0, mapWidth - 1),
-                Random.Range(0, mapHeight - 1)
+                erosionInfo.rng.Next(0, mapWidth - 1),
+                erosionInfo.rng.Next(0, mapHeight - 1)
             );
 
             direction = new Vector2(0f, 0f).normalized;
@@ -278,5 +287,7 @@ public class HydraulicErosion : MonoBehaviour {
         public float evaporationFactor;
         public float erosionRadius;
         public int dropletLifetime;
+
+        public System.Random rng;
     }
 }
