@@ -1,28 +1,25 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class HydraulicErosion {
-    static float[][] erosionBrushWeights;
-    static float[][] erosionBrushVertices;
+public class HydraulicErosion : MonoBehaviour {
 
-    public static float[,] ErodeTerrain(float[,] heightMap, float radius, int lifetime) {
-        InitializeErosionBrush(heightMap, radius);
+    public float[,] ErodeTerrain(float[,] heightMap, float radius, int lifetime) {
+        ErosionBrush erosionBrush = InitializeErosionBrush(heightMap, radius);
 
-        for (int i = 0; i < 50000; i++) {
-            Droplet droplet = new Droplet(heightMap, lifetime);       
+        for (int i = 0; i < 100000; i++) {
+            Droplet droplet = new Droplet(heightMap, erosionBrush, lifetime);       
             droplet.Update();
         }
 
         return heightMap;
     }
 
-    static void InitializeErosionBrush(float[,] heightMap, float radius) {
+    ErosionBrush InitializeErosionBrush(float[,] heightMap, float radius) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
 
-        erosionBrushWeights = new float[width * height][];
-        erosionBrushVertices = new float[width * height][];
+        ErosionBrush erosionBrush = new ErosionBrush(width, height);
 
         Vector2 position = new Vector2();
         Vector2 v = new Vector2();
@@ -63,19 +60,21 @@ public static class HydraulicErosion {
                     }
                 }
 
-                erosionBrushWeights[y * width + x] = new float[numVertices];
-                erosionBrushVertices[y * width + x] = new float[numVertices];
+                erosionBrush.erosionBrushWeights[y * width + x] = new float[numVertices];
+                erosionBrush.erosionBrushVertices[y * width + x] = new float[numVertices];
 
                 for (int n = 0; n < numVertices; n++) {
                     v.x = x + xOffsets[n];
                     v.y = y + yOffsets[n];
                 
                     float weight = Mathf.Max(0, radius - (v - position).magnitude) / weightSum;
-                    erosionBrushVertices[y * width + x][n] = v.y * width + v.x;
-                    erosionBrushWeights[y * width + x][n] = weight;
+                    erosionBrush.erosionBrushVertices[y * width + x][n] = v.y * width + v.x;
+                    erosionBrush.erosionBrushWeights[y * width + x][n] = weight;
                 }
             }
         }
+
+        return erosionBrush;
     }
 
     class Droplet {
@@ -100,8 +99,11 @@ public static class HydraulicErosion {
         int mapHeight;
         int lifetime;
 
-        public Droplet(float[,] map, int lt) {
+        ErosionBrush erosionBrush;
+
+        public Droplet(float[,] map, ErosionBrush brush, int lt) {
             heightMap = map;
+            erosionBrush = brush;
             lifetime = lt;
 
             mapWidth = heightMap.GetLength(0);
@@ -180,12 +182,12 @@ public static class HydraulicErosion {
 
             int brushIndex = coordY * mapWidth + coordX;
 
-            for (int i = 0; i < erosionBrushVertices[brushIndex].Length; i++) {
-                int nodeIndex = (int)erosionBrushVertices[brushIndex][i];
+            for (int i = 0; i < erosionBrush.erosionBrushVertices[brushIndex].Length; i++) {
+                int nodeIndex = (int)erosionBrush.erosionBrushVertices[brushIndex][i];
                 int x = nodeIndex % mapWidth;
                 int y = nodeIndex / mapWidth;
 
-                float weight = erosionBrushWeights[brushIndex][i];
+                float weight = erosionBrush.erosionBrushWeights[brushIndex][i];
 
                 heightMap[x, y] -= sedimentEroded * weight;
             }
@@ -223,6 +225,17 @@ public static class HydraulicErosion {
                 (heightMap[coordX + 1, coordY] - heightMap[coordX, coordY]) * (1 - offsetX) - (heightMap[coordX + 1, coordY + 1] - heightMap[coordX, coordY + 1]) * offsetX,
                 (heightMap[coordX, coordY + 1] - heightMap[coordX, coordY]) * (1 - offsetY) - (heightMap[coordX + 1, coordY + 1] - heightMap[coordX + 1, coordY]) * offsetY
             );
+        }
+    }
+
+    
+    class ErosionBrush {
+        public float[][] erosionBrushWeights;
+        public float[][] erosionBrushVertices;
+
+        public ErosionBrush(int width, int height) {
+            erosionBrushWeights = new float[width * height][];
+            erosionBrushVertices = new float[width * height][];
         }
     }
 }

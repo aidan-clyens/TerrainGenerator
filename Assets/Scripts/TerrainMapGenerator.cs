@@ -94,7 +94,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
         
         if (useHydraulicErosion) {
-            noiseMap = HydraulicErosion.ErodeTerrain(noiseMap, 5f, 30);
+            HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
+            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, 5f, 30);
         }
 
         float[,] heightMap = new float[mapWidth, mapHeight];
