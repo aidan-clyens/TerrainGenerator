@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 495154785}
   - component: {fileID: 495154786}
   - component: {fileID: 495154787}
+  - component: {fileID: 495154782}
   m_Layer: 0
   m_Name: TerrainGenerator
   m_TagString: Untagged
@@ -139,6 +140,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &495154782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495154781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d15f74b50c26f347a44d1ee306d3129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &495154785
 Transform:
   m_ObjectHideFlags: 0
@@ -167,14 +180,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapWidth: 256
   mapHeight: 256
-  mapDepth: 40
+  mapDepth: 60
   noiseScale: 3
   noiseOctaves: 4
   persistence: 0.5
   lacunarity: 1.6
   mapOffsetX: 0
   mapOffsetY: 0
-  waterLevel: 20
+  waterLevel: 19.4
+  useHydraulicErosion: 1
+  createWater: 0
+  createForest: 0
   terrainColourGradient:
     serializedVersion: 2
     key0: {r: 0.4811321, g: 0.30183756, b: 0, a: 1}

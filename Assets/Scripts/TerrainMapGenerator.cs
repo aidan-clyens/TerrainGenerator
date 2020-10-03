@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +16,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float waterLevel;
 
     public bool useHydraulicErosion;
+    public bool createWater;
+    public bool createForest;
 
     public Gradient terrainColourGradient;
     public Gradient waterColourGradient;
@@ -39,8 +41,13 @@ public class TerrainMapGenerator : MonoBehaviour {
         float[,] heightMap = CreateHeightMap();
 
         CreateTerrain(heightMap);
-        CreateWater();
-        CreateForest(heightMap);
+        if (createWater) {
+            CreateWater();
+        }
+
+        if (createForest) {
+            CreateForest(heightMap);
+        }
     }
 
     public void Clear() {
