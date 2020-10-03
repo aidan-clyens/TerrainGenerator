@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,9 +18,15 @@ public class HydraulicErosion : MonoBehaviour {
     public float erosionRadius = 5f;
     public int dropletLifetime = 30;
 
+    ErosionInfo erosionInfo;
+    ErosionBrush erosionBrush;
+
     public float[,] ErodeTerrain(float[,] heightMap) {
-        ErosionInfo erosionInfo = InitializeErosionInfo();
-        ErosionBrush erosionBrush = InitializeErosionBrush(heightMap);
+        erosionInfo = InitializeErosionInfo();
+
+        if (erosionBrush == null) {
+            erosionBrush = InitializeErosionBrush(heightMap);
+        }
 
         for (int i = 0; i < iterations; i++) {
             Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush);       
