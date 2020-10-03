@@ -12,7 +12,7 @@ public static class HydraulicErosion {
         return heightMap;
     }
 
-    public class Droplet {
+    class Droplet {
         public Vector2 position;
         public Vector2 direction;
         public float height;
