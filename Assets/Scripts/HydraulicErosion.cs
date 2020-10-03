@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HydraulicErosion : MonoBehaviour {
-    // Parameters
+    public int iterations = 50000;
     public float inertia = 0.1f;
     public float gravity = 4f;
     public float minSlope = 0.01f;
@@ -18,7 +18,7 @@ public class HydraulicErosion : MonoBehaviour {
         ErosionInfo erosionInfo = InitializeErosionInfo();
         ErosionBrush erosionBrush = InitializeErosionBrush(heightMap);
 
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < iterations; i++) {
             Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush);       
             droplet.Update();
         }
