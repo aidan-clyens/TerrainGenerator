@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -203,17 +203,17 @@ MonoBehaviour:
   createForest: 0
   terrainColourGradient:
     serializedVersion: 2
-    key0: {r: 0.4811321, g: 0.30183756, b: 0, a: 1}
-    key1: {r: 0.010566453, g: 0.6886792, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0.7294118, g: 0.45490196, b: 0.42352942, a: 1}
+    key1: {r: 0.45882353, g: 0.39215687, b: 0.35686275, a: 1}
+    key2: {r: 0.65882355, g: 0.6627451, b: 0.5686275, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 65535
-    ctime2: 0
+    ctime1: 26985
+    ctime2: 65535
     ctime3: 0
     ctime4: 0
     ctime5: 0
@@ -228,7 +228,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 2
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   waterColourGradient:
     serializedVersion: 2
