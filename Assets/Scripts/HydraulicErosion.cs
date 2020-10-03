@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,12 +78,12 @@ public class HydraulicErosion : MonoBehaviour {
     }
 
     class Droplet {
-        public Vector2 position;
-        public Vector2 direction;
-        public float height;
-        public float speed = 1f;
-        public float water = 1f;
-        public float sediment = 0f;
+        Vector2 position;
+        Vector2 direction;
+        float height;
+        float speed = 1f;
+        float water = 1f;
+        float sediment = 0f;
 
         // Parameters
         public float inertia = 0.1f;
