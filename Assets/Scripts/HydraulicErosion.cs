@@ -3,13 +3,79 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class HydraulicErosion {
-    public static float[,] ErodeTerrain(float[,] heightMap, int lifetime) {
-        for (int i = 0; i < 10000; i++) {
+    static float[][] erosionBrushWeights;
+    static float[][] erosionBrushVertices;
+
+    public static float[,] ErodeTerrain(float[,] heightMap, float radius, int lifetime) {
+        InitializeErosionBrush(heightMap, radius);
+
+        for (int i = 0; i < 50000; i++) {
             Droplet droplet = new Droplet(heightMap, lifetime);       
             droplet.Update();
         }
 
         return heightMap;
+    }
+
+    static void InitializeErosionBrush(float[,] heightMap, float radius) {
+        int width = heightMap.GetLength(0);
+        int height = heightMap.GetLength(1);
+
+        erosionBrushWeights = new float[width * height][];
+        erosionBrushVertices = new float[width * height][];
+
+        Vector2 position = new Vector2();
+        Vector2 v = new Vector2();
+
+        float[] xOffsets = new float[(int)radius * (int)radius * 4];
+        float[] yOffsets = new float[(int)radius * (int)radius * 4];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+                int index = 0;
+
+                position.x = x;
+                position.y = y;
+
+                float weightSum = 0f;
+                int numVertices = 0;
+                for (int i = -(int)radius; i <= radius; i++) {
+                    int xCoord = x + i;
+                    for (int j = -(int)radius; j <= radius; j++) {
+                        int yCoord = y + j;
+
+                        v.x = xCoord;
+                        v.y = yCoord;
+
+                        if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height) continue;
+                        
+                        if ((v - position).magnitude <= radius) {
+                            weightSum += Mathf.Max(0f, radius - (v - position).magnitude);
+                            numVertices++;
+
+                            xOffsets[index] = i;
+                            yOffsets[index] = j;
+
+                            index++;
+                        }
+                    }
+                }
+
+                erosionBrushWeights[y * width + x] = new float[numVertices];
+                erosionBrushVertices[y * width + x] = new float[numVertices];
+
+                for (int n = 0; n < numVertices; n++) {
+                    v.x = x + xOffsets[n];
+                    v.y = y + yOffsets[n];
+                
+                    float weight = Mathf.Max(0, radius - (v - position).magnitude) / weightSum;
+                    erosionBrushVertices[y * width + x][n] = v.y * width + v.x;
+                    erosionBrushWeights[y * width + x][n] = weight;
+                }
+            }
+        }
     }
 
     class Droplet {
@@ -112,13 +178,17 @@ public static class HydraulicErosion {
             int coordX = (int)position.x;
             int coordY = (int)position.y;
 
-            float offsetX = position.x - coordX;
-            float offsetY = position.y - coordY;
+            int brushIndex = coordY * mapWidth + coordX;
 
-            heightMap[coordX, coordY] -= sedimentEroded * (1 - offsetX) * (1 - offsetY);
-            heightMap[coordX + 1, coordY] -= sedimentEroded * offsetX * (1 - offsetY);
-            heightMap[coordX, coordY + 1] -= sedimentEroded * (1 - offsetX) * offsetY;
-            heightMap[coordX + 1, coordY + 1] -= sedimentEroded * offsetX * offsetY;
+            for (int i = 0; i < erosionBrushVertices[brushIndex].Length; i++) {
+                int nodeIndex = (int)erosionBrushVertices[brushIndex][i];
+                int x = nodeIndex % mapWidth;
+                int y = nodeIndex / mapWidth;
+
+                float weight = erosionBrushWeights[brushIndex][i];
+
+                heightMap[x, y] -= sedimentEroded * weight;
+            }
         }
 
         float GetNewHeight() {
