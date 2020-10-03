@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -58,7 +58,7 @@ public static class HydraulicErosion {
                 position += direction;
 
                 // Check whether droplet has stopped moving or flowed over the edge of the map
-                if ((direction.x == 0 && direction.y == 0) || position.x < 0 || position.x > mapWidth - 1 || position.y < 0 || position.y > mapHeight - 1) {
+                if ((direction.x == 0 && direction.y == 0) || position.x < 0 || position.x >= mapWidth - 1 || position.y < 0 || position.y >= mapHeight - 1) {
                     break;
                 }
 
