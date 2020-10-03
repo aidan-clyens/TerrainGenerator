@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,9 +52,17 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     public void Clear() {
-        DestroyImmediate(terrainGameObject, true);
-        DestroyImmediate(waterGameObject, true);
-        forestGenerator.Clear();
+        if (terrainGameObject != null) {
+            DestroyImmediate(terrainGameObject, true);
+        }
+
+        if (waterGameObject != null) {
+            DestroyImmediate(waterGameObject, true);
+        }
+
+        if (forestGenerator != null) {
+            forestGenerator.Clear();
+        }
     }
 
     void CreateTerrain(float[,] heightMap) {

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +24,7 @@ public class HydraulicErosion : MonoBehaviour {
     System.Random rng;
     int currentSeed;
 
-    public float[,] ErodeTerrain(float[,] heightMap) {
+    public float[,] ErodeTerrain(float[,] heightMap, int seed) {
         if (rng == null || seed != currentSeed) {
             rng = new System.Random(seed);
             currentSeed = seed;
