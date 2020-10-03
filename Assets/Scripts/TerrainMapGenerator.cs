@@ -102,7 +102,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         
         if (useHydraulicErosion) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
-            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, 5f, 30);
+            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap);
         }
 
         float[,] heightMap = new float[mapWidth, mapHeight];

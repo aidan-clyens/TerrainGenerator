@@ -1,21 +1,32 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HydraulicErosion : MonoBehaviour {
+    // Parameters
+    public float inertia = 0.1f;
+    public float gravity = 4f;
+    public float minSlope = 0.01f;
+    public float capacityFactor = 8f;
+    public float depositionFactor = 0.1f;
+    public float erosionFactor = 0.1f;
+    public float evaporationFactor = 0.05f;
+    public float erosionRadius = 5f;
+    public int dropletLifetime = 30;
 
-    public float[,] ErodeTerrain(float[,] heightMap, float radius, int lifetime) {
-        ErosionBrush erosionBrush = InitializeErosionBrush(heightMap, radius);
+    public float[,] ErodeTerrain(float[,] heightMap) {
+        ErosionInfo erosionInfo = InitializeErosionInfo();
+        ErosionBrush erosionBrush = InitializeErosionBrush(heightMap);
 
         for (int i = 0; i < 100000; i++) {
-            Droplet droplet = new Droplet(heightMap, erosionBrush, lifetime);       
+            Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush);       
             droplet.Update();
         }
 
         return heightMap;
     }
 
-    ErosionBrush InitializeErosionBrush(float[,] heightMap, float radius) {
+    ErosionBrush InitializeErosionBrush(float[,] heightMap) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
 
@@ -24,8 +35,8 @@ public class HydraulicErosion : MonoBehaviour {
         Vector2 position = new Vector2();
         Vector2 v = new Vector2();
 
-        float[] xOffsets = new float[(int)radius * (int)radius * 4];
-        float[] yOffsets = new float[(int)radius * (int)radius * 4];
+        float[] xOffsets = new float[(int)erosionRadius * (int)erosionRadius * 4];
+        float[] yOffsets = new float[(int)erosionRadius * (int)erosionRadius * 4];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -38,9 +49,9 @@ public class HydraulicErosion : MonoBehaviour {
 
                 float weightSum = 0f;
                 int numVertices = 0;
-                for (int i = -(int)radius; i <= radius; i++) {
+                for (int i = -(int)erosionRadius; i <= erosionRadius; i++) {
                     int xCoord = x + i;
-                    for (int j = -(int)radius; j <= radius; j++) {
+                    for (int j = -(int)erosionRadius; j <= erosionRadius; j++) {
                         int yCoord = y + j;
 
                         v.x = xCoord;
@@ -48,8 +59,8 @@ public class HydraulicErosion : MonoBehaviour {
 
                         if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height) continue;
                         
-                        if ((v - position).magnitude <= radius) {
-                            weightSum += Mathf.Max(0f, radius - (v - position).magnitude);
+                        if ((v - position).magnitude <= erosionRadius) {
+                            weightSum += Mathf.Max(0f, erosionRadius - (v - position).magnitude);
                             numVertices++;
 
                             xOffsets[index] = i;
@@ -67,7 +78,7 @@ public class HydraulicErosion : MonoBehaviour {
                     v.x = x + xOffsets[n];
                     v.y = y + yOffsets[n];
                 
-                    float weight = Mathf.Max(0, radius - (v - position).magnitude) / weightSum;
+                    float weight = Mathf.Max(0, erosionRadius - (v - position).magnitude) / weightSum;
                     erosionBrush.erosionBrushVertices[y * width + x][n] = v.y * width + v.x;
                     erosionBrush.erosionBrushWeights[y * width + x][n] = weight;
                 }
@@ -75,6 +86,22 @@ public class HydraulicErosion : MonoBehaviour {
         }
 
         return erosionBrush;
+    }
+
+    ErosionInfo InitializeErosionInfo() {
+        ErosionInfo erosionInfo;
+
+        erosionInfo.inertia = inertia;
+        erosionInfo.gravity = gravity;
+        erosionInfo.minSlope = minSlope;
+        erosionInfo.capacityFactor = capacityFactor;
+        erosionInfo.depositionFactor = depositionFactor;
+        erosionInfo.erosionFactor = erosionFactor;
+        erosionInfo.evaporationFactor = evaporationFactor;
+        erosionInfo.erosionRadius = erosionRadius;
+        erosionInfo.dropletLifetime = dropletLifetime;
+
+        return erosionInfo;
     }
 
     class Droplet {
@@ -85,26 +112,18 @@ public class HydraulicErosion : MonoBehaviour {
         float water = 1f;
         float sediment = 0f;
 
-        // Parameters
-        public float inertia = 0.1f;
-        public float gravity = 4f;
-        public float minSlope = 0.01f;
-        public float capacityFactor = 8f;
-        public float depositionFactor = 0.1f;
-        public float erosionFactor = 0.1f;
-        public float evaporationFactor = 0.05f;
 
         float[,] heightMap;
         int mapWidth;
         int mapHeight;
-        int lifetime;
 
+        ErosionInfo erosionInfo;
         ErosionBrush erosionBrush;
 
-        public Droplet(float[,] map, ErosionBrush brush, int lt) {
+        public Droplet(float[,] map, ErosionInfo info, ErosionBrush brush) {
             heightMap = map;
+            erosionInfo = info;
             erosionBrush = brush;
-            lifetime = lt;
 
             mapWidth = heightMap.GetLength(0);
             mapHeight = heightMap.GetLength(1);
@@ -118,7 +137,7 @@ public class HydraulicErosion : MonoBehaviour {
         }
 
         public void Update() {
-            for (int i = 0; i < lifetime; i++) {
+            for (int i = 0; i < erosionInfo.dropletLifetime; i++) {
                 // Update direction and get current height
                 direction = GetNewDirection();
                 height = GetNewHeight();
@@ -134,12 +153,12 @@ public class HydraulicErosion : MonoBehaviour {
                 float heightDiff = GetNewHeight() - height;
 
                 // Update sediment carrying capacity
-                float sedimentCapacity = Mathf.Max(-heightDiff, minSlope) * speed * water * capacityFactor;
+                float sedimentCapacity = Mathf.Max(-heightDiff, erosionInfo.minSlope) * speed * water * erosionInfo.capacityFactor;
 
                 // If height diff > 0, the new position is uphill
                 // If travelling uphill, or carrying more sediment than capacity, deposit sediment
                 if (sediment > sedimentCapacity || heightDiff > 0) {
-                    float sedimentDeposited = (sediment - sedimentCapacity) * depositionFactor;
+                    float sedimentDeposited = (sediment - sedimentCapacity) * erosionInfo.depositionFactor;
                     sediment -= sedimentDeposited;
 
                     // Deposit sediment to surrounding vertices
@@ -148,7 +167,7 @@ public class HydraulicErosion : MonoBehaviour {
                 // If height diff < 0, the new position is downhill
                 else {
                     // Erode a fraction of the sediment carrying capacity
-                    float sedimentEroded = Mathf.Min((sedimentCapacity - sediment) * erosionFactor, -heightDiff);
+                    float sedimentEroded = Mathf.Min((sedimentCapacity - sediment) * erosionInfo.erosionFactor, -heightDiff);
                     sediment += sedimentEroded;
 
                     // Erode sediment from surrounding vertices
@@ -156,10 +175,10 @@ public class HydraulicErosion : MonoBehaviour {
                 }
 
                 // Update speed
-                speed = Mathf.Max(Mathf.Sqrt(speed * speed + heightDiff * gravity), 0f);
+                speed = Mathf.Max(Mathf.Sqrt(speed * speed + heightDiff * erosionInfo.gravity), 0f);
 
                 // Evaporate water
-                water = water * (1 - evaporationFactor);
+                water = water * (1 - erosionInfo.evaporationFactor);
             }
         }
 
@@ -211,7 +230,7 @@ public class HydraulicErosion : MonoBehaviour {
         Vector2 GetNewDirection() {
             Vector2 gradient = GetGradient();
 
-            return (direction * inertia - gradient * (1 - inertia)).normalized;
+            return (direction * erosionInfo.inertia - gradient * (1 - erosionInfo.inertia)).normalized;
         }
 
         Vector2 GetGradient() {
@@ -237,5 +256,17 @@ public class HydraulicErosion : MonoBehaviour {
             erosionBrushWeights = new float[width * height][];
             erosionBrushVertices = new float[width * height][];
         }
+    }
+
+    struct ErosionInfo {
+        public float inertia;
+        public float gravity;
+        public float minSlope;
+        public float capacityFactor;
+        public float depositionFactor;
+        public float erosionFactor;
+        public float evaporationFactor;
+        public float erosionRadius;
+        public int dropletLifetime;
     }
 }
