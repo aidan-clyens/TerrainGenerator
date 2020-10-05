@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -188,6 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12d6f74e0f5311f43a038760821bf66c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 1
   mapWidth: 256
   mapHeight: 256
   mapDepth: 60
@@ -200,7 +201,7 @@ MonoBehaviour:
   waterLevel: 19.4
   useHydraulicErosion: 1
   createWater: 0
-  createForest: 0
+  createForest: 1
   terrainColourGradient:
     serializedVersion: 2
     key0: {r: 0.7294118, g: 0.45490196, b: 0.42352942, a: 1}
@@ -273,8 +274,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cc581be1e6a65c4983892b3a2102443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 191266, guid: c44bd9bdc114d4a60932c0087d9d1732, type: 3}
-  numTrees: 200
+  treePrefab: {fileID: 6355307119461563011, guid: 206f6598bde148d4594ec1f9404fa5e3,
+    type: 3}
+  numTrees: 400
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
