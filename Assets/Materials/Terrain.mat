@@ -105,6 +105,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_42E23765: 0.17
+    - Vector1_BA52880A: 0.63
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -117,6 +119,8 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _GrassBlendAmount: 0.5
+    - _GrassSlopeThreshold: 0.5
     - _HeightTransition: 0
     - _Metallic: 0
     - _Metallic0: 0
@@ -139,9 +143,12 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - Color_969585A2: {r: 0.5411765, g: 0.5803922, b: 0.19215687, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _GrassColor: {r: 0, g: 1, b: 0, a: 1}
+    - _RockColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
 --- !u!114 &4736363921990325884
 MonoBehaviour:

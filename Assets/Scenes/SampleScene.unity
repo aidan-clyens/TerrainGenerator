@@ -200,7 +200,7 @@ MonoBehaviour:
   mapOffsetY: 0
   waterLevel: 19.4
   useHydraulicErosion: 1
-  createWater: 0
+  createWater: 1
   createForest: 1
   terrainColourGradient:
     serializedVersion: 2
