@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -17,5 +17,14 @@ public class TerrainMapEditor : Editor {
         if (GUILayout.Button("Clear")) {
             terrainMapGenerator.Clear();
         }
+
+        GUILayout.Label("Save Level");
+        EditorGUILayout.BeginHorizontal();
+        string levelName = EditorGUILayout.TextField("Terrain");
+        if (GUILayout.Button("Save")) {
+            terrainMapGenerator.SaveTerrainData(levelName);
+        }
+
+        EditorGUILayout.EndHorizontal();
     }
 }

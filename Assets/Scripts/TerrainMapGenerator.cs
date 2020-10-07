@@ -65,6 +65,34 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
+    public void SaveTerrainData(string levelName) {
+        TerrainData terrainData = new TerrainData();
+        terrainData.seed = seed;
+        terrainData.mapWidth = mapWidth;
+        terrainData.mapHeight = mapHeight;
+        terrainData.mapDepth = mapDepth;
+        terrainData.noiseScale = noiseScale;
+        terrainData.noiseOctaves = noiseOctaves;
+        terrainData.persistence = persistence;
+        terrainData.lacunarity = lacunarity;
+        terrainData.mapOffsetX = mapOffsetX;
+        terrainData.mapOffsetY = mapOffsetY;
+        terrainData.waterLevel = waterLevel;
+        terrainData.useHydraulicErosion = useHydraulicErosion;
+        terrainData.createWater = createWater;
+        terrainData.createForest = createForest;
+        terrainData.terrainColourGradient = terrainColourGradient;
+        terrainData.waterColourGradient = waterColourGradient;
+        terrainData.terrainMaterial = terrainMaterial;
+        terrainData.waterMaterial = waterMaterial;
+
+        string terrainDataJson = JsonUtility.ToJson(terrainData);
+        string filePath = Application.persistentDataPath + "/" + levelName + ".json";
+
+        Debug.Log("Saved terrain to: " + filePath);
+        System.IO.File.WriteAllText(filePath, terrainDataJson);
+    }
+
     void CreateTerrain(float[,] heightMap) {
         terrainGameObject = new GameObject("Terrain");
         terrainGameObject.AddComponent<MeshFilter>();
@@ -123,5 +151,30 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         return heightMap;
+    }
+
+
+    [System.Serializable]
+    class TerrainData {
+        public int seed;
+
+        public int mapWidth;
+        public int mapHeight;
+        public int mapDepth;
+        public float noiseScale;
+        public int noiseOctaves;
+        public float persistence;
+        public float lacunarity;
+        public int mapOffsetX;
+        public int mapOffsetY;
+        public float waterLevel;
+
+        public bool useHydraulicErosion;
+        public bool createWater;
+        public bool createForest;
+        public Gradient terrainColourGradient;
+        public Gradient waterColourGradient;
+        public Material terrainMaterial;
+        public Material waterMaterial;
     }
 }
