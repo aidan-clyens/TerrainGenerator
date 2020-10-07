@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -83,7 +83,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         forestGenerator = GetComponent<ForestGenerator>();
 
         forestGenerator.Clear();
-        forestGenerator.Generate(heightMap, waterLevel);
+        forestGenerator.Generate(heightMap, waterLevel, seed);
     }
 
     void CreateWater() {
