@@ -16,6 +16,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapOffsetY;
     public float waterLevel;
 
+    public bool useFalloff;
     public bool useHydraulicErosion;
     public bool createWater;
     public bool createForest;
@@ -79,6 +80,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.mapOffsetY = mapOffsetY;
         terrainData.waterLevel = waterLevel;
         terrainData.useHydraulicErosion = useHydraulicErosion;
+        terrainData.useFalloff = useFalloff;
         terrainData.createWater = createWater;
         terrainData.createForest = createForest;
         terrainData.terrainColourGradient = terrainColourGradient;
@@ -112,6 +114,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         mapOffsetY = terrainData.mapOffsetY;
         waterLevel = terrainData.waterLevel;
         useHydraulicErosion = terrainData.useHydraulicErosion;
+        useFalloff = terrainData.useFalloff;
         createWater = terrainData.createWater;
         createForest = terrainData.createForest;
         terrainColourGradient = terrainData.terrainColourGradient;
@@ -166,7 +169,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     float[,] CreateHeightMap() {
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
-        
+        float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapHeight);
+
         if (useHydraulicErosion) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
@@ -176,6 +180,10 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         for (int z = 0; z < mapHeight; z++) {
             for (int x = 0; x < mapWidth; x++) {
+                if (useFalloff) {
+                    noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);
+                }
+
                 heightMap[x, z] = noiseMap[x, z] * mapDepth;
             }
         }
@@ -199,6 +207,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         public int mapOffsetY;
         public float waterLevel;
 
+        public bool useFalloff;
         public bool useHydraulicErosion;
         public bool createWater;
         public bool createForest;
