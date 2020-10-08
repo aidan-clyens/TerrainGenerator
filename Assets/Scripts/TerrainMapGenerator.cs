@@ -93,6 +93,36 @@ public class TerrainMapGenerator : MonoBehaviour {
         System.IO.File.WriteAllText(filePath, terrainDataJson);
     }
 
+    public void LoadTerrainData(string levelName) {
+        string filePath = Application.persistentDataPath + "/" + levelName + ".json";
+        string terrainDataJson = System.IO.File.ReadAllText(filePath);
+
+        TerrainData terrainData = JsonUtility.FromJson<TerrainData>(terrainDataJson);
+        Debug.Log("Loaded terrain from: " + filePath);
+
+        seed = terrainData.seed;
+        mapWidth = terrainData.mapWidth;
+        mapHeight = terrainData.mapHeight;
+        mapDepth = terrainData.mapDepth;
+        noiseScale = terrainData.noiseScale;
+        noiseOctaves = terrainData.noiseOctaves;
+        persistence = terrainData.persistence;
+        lacunarity = terrainData.lacunarity;
+        mapOffsetX = terrainData.mapOffsetX;
+        mapOffsetY = terrainData.mapOffsetY;
+        waterLevel = terrainData.waterLevel;
+        useHydraulicErosion = terrainData.useHydraulicErosion;
+        createWater = terrainData.createWater;
+        createForest = terrainData.createForest;
+        terrainColourGradient = terrainData.terrainColourGradient;
+        waterColourGradient = terrainData.waterColourGradient;
+        terrainMaterial = terrainData.terrainMaterial;
+        waterMaterial = terrainData.waterMaterial;
+
+        Clear();
+        Generate();
+    }
+
     void CreateTerrain(float[,] heightMap) {
         terrainGameObject = new GameObject("Terrain");
         terrainGameObject.AddComponent<MeshFilter>();
