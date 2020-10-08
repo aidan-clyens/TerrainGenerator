@@ -32,7 +32,7 @@ public class ForestGenerator : MonoBehaviour {
             x = (int)topLeftX + x;
             z = (int)topLeftZ - z;
 
-            if (y > waterLevel) {
+            if (y > waterLevel + 5) {
                 Vector3 position = new Vector3(x, y, z);
                 GameObject tree = Instantiate(treePrefab, position, Quaternion.identity, forestGameObject.transform);
 
