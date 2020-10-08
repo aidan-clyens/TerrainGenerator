@@ -9,6 +9,7 @@ public class ForestGenerator : MonoBehaviour {
     public int numTrees;
 
     ArrayList trees = new ArrayList();
+    GameObject forestGameObject;
 
     System.Random rng;
 
@@ -17,6 +18,8 @@ public class ForestGenerator : MonoBehaviour {
         int height = heightMap.GetLength(1);
 
         rng = new System.Random(seed);
+
+        forestGameObject = new GameObject("Forest");
 
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
@@ -31,7 +34,7 @@ public class ForestGenerator : MonoBehaviour {
 
             if (y > waterLevel) {
                 Vector3 position = new Vector3(x, y, z);
-                GameObject tree = Instantiate(treePrefab, position, Quaternion.identity);
+                GameObject tree = Instantiate(treePrefab, position, Quaternion.identity, forestGameObject.transform);
 
                 float scale = (float)rng.NextDouble() + 1f;
                 tree.transform.localScale = new Vector3(scale, scale, scale);
@@ -42,9 +45,10 @@ public class ForestGenerator : MonoBehaviour {
     }
 
     public void Clear() {
-        foreach (GameObject tree in trees) {
-            DestroyImmediate(tree, true);
-        }
+        // foreach (GameObject tree in trees) {
+        //     DestroyImmediate(tree, true);
+        // }
+        DestroyImmediate(forestGameObject, true);
 
         trees.Clear();
     }
