@@ -42,6 +42,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void Generate() {
         float[,] heightMap = CreateHeightMap();
 
+        Clear();
+
         CreateTerrain(heightMap);
         if (createWater) {
             CreateWater();
@@ -122,7 +124,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainMaterial = terrainData.terrainMaterial;
         waterMaterial = terrainData.waterMaterial;
 
-        Clear();
         Generate();
     }
 
