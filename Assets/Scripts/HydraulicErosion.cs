@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,10 +16,12 @@ public class HydraulicErosion : MonoBehaviour {
     [Range(0, 1)]
     public float evaporationFactor = 0.05f;
     public float erosionRadius = 5f;
+    public float depositionRadius = 5f;
     public int dropletLifetime = 30;
 
     ErosionInfo erosionInfo;
     ErosionBrush erosionBrush;
+    DepositionBrush depositionBrush;
 
     System.Random rng;
 
@@ -32,8 +34,13 @@ public class HydraulicErosion : MonoBehaviour {
             erosionBrush = InitializeErosionBrush(heightMap);
         }
 
+        if (depositionBrush == null) {
+            depositionBrush = InitializeDepositionBrush(heightMap);
+        }
+
+
         for (int i = 0; i < iterations; i++) {
-            Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush);       
+            Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush, depositionBrush);       
             droplet.Update();
         }
 
@@ -102,6 +109,68 @@ public class HydraulicErosion : MonoBehaviour {
         return erosionBrush;
     }
 
+    DepositionBrush InitializeDepositionBrush(float[,] heightMap) {
+        int width = heightMap.GetLength(0);
+        int height = heightMap.GetLength(1);
+
+        DepositionBrush depositionBrush = new DepositionBrush(width, height);
+
+        Vector2 position = new Vector2();
+        Vector2 v = new Vector2();
+
+        float[] xOffsets = new float[(int)depositionRadius * (int)depositionRadius * 4];
+        float[] yOffsets = new float[(int)depositionRadius * (int)depositionRadius * 4];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+                int index = 0;
+
+                position.x = x;
+                position.y = y;
+
+                float weightSum = 0f;
+                int numVertices = 0;
+                for (int i = -(int)depositionRadius; i <= depositionRadius; i++) {
+                    int xCoord = x + i;
+                    for (int j = -(int)depositionRadius; j <= depositionRadius; j++) {
+                        int yCoord = y + j;
+
+                        v.x = xCoord;
+                        v.y = yCoord;
+
+                        if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height) continue;
+                        
+                        if ((v - position).magnitude <= depositionRadius) {
+                            weightSum += Mathf.Max(0f, depositionRadius - (v - position).magnitude);
+                            numVertices++;
+
+                            xOffsets[index] = i;
+                            yOffsets[index] = j;
+
+                            index++;
+                        }
+                    }
+                }
+
+                depositionBrush.depositionBrushWeights[y * width + x] = new float[numVertices];
+                depositionBrush.depositionBrushVertices[y * width + x] = new float[numVertices];
+
+                for (int n = 0; n < numVertices; n++) {
+                    v.x = x + xOffsets[n];
+                    v.y = y + yOffsets[n];
+                
+                    float weight = Mathf.Max(0, depositionRadius - (v - position).magnitude) / weightSum;
+                    depositionBrush.depositionBrushVertices[y * width + x][n] = v.y * width + v.x;
+                    depositionBrush.depositionBrushWeights[y * width + x][n] = weight;
+                }
+            }
+        }
+
+        return depositionBrush;
+    }
+
     ErosionInfo InitializeErosionInfo() {
         ErosionInfo erosionInfo;
 
@@ -134,11 +203,13 @@ public class HydraulicErosion : MonoBehaviour {
 
         ErosionInfo erosionInfo;
         ErosionBrush erosionBrush;
+        DepositionBrush depositionBrush;
 
-        public Droplet(float[,] map, ErosionInfo info, ErosionBrush brush) {
+        public Droplet(float[,] map, ErosionInfo info, ErosionBrush eBrush, DepositionBrush dBrush) {
             heightMap = map;
             erosionInfo = info;
-            erosionBrush = brush;
+            erosionBrush = eBrush;
+            depositionBrush = dBrush;
 
             mapWidth = heightMap.GetLength(0);
             mapHeight = heightMap.GetLength(1);
@@ -201,13 +272,17 @@ public class HydraulicErosion : MonoBehaviour {
             int coordX = (int)position.x;
             int coordY = (int)position.y;
 
-            float offsetX = position.x - coordX;
-            float offsetY = position.y - coordY;
+            int brushIndex = coordY * mapWidth + coordX;
 
-            heightMap[coordX, coordY] += sedimentDeposited * (1 - offsetX) * (1 - offsetY);
-            heightMap[coordX + 1, coordY] += sedimentDeposited * offsetX * (1 - offsetY);
-            heightMap[coordX, coordY + 1] += sedimentDeposited * (1 - offsetX) * offsetY;
-            heightMap[coordX + 1, coordY + 1] += sedimentDeposited * offsetX * offsetY;
+            for (int i = 0; i < depositionBrush.depositionBrushVertices[brushIndex].Length; i++) {
+                int nodeIndex = (int)depositionBrush.depositionBrushVertices[brushIndex][i];
+                int x = nodeIndex % mapWidth;
+                int y = nodeIndex / mapWidth;
+
+                float weight = depositionBrush.depositionBrushWeights[brushIndex][i];
+
+                heightMap[x, y] += sedimentDeposited * weight;
+            }
         }
 
         void ErodeSediment(float sedimentEroded) {
@@ -270,6 +345,16 @@ public class HydraulicErosion : MonoBehaviour {
         public ErosionBrush(int width, int height) {
             erosionBrushWeights = new float[width * height][];
             erosionBrushVertices = new float[width * height][];
+        }
+    }
+
+    class DepositionBrush {
+        public float[][] depositionBrushWeights;
+        public float[][] depositionBrushVertices;
+
+        public DepositionBrush(int width, int height) {
+            depositionBrushWeights = new float[width * height][];
+            depositionBrushVertices = new float[width * height][];
         }
     }
 
