@@ -162,7 +162,7 @@ MonoBehaviour:
   erosionFactor: 0.1
   evaporationFactor: 0.1
   erosionRadius: 5
-  depositionRadius: 2
+  depositionRadius: 3
   dropletLifetime: 30
 --- !u!4 &495154785
 Transform:
