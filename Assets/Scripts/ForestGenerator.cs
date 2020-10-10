@@ -9,17 +9,16 @@ public class ForestGenerator : MonoBehaviour {
     public int numTrees;
 
     ArrayList trees = new ArrayList();
-    GameObject forestGameObject;
 
     System.Random rng;
 
-    public void Generate(float[,] heightMap, float waterLevel, int seed) {
+    public GameObject Generate(float[,] heightMap, float waterLevel, int seed) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
 
         rng = new System.Random(seed);
 
-        forestGameObject = new GameObject("Forest");
+        GameObject forestGameObject = new GameObject("Forest");
 
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
@@ -42,14 +41,11 @@ public class ForestGenerator : MonoBehaviour {
                 trees.Add(tree);
             }
         }
+
+        return forestGameObject;
     }
 
     public void Clear() {
-        // foreach (GameObject tree in trees) {
-        //     DestroyImmediate(tree, true);
-        // }
-        DestroyImmediate(forestGameObject, true);
-
         trees.Clear();
     }
 }

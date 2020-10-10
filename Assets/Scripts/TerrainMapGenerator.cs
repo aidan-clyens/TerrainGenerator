@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,7 +28,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     ForestGenerator forestGenerator;
 
-    GameObject terrainGameObject;
+    GameObject chunkGameObject;
     GameObject waterGameObject;
 
     void Start() {
@@ -44,23 +44,24 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         Clear();
 
-        CreateTerrain(heightMap);
+        chunkGameObject = new GameObject("TerrainChunk");
+        GameObject terrainGameObject = CreateTerrain(heightMap);
+        terrainGameObject.transform.parent = chunkGameObject.transform;
+
         if (createWater) {
-            CreateWater();
+            GameObject waterGameObject = CreateWater();
+            waterGameObject.transform.parent = chunkGameObject.transform;
         }
 
         if (createForest) {
-            CreateForest(heightMap);
+            GameObject forestGameObject = CreateForest(heightMap);
+            forestGameObject.transform.parent = chunkGameObject.transform;
         }
     }
 
     public void Clear() {
-        if (terrainGameObject != null) {
-            DestroyImmediate(terrainGameObject, true);
-        }
-
-        if (waterGameObject != null) {
-            DestroyImmediate(waterGameObject, true);
+        if (chunkGameObject != null) {
+            DestroyImmediate(chunkGameObject, true);
         }
 
         if (forestGenerator != null) {
@@ -127,8 +128,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         Generate();
     }
 
-    void CreateTerrain(float[,] heightMap) {
-        terrainGameObject = new GameObject("Terrain");
+    GameObject CreateTerrain(float[,] heightMap) {
+        GameObject terrainGameObject = new GameObject("Terrain");
         terrainGameObject.AddComponent<MeshFilter>();
         terrainGameObject.AddComponent<MeshRenderer>();
         terrainGameObject.AddComponent<MeshCollider>();
@@ -139,16 +140,20 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
         terrainGameObject.GetComponent<MeshFilter>().mesh = mesh;
         terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+    
+        return terrainGameObject;
     }
 
-    void CreateForest(float[,] heightMap) {
+    GameObject CreateForest(float[,] heightMap) {
         forestGenerator = GetComponent<ForestGenerator>();
 
         forestGenerator.Clear();
-        forestGenerator.Generate(heightMap, waterLevel, seed);
+        GameObject forestGameObject = forestGenerator.Generate(heightMap, waterLevel, seed);
+    
+        return forestGameObject;
     }
 
-    void CreateWater() {
+    GameObject CreateWater() {
         float[,] heightMap = new float[mapWidth, mapHeight];
 
         for (int z = 0; z < mapHeight; z++) {
@@ -157,7 +162,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             }
         }
 
-        waterGameObject = new GameObject("Water");
+        GameObject waterGameObject = new GameObject("Water");
         waterGameObject.AddComponent<MeshFilter>();
         waterGameObject.AddComponent<MeshRenderer>();
 
@@ -166,6 +171,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         waterGameObject.GetComponent<MeshRenderer>().material = waterMaterial;
         waterGameObject.GetComponent<MeshFilter>().mesh = mesh;
+
+        return waterGameObject;
     }
 
     float[,] CreateHeightMap() {
