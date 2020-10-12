@@ -8,6 +8,7 @@ public class TerrainMapEditor : Editor {
     string levelNameSave = "Terrain";
     string levelNameLoad = "Terrain";
 
+    int levelNameIndex = 0;
 
     public override void OnInspectorGUI() {
         TerrainMapGenerator terrainMapGenerator = (TerrainMapGenerator) target;
@@ -32,10 +33,24 @@ public class TerrainMapEditor : Editor {
 
         GUILayout.Label("Load Level");
         EditorGUILayout.BeginHorizontal();
-        levelNameLoad = EditorGUILayout.TextField(levelNameLoad);
+
+        string[] saveFiles = GetSaveFiles();
+
+        levelNameIndex = EditorGUILayout.Popup(levelNameIndex, saveFiles);
+        levelNameLoad = saveFiles[levelNameIndex];
         if (GUILayout.Button("Load")) {
             terrainMapGenerator.LoadTerrainData(levelNameLoad);
         }
         EditorGUILayout.EndHorizontal();
+    }
+
+    string[] GetSaveFiles() {
+        string[] files = System.IO.Directory.GetFiles(Application.persistentDataPath + "/worlds");
+
+        for (int i = 0; i < files.Length; i++) {
+            files[i] = System.IO.Path.GetFileNameWithoutExtension(files[i]);
+        }
+
+        return files;
     }
 }

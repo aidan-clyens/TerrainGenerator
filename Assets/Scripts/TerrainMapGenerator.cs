@@ -92,14 +92,20 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.waterMaterial = waterMaterial;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
-        string filePath = Application.persistentDataPath + "/" + levelName + ".json";
+        string directory = Application.persistentDataPath + "/worlds"; 
+        if (!System.IO.Directory.Exists(directory)) {
+            System.IO.Directory.CreateDirectory(directory);
+        }
+
+        string filePath = directory + "/" + levelName + ".json";
 
         Debug.Log("Saved terrain to: " + filePath);
         System.IO.File.WriteAllText(filePath, terrainDataJson);
     }
 
     public void LoadTerrainData(string levelName) {
-        string filePath = Application.persistentDataPath + "/" + levelName + ".json";
+        string directory = Application.persistentDataPath + "/worlds"; 
+        string filePath = directory + "/" + levelName + ".json";
         string terrainDataJson = System.IO.File.ReadAllText(filePath);
 
         TerrainData terrainData = JsonUtility.FromJson<TerrainData>(terrainDataJson);
