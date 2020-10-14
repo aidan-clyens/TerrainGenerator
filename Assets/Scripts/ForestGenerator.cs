@@ -37,6 +37,8 @@ public class ForestGenerator : MonoBehaviour {
 
                 float scale = (float)rng.NextDouble() + 1f;
                 tree.transform.localScale = new Vector3(scale, scale, scale);
+
+                tree.isStatic = true;
             
                 trees.Add(tree);
             }

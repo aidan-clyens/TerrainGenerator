@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,6 +55,8 @@ public class TerrainMapGenerator : MonoBehaviour {
             GameObject forestGameObject = CreateForest(heightMap);
             forestGameObject.transform.parent = chunkGameObject.transform;
         }
+
+        chunkGameObject.isStatic = true;
     }
 
     public void Clear() {
@@ -145,6 +147,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainGameObject.GetComponent<MeshFilter>().mesh = mesh;
         terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     
+        terrainGameObject.isStatic = true;
+
         return terrainGameObject;
     }
 
@@ -153,6 +157,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         forestGenerator.Clear();
         GameObject forestGameObject = forestGenerator.Generate(heightMap, waterLevel, seed);
+
+        forestGameObject.isStatic = true;
     
         return forestGameObject;
     }
