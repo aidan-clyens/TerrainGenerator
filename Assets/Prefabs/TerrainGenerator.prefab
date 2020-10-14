@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5871110956056948488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5871110956056948532}
+  - component: {fileID: 5871110956056948535}
+  - component: {fileID: 5871110956056948534}
+  - component: {fileID: 5871110956056948491}
+  m_Layer: 0
+  m_Name: TerrainGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5871110956056948532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5871110956056948535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12d6f74e0f5311f43a038760821bf66c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 100
+  mapWidth: 256
+  mapHeight: 256
+  terrainColourGradient:
+    serializedVersion: 2
+    key0: {r: 0.7294118, g: 0.45490196, b: 0.42352942, a: 1}
+    key1: {r: 0.45882353, g: 0.39215687, b: 0.35686275, a: 1}
+    key2: {r: 0.65882355, g: 0.6627451, b: 0.5686275, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 26985
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  terrainMaterial: {fileID: 2100000, guid: afc43a23e3b0b8b4cbedab7c19542316, type: 2}
+  useFalloff: 0
+  useHydraulicErosion: 1
+  createForest: 1
+  noiseScale: 2
+  noiseOctaves: 4
+  persistence: 0.5
+  lacunarity: 1.6
+  mapDepth: 80
+  mapOffsetX: 25600
+  mapOffsetY: 25600
+  noiseRedistributionFactor: 2
+  createWater: 1
+  waterColourGradient:
+    serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  waterMaterial: {fileID: 2100000, guid: 4d1ec5d9ab1198646a96a6f081b245c4, type: 2}
+  waterLevel: 10
+--- !u!114 &5871110956056948534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc581be1e6a65c4983892b3a2102443, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treePrefab: {fileID: 6355307119461563011, guid: 206f6598bde148d4594ec1f9404fa5e3,
+    type: 3}
+  numTrees: 400
+--- !u!114 &5871110956056948491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d15f74b50c26f347a44d1ee306d3129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iterations: 100000
+  inertia: 0.2
+  gravity: 4
+  minSlope: 0.01
+  capacityFactor: 4
+  depositionFactor: 0.1
+  erosionFactor: 0.1
+  evaporationFactor: 0.1
+  erosionRadius: 5
+  depositionRadius: 3
+  dropletLifetime: 30
