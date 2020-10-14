@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Noise {
-    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity) {
+    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
         float[,] noiseMap = new float[width, height];
 
         float maxNoiseHeight = float.MinValue;
@@ -40,6 +40,7 @@ public class Noise {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
+                noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], noiseRedistributionFactor);
             }
         }
 

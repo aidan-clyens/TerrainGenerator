@@ -23,6 +23,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapDepth;
     public int mapOffsetX;
     public int mapOffsetY;
+    public float noiseRedistributionFactor;
 
     [Header("Water Settings")]
     public bool createWater;
@@ -179,7 +180,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     float[,] CreateHeightMap() {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity);
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapHeight);
 
         if (useHydraulicErosion) {
