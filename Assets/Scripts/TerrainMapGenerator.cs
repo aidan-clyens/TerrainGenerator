@@ -35,13 +35,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     GameObject chunkGameObject;
     GameObject waterGameObject;
 
-    void Start() {
-        Generate();
-    }
-
-    void OnDestroy() {
-        Clear();    
-    }
 
     public void Generate() {
         float[,] heightMap = CreateHeightMap();
