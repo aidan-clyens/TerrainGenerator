@@ -1,30 +1,34 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
+    [Header("Generator Settings")]
     public int seed = 1;
-
     public int mapWidth;
     public int mapHeight;
-    public int mapDepth;
+
+    [Header("Terrain Settings")]
+    public Gradient terrainColourGradient;
+    public Material terrainMaterial;
+    public bool useFalloff;
+    public bool useHydraulicErosion;
+    public bool createForest;
+
+    [Header("Perlin Noise Settings")]
     public float noiseScale;
     public int noiseOctaves;
     public float persistence;
     public float lacunarity;
+    public int mapDepth;
     public int mapOffsetX;
     public int mapOffsetY;
-    public float waterLevel;
 
-    public bool useFalloff;
-    public bool useHydraulicErosion;
+    [Header("Water Settings")]
     public bool createWater;
-    public bool createForest;
-
-    public Gradient terrainColourGradient;
     public Gradient waterColourGradient;
-    public Material terrainMaterial;
     public Material waterMaterial;
+    public float waterLevel;
 
     ForestGenerator forestGenerator;
 
