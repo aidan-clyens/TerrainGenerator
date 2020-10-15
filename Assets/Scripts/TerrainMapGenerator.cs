@@ -22,6 +22,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float lacunarity;
     public int mapDepth;
     public float noiseRedistributionFactor;
+    public bool normalizeLocal;
 
     [Header("Water Settings")]
     public bool createWater;
@@ -58,6 +59,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.noiseOctaves = noiseOctaves;
         terrainData.persistence = persistence;
         terrainData.lacunarity = lacunarity;
+        terrainData.normalizeLocal = normalizeLocal;
         terrainData.waterLevel = waterLevel;
         terrainData.useHydraulicErosion = useHydraulicErosion;
         terrainData.useFalloff = useFalloff;
@@ -96,6 +98,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         noiseOctaves = terrainData.noiseOctaves;
         persistence = terrainData.persistence;
         lacunarity = terrainData.lacunarity;
+        normalizeLocal = terrainData.normalizeLocal;
         waterLevel = terrainData.waterLevel;
         useHydraulicErosion = terrainData.useHydraulicErosion;
         useFalloff = terrainData.useFalloff;
@@ -187,12 +190,15 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     float[,] CreateHeightMap(int offsetX, int offsetY) {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor, normalizeLocal);
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
-        if (useHydraulicErosion) {
+        if (useHydraulicErosion && normalizeLocal) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
+        }
+        else if (useHydraulicErosion && !normalizeLocal) {
+            Debug.LogWarning("Warning: Cannot use hydraulic erosion in normalize global mode.");
         }
 
         float[,] heightMap = new float[mapWidth, mapWidth];

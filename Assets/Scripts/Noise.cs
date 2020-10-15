@@ -3,17 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Noise {
-    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
+    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor, bool normalizeLocal) {
         float[,] noiseMap = new float[width, height];
 
+        // Use local min and max to normalize locally, does not work well with other chunks
         float maxNoiseHeight = float.MinValue;
         float minNoiseHeight = float.MaxValue;
 
+        float maxPossibleHeight = 0f;
+        float amplitude = 1;
+        float frequency = 1;
+
+        // Find max possible height to normalize heightmap globally
+        for (int i = 0; i < octaves; i++) {
+            maxPossibleHeight += amplitude;
+            amplitude *= persistence;
+        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                float amplitude = 1;
-                float frequency = 1;
                 float noiseHeight = 0;
+                amplitude = 1;
+                frequency = 1;
 
                 for (int i = 0; i < octaves; i++) {
                     float sampleX = (float)(x + offsetX) / (float)width * scale * frequency;
@@ -39,7 +50,14 @@ public class Noise {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
+                if (normalizeLocal) {
+                    noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
+                }
+                else {
+                    float normalizedHeight = (noiseMap[x, y] + 1) / (2f * maxPossibleHeight / 2f);
+                    noiseMap[x, y] = normalizedHeight;
+                }
+
                 noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], noiseRedistributionFactor);
             }
         }

@@ -14,6 +14,7 @@ class TerrainData {
     public int noiseOctaves;
     public float persistence;
     public float lacunarity;
+    public bool normalizeLocal;
     public float waterLevel;
 
     public bool useFalloff;
