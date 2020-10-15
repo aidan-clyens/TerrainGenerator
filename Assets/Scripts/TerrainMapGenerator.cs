@@ -51,6 +51,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void SaveTerrainData(string levelName) {
         TerrainData terrainData = new TerrainData();
         terrainData.seed = seed;
+        terrainData.position = position;
         terrainData.mapWidth = mapWidth;
         terrainData.mapDepth = mapDepth;
         terrainData.noiseScale = noiseScale;
@@ -88,6 +89,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         Debug.Log("Loaded terrain from: " + filePath);
 
         seed = terrainData.seed;
+        position = terrainData.position;
         mapWidth = terrainData.mapWidth;
         mapDepth = terrainData.mapDepth;
         noiseScale = terrainData.noiseScale;

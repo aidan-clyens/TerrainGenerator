@@ -6,6 +6,8 @@ using UnityEngine;
 class TerrainData {
     public int seed;
 
+    public Vector2 position;
+
     public int mapWidth;
     public int mapDepth;
     public float noiseScale;
