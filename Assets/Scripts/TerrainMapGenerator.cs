@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,8 +21,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float persistence;
     public float lacunarity;
     public int mapDepth;
-    public int mapOffsetX;
-    public int mapOffsetY;
     public float noiseRedistributionFactor;
 
     [Header("Water Settings")]
@@ -36,8 +34,12 @@ public class TerrainMapGenerator : MonoBehaviour {
     GameObject chunkGameObject;
     GameObject waterGameObject;
 
+    int mapOffsetX;
+    int mapOffsetY;
+
 
     public void Generate() {
+        mapOffsetX = mapOffsetY = seed;
         float[,] heightMap = CreateHeightMap();
 
         Clear();
