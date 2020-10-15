@@ -32,33 +32,15 @@ public class TerrainMapGenerator : MonoBehaviour {
     ForestGenerator forestGenerator;
 
     GameObject chunkGameObject;
-    GameObject waterGameObject;
 
     int mapOffsetX;
     int mapOffsetY;
 
 
     public void Generate() {
-        mapOffsetX = mapOffsetY = seed;
-        float[,] heightMap = CreateHeightMap();
-
         Clear();
 
-        chunkGameObject = new GameObject("TerrainChunk");
-        GameObject terrainGameObject = CreateTerrain(heightMap);
-        terrainGameObject.transform.parent = chunkGameObject.transform;
-
-        if (createWater) {
-            GameObject waterGameObject = CreateWater();
-            waterGameObject.transform.parent = chunkGameObject.transform;
-        }
-
-        if (createForest) {
-            GameObject forestGameObject = CreateForest(heightMap);
-            forestGameObject.transform.parent = chunkGameObject.transform;
-        }
-
-        chunkGameObject.isStatic = true;
+        chunkGameObject = CreateTerrainChunk();
     }
 
     public void Clear() {
@@ -134,6 +116,29 @@ public class TerrainMapGenerator : MonoBehaviour {
         waterMaterial = terrainData.waterMaterial;
 
         Generate();
+    }
+
+    GameObject CreateTerrainChunk() {
+        mapOffsetX = mapOffsetY = seed;
+        float[,] heightMap = CreateHeightMap();
+
+        GameObject chunkGameObject = new GameObject("TerrainChunk");
+        GameObject terrainGameObject = CreateTerrain(heightMap);
+        terrainGameObject.transform.parent = chunkGameObject.transform;
+
+        if (createWater) {
+            GameObject waterGameObject = CreateWater();
+            waterGameObject.transform.parent = chunkGameObject.transform;
+        }
+
+        if (createForest) {
+            GameObject forestGameObject = CreateForest(heightMap);
+            forestGameObject.transform.parent = chunkGameObject.transform;
+        }
+
+        chunkGameObject.isStatic = true;
+
+        return chunkGameObject;
     }
 
     GameObject CreateTerrain(float[,] heightMap) {
