@@ -6,6 +6,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed = 1;
     public int mapWidth;
+    public Vector2 position;
 
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
@@ -32,14 +33,11 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     GameObject chunkGameObject;
 
-    int mapOffsetX;
-    int mapOffsetY;
-
 
     public void Generate() {
         Clear();
 
-        chunkGameObject = CreateTerrainChunk();
+        chunkGameObject = CreateTerrainChunk(position);
     }
 
     public void Clear() {
@@ -61,8 +59,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.noiseOctaves = noiseOctaves;
         terrainData.persistence = persistence;
         terrainData.lacunarity = lacunarity;
-        terrainData.mapOffsetX = mapOffsetX;
-        terrainData.mapOffsetY = mapOffsetY;
         terrainData.waterLevel = waterLevel;
         terrainData.useHydraulicErosion = useHydraulicErosion;
         terrainData.useFalloff = useFalloff;
@@ -100,8 +96,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         noiseOctaves = terrainData.noiseOctaves;
         persistence = terrainData.persistence;
         lacunarity = terrainData.lacunarity;
-        mapOffsetX = terrainData.mapOffsetX;
-        mapOffsetY = terrainData.mapOffsetY;
         waterLevel = terrainData.waterLevel;
         useHydraulicErosion = terrainData.useHydraulicErosion;
         useFalloff = terrainData.useFalloff;
@@ -115,9 +109,11 @@ public class TerrainMapGenerator : MonoBehaviour {
         Generate();
     }
 
-    GameObject CreateTerrainChunk() {
-        mapOffsetX = mapOffsetY = seed;
-        float[,] heightMap = CreateHeightMap();
+    GameObject CreateTerrainChunk(Vector2 position) {
+        int mapOffsetX = (int)(position.x * mapWidth) + seed;
+        int mapOffsetY = (int)(position.y * mapWidth) + seed;
+
+        float[,] heightMap = CreateHeightMap(mapOffsetX, mapOffsetY);
 
         GameObject chunkGameObject = new GameObject("TerrainChunk");
         GameObject terrainGameObject = CreateTerrain(heightMap);
@@ -134,6 +130,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         chunkGameObject.isStatic = true;
+        chunkGameObject.transform.position = new Vector3(position.x * mapWidth, 0f, position.y * mapWidth);
 
         return chunkGameObject;
     }
@@ -189,8 +186,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         return waterGameObject;
     }
 
-    float[,] CreateHeightMap() {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
+    float[,] CreateHeightMap(int offsetX, int offsetY) {
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
         if (useHydraulicErosion) {
