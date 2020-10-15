@@ -6,7 +6,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed = 1;
     public int mapWidth;
-    public int mapHeight;
 
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
@@ -57,7 +56,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         TerrainData terrainData = new TerrainData();
         terrainData.seed = seed;
         terrainData.mapWidth = mapWidth;
-        terrainData.mapHeight = mapHeight;
         terrainData.mapDepth = mapDepth;
         terrainData.noiseScale = noiseScale;
         terrainData.noiseOctaves = noiseOctaves;
@@ -97,7 +95,6 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         seed = terrainData.seed;
         mapWidth = terrainData.mapWidth;
-        mapHeight = terrainData.mapHeight;
         mapDepth = terrainData.mapDepth;
         noiseScale = terrainData.noiseScale;
         noiseOctaves = terrainData.noiseOctaves;
@@ -171,9 +168,9 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     GameObject CreateWater() {
-        float[,] heightMap = new float[mapWidth, mapHeight];
+        float[,] heightMap = new float[mapWidth, mapWidth];
 
-        for (int z = 0; z < mapHeight; z++) {
+        for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
                 heightMap[x, z] = waterLevel;
             }
@@ -193,17 +190,17 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     float[,] CreateHeightMap() {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapHeight, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
-        float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapHeight);
+        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, mapOffsetX, mapOffsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor);
+        float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
         if (useHydraulicErosion) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
 
-        float[,] heightMap = new float[mapWidth, mapHeight];
+        float[,] heightMap = new float[mapWidth, mapWidth];
 
-        for (int z = 0; z < mapHeight; z++) {
+        for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
                 if (useFalloff) {
                     noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);

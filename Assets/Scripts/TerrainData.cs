@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,6 @@ class TerrainData {
     public int seed;
 
     public int mapWidth;
-    public int mapHeight;
     public int mapDepth;
     public float noiseScale;
     public int noiseOctaves;
