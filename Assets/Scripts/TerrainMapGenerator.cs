@@ -31,18 +31,16 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     ForestGenerator forestGenerator;
 
-    GameObject chunkGameObject;
-
+    List<GameObject> terrainChunks = new List<GameObject>();
 
     public void Generate() {
-        Clear();
-
-        chunkGameObject = CreateTerrainChunk(position);
+        GameObject chunk = CreateTerrainChunk(position);
+        terrainChunks.Add(chunk);
     }
 
     public void Clear() {
-        if (chunkGameObject != null) {
-            DestroyImmediate(chunkGameObject, true);
+        foreach (GameObject chunk in terrainChunks) {
+            DestroyImmediate(chunk, true);
         }
 
         if (forestGenerator != null) {
@@ -110,8 +108,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     GameObject CreateTerrainChunk(Vector2 position) {
-        int mapOffsetX = (int)(position.x * mapWidth) + seed;
-        int mapOffsetY = (int)(position.y * mapWidth) + seed;
+        int mapOffsetX = (int)(position.x * (mapWidth - 1)) + seed;
+        int mapOffsetY = (int)(position.y * (mapWidth - 1)) + seed;
 
         float[,] heightMap = CreateHeightMap(mapOffsetX, mapOffsetY);
 
@@ -130,7 +128,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         chunkGameObject.isStatic = true;
-        chunkGameObject.transform.position = new Vector3(position.x * mapWidth, 0f, position.y * mapWidth);
+        chunkGameObject.transform.position = new Vector3(position.x * (mapWidth - 1), 0f, -position.y * (mapWidth - 1));
 
         return chunkGameObject;
     }
