@@ -8,9 +8,28 @@ public class ForestGenerator : MonoBehaviour {
     public int numTrees;
     public float slopeThreshold;
 
+    public GameObject viewer;
+    public float viewRange;
+
     List<GameObject> trees = new List<GameObject>();
 
     System.Random rng;
+
+
+    public void Update() {
+        Vector2 position = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
+
+        foreach (GameObject tree in trees) {
+            Vector2 treePosition = new Vector2(tree.transform.position.x, tree.transform.position.z);
+
+            if ((position - treePosition).magnitude < viewRange) {
+                tree.SetActive(true);
+            }
+            else {
+                tree.SetActive(false);
+            }
+        }
+    }
 
     public GameObject Generate(float[,] heightMap, Vector3[] normals, float waterLevel, int seed) {
         int width = heightMap.GetLength(0);
@@ -42,6 +61,7 @@ public class ForestGenerator : MonoBehaviour {
                 tree.transform.localScale = new Vector3(scale, scale, scale);
 
                 tree.isStatic = true;
+                tree.SetActive(false);
             
                 trees.Add(tree);
             }
