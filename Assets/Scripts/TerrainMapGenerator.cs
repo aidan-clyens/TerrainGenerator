@@ -35,13 +35,30 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     List<GameObject> terrainChunks = new List<GameObject>();
 
+
+    public void Start() {
+        Clear();
+        Generate();
+    }
+
     public void Generate() {
         GameObject chunk = CreateTerrainChunk(position);
         terrainChunks.Add(chunk);
     }
 
     public void Clear() {
-        foreach (GameObject chunk in terrainChunks) {
+        Transform[] chunkTransforms = GetComponentsInChildren<Transform>();
+        GameObject[] chunks = new GameObject[chunkTransforms.Length - 1];
+
+        int index = 0;
+        foreach (Transform chunk in chunkTransforms) {
+            if (chunk != transform) {
+                chunks[index] = chunk.gameObject;
+                index++;
+            }
+        }
+
+        foreach (GameObject chunk in chunks) {
             DestroyImmediate(chunk, true);
         }
 
@@ -134,6 +151,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         chunkGameObject.isStatic = true;
         chunkGameObject.transform.position = new Vector3(position.x * (mapWidth - 1), 0f, -position.y * (mapWidth - 1));
+        chunkGameObject.transform.parent = transform;
 
         return chunkGameObject;
     }
