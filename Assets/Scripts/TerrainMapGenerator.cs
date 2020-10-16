@@ -6,7 +6,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed = 1;
     public int mapWidth;
-    public Vector2 position;
 
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
@@ -30,6 +29,9 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float waterLevel;
 
     ForestGenerator forestGenerator;
+
+    Vector2 position = new Vector2(0, 0);
+
 
     List<GameObject> terrainChunks = new List<GameObject>();
 
