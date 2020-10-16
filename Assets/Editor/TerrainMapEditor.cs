@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -16,7 +16,7 @@ public class TerrainMapEditor : Editor {
         DrawDefaultInspector();
 
         if (GUILayout.Button("Generate")) {
-            terrainMapGenerator.Generate();
+            terrainMapGenerator.Generate(loadAllObjects: true);
         }
 
         if (GUILayout.Button("Clear")) {
