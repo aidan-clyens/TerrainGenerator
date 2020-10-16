@@ -26,7 +26,6 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     [Header("Water Settings")]
     public bool createWater;
-    public Gradient waterColourGradient;
     public Material waterMaterial;
     public float waterLevel;
 
@@ -66,7 +65,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.createWater = createWater;
         terrainData.createForest = createForest;
         terrainData.terrainColourGradient = terrainColourGradient;
-        terrainData.waterColourGradient = waterColourGradient;
         terrainData.terrainMaterial = terrainMaterial;
         terrainData.waterMaterial = waterMaterial;
 
@@ -105,7 +103,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         createWater = terrainData.createWater;
         createForest = terrainData.createForest;
         terrainColourGradient = terrainData.terrainColourGradient;
-        waterColourGradient = terrainData.waterColourGradient;
         terrainMaterial = terrainData.terrainMaterial;
         waterMaterial = terrainData.waterMaterial;
 
@@ -180,7 +177,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         waterGameObject.AddComponent<MeshFilter>();
         waterGameObject.AddComponent<MeshRenderer>();
 
-        MeshData meshData = MeshGenerator.Generate(heightMap, waterColourGradient);
+        MeshData meshData = MeshGenerator.Generate(heightMap);
         Mesh mesh = meshData.CreateMesh();
 
         waterGameObject.GetComponent<MeshRenderer>().material = waterMaterial;

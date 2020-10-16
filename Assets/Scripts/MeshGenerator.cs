@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class MeshGenerator {
 
-    public static MeshData Generate(float[,] heightMap, Gradient gradient) {
+    public static MeshData Generate(float[,] heightMap, Gradient gradient=null) {
         int meshWidth = heightMap.GetLength(0);
         int meshHeight = heightMap.GetLength(1);
 
@@ -36,14 +36,23 @@ public static class MeshGenerator {
                     maxDepth = heightMap[x, z];
                 }
 
-                // Set vertex colour
-                float y = Mathf.InverseLerp(minDepth, maxDepth, meshData.vertices[index].y);
-                meshData.colours[index] = gradient.Evaluate(y);
-
                 // Set UVs
                 meshData.uvs[index] = new Vector2(x / (float)meshWidth, z / (float)meshHeight);
 
                 index++;
+            }
+        }
+
+        index = 0;
+        if (gradient != null) {
+            for (int z = 0; z < meshHeight; z++) {
+                for (int x = 0; x < meshWidth; x++) {
+                    // Set vertex colour
+                    float y = Mathf.InverseLerp(minDepth, maxDepth, meshData.vertices[index].y);
+                    meshData.colours[index] = gradient.Evaluate(y);
+                
+                    index++;
+                }
             }
         }
 

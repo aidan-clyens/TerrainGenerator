@@ -22,7 +22,6 @@ class TerrainData {
     public bool createWater;
     public bool createForest;
     public Gradient terrainColourGradient;
-    public Gradient waterColourGradient;
     public Material terrainMaterial;
     public Material waterMaterial;
 }
