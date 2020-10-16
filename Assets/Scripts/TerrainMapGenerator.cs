@@ -127,7 +127,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         if (createForest) {
-            GameObject forestGameObject = CreateForest(heightMap);
+            Vector3[] normals = terrainGameObject.GetComponent<MeshFilter>().sharedMesh.normals;
+            GameObject forestGameObject = CreateForest(heightMap, normals);
             forestGameObject.transform.parent = chunkGameObject.transform;
         }
 
@@ -147,7 +148,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         Mesh mesh = meshData.CreateMesh();
 
         terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
-        terrainGameObject.GetComponent<MeshFilter>().mesh = mesh;
+        terrainGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
         terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     
         terrainGameObject.isStatic = true;
@@ -155,11 +156,11 @@ public class TerrainMapGenerator : MonoBehaviour {
         return terrainGameObject;
     }
 
-    GameObject CreateForest(float[,] heightMap) {
+    GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals) {
         forestGenerator = GetComponent<ForestGenerator>();
 
         forestGenerator.Clear();
-        GameObject forestGameObject = forestGenerator.Generate(heightMap, waterLevel, seed);
+        GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
 
         forestGameObject.isStatic = true;
     
