@@ -211,7 +211,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor, normalizeLocal);
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
-        if (useHydraulicErosion && normalizeLocal) {
+        if (useHydraulicErosion && normalizeLocal && mapDepth > 0) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
@@ -223,11 +223,16 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
-                if (useFalloff) {
+                if (useFalloff && mapDepth > 0) {
                     noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);
                 }
 
-                heightMap[x, z] = noiseMap[x, z] * mapDepth;
+                if (mapDepth == 0) {
+                    heightMap[x, z] = 1f;
+                }
+                else {
+                    heightMap[x, z] = noiseMap[x, z] * mapDepth;
+                }
             }
         }
 
