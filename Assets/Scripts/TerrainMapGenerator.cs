@@ -30,7 +30,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     ForestGenerator forestGenerator;
 
-    Vector2 position = new Vector2(0, 0);
+    public Vector2 position = new Vector2(0, 0);
 
 
     List<GameObject> terrainChunks = new List<GameObject>();
@@ -65,69 +65,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (forestGenerator != null) {
             forestGenerator.Clear();
         }
-    }
-
-    public void SaveTerrainData(string levelName) {
-        TerrainData terrainData = new TerrainData();
-        terrainData.seed = seed;
-        terrainData.position = position;
-        terrainData.mapWidth = mapWidth;
-        terrainData.mapDepth = mapDepth;
-        terrainData.noiseScale = noiseScale;
-        terrainData.noiseOctaves = noiseOctaves;
-        terrainData.persistence = persistence;
-        terrainData.lacunarity = lacunarity;
-        terrainData.normalizeLocal = normalizeLocal;
-        terrainData.noiseRedistributionFactor = noiseRedistributionFactor;
-        terrainData.waterLevel = waterLevel;
-        terrainData.useHydraulicErosion = useHydraulicErosion;
-        terrainData.useFalloff = useFalloff;
-        terrainData.createWater = createWater;
-        terrainData.createForest = createForest;
-        terrainData.terrainColourGradient = terrainColourGradient;
-        terrainData.terrainMaterial = terrainMaterial;
-        terrainData.waterMaterial = waterMaterial;
-
-        string terrainDataJson = JsonUtility.ToJson(terrainData);
-        string directory = Application.persistentDataPath + "/worlds"; 
-        if (!System.IO.Directory.Exists(directory)) {
-            System.IO.Directory.CreateDirectory(directory);
-        }
-
-        string filePath = directory + "/" + levelName + ".json";
-
-        Debug.Log("Saved terrain to: " + filePath);
-        System.IO.File.WriteAllText(filePath, terrainDataJson);
-    }
-
-    public void LoadTerrainData(string levelName) {
-        string directory = Application.persistentDataPath + "/worlds"; 
-        string filePath = directory + "/" + levelName + ".json";
-        string terrainDataJson = System.IO.File.ReadAllText(filePath);
-
-        TerrainData terrainData = JsonUtility.FromJson<TerrainData>(terrainDataJson);
-        Debug.Log("Loaded terrain from: " + filePath);
-
-        seed = terrainData.seed;
-        position = terrainData.position;
-        mapWidth = terrainData.mapWidth;
-        mapDepth = terrainData.mapDepth;
-        noiseScale = terrainData.noiseScale;
-        noiseOctaves = terrainData.noiseOctaves;
-        persistence = terrainData.persistence;
-        lacunarity = terrainData.lacunarity;
-        noiseRedistributionFactor = terrainData.noiseRedistributionFactor;
-        normalizeLocal = terrainData.normalizeLocal;
-        waterLevel = terrainData.waterLevel;
-        useHydraulicErosion = terrainData.useHydraulicErosion;
-        useFalloff = terrainData.useFalloff;
-        createWater = terrainData.createWater;
-        createForest = terrainData.createForest;
-        terrainColourGradient = terrainData.terrainColourGradient;
-        terrainMaterial = terrainData.terrainMaterial;
-        waterMaterial = terrainData.waterMaterial;
-
-        Generate();
     }
 
     GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {

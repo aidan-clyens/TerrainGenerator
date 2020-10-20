@@ -59,7 +59,7 @@ public class TerrainMapEditor : Editor {
         EditorGUILayout.BeginHorizontal();
         levelNameSave = EditorGUILayout.TextField(levelNameSave);
         if (GUILayout.Button("Save")) {
-            terrainMapGenerator.SaveTerrainData(levelNameSave);
+            SaveTerrainData(terrainMapGenerator, levelNameSave);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -71,7 +71,8 @@ public class TerrainMapEditor : Editor {
         levelNameIndex = EditorGUILayout.Popup(levelNameIndex, saveFiles);
         levelNameLoad = saveFiles[levelNameIndex];
         if (GUILayout.Button("Load")) {
-            terrainMapGenerator.LoadTerrainData(levelNameLoad);
+            LoadTerrainData(terrainMapGenerator, levelNameLoad);
+            terrainMapGenerator.Generate(loadAllObjects: true);
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -84,5 +85,66 @@ public class TerrainMapEditor : Editor {
         }
 
         return files;
+    }
+
+    void SaveTerrainData(TerrainMapGenerator terrainMapGenerator, string levelName) {
+        TerrainData terrainData = new TerrainData();
+        terrainData.seed = terrainMapGenerator.seed;
+        terrainData.position = terrainMapGenerator.position;
+        terrainData.mapWidth = terrainMapGenerator.mapWidth;
+        terrainData.mapDepth = terrainMapGenerator.mapDepth;
+        terrainData.noiseScale = terrainMapGenerator.noiseScale;
+        terrainData.noiseOctaves = terrainMapGenerator.noiseOctaves;
+        terrainData.persistence = terrainMapGenerator.persistence;
+        terrainData.lacunarity = terrainMapGenerator.lacunarity;
+        terrainData.normalizeLocal = terrainMapGenerator.normalizeLocal;
+        terrainData.noiseRedistributionFactor = terrainMapGenerator.noiseRedistributionFactor;
+        terrainData.waterLevel = terrainMapGenerator.waterLevel;
+        terrainData.useHydraulicErosion = terrainMapGenerator.useHydraulicErosion;
+        terrainData.useFalloff = terrainMapGenerator.useFalloff;
+        terrainData.createWater = terrainMapGenerator.createWater;
+        terrainData.createForest = terrainMapGenerator.createForest;
+        terrainData.terrainColourGradient = terrainMapGenerator.terrainColourGradient;
+        terrainData.terrainMaterial = terrainMapGenerator.terrainMaterial;
+        terrainData.waterMaterial = terrainMapGenerator.waterMaterial;
+
+        string terrainDataJson = JsonUtility.ToJson(terrainData);
+        string directory = Application.persistentDataPath + "/worlds"; 
+        if (!System.IO.Directory.Exists(directory)) {
+            System.IO.Directory.CreateDirectory(directory);
+        }
+
+        string filePath = directory + "/" + levelName + ".json";
+
+        Debug.Log("Saved terrain to: " + filePath);
+        System.IO.File.WriteAllText(filePath, terrainDataJson);
+    }
+
+    void LoadTerrainData(TerrainMapGenerator terrainMapGenerator, string levelName) {
+        string directory = Application.persistentDataPath + "/worlds"; 
+        string filePath = directory + "/" + levelName + ".json";
+        string terrainDataJson = System.IO.File.ReadAllText(filePath);
+
+        TerrainData terrainData = JsonUtility.FromJson<TerrainData>(terrainDataJson);
+        Debug.Log("Loaded terrain from: " + filePath);
+
+        terrainMapGenerator.seed = terrainData.seed;
+        terrainMapGenerator.position = terrainData.position;
+        terrainMapGenerator.mapWidth = terrainData.mapWidth;
+        terrainMapGenerator.mapDepth = terrainData.mapDepth;
+        terrainMapGenerator.noiseScale = terrainData.noiseScale;
+        terrainMapGenerator.noiseOctaves = terrainData.noiseOctaves;
+        terrainMapGenerator.persistence = terrainData.persistence;
+        terrainMapGenerator.lacunarity = terrainData.lacunarity;
+        terrainMapGenerator.noiseRedistributionFactor = terrainData.noiseRedistributionFactor;
+        terrainMapGenerator.normalizeLocal = terrainData.normalizeLocal;
+        terrainMapGenerator.waterLevel = terrainData.waterLevel;
+        terrainMapGenerator.useHydraulicErosion = terrainData.useHydraulicErosion;
+        terrainMapGenerator.useFalloff = terrainData.useFalloff;
+        terrainMapGenerator.createWater = terrainData.createWater;
+        terrainMapGenerator.createForest = terrainData.createForest;
+        terrainMapGenerator.terrainColourGradient = terrainData.terrainColourGradient;
+        terrainMapGenerator.terrainMaterial = terrainData.terrainMaterial;
+        terrainMapGenerator.waterMaterial = terrainData.waterMaterial;
     }
 }
