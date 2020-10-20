@@ -6,6 +6,9 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed = 1;
     public int mapWidth;
+    public Vector2 position = new Vector2(0, 0);
+    public GameObject viewer;
+    public float objectViewRange;
 
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
@@ -19,7 +22,6 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     ForestGenerator forestGenerator;
 
-    public Vector2 position = new Vector2(0, 0);
 
 
     List<GameObject> terrainChunks = new List<GameObject>();
@@ -105,6 +107,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals, bool loadAllObjects) {
         forestGenerator = GetComponent<ForestGenerator>();
+        forestGenerator.Init(viewer, objectViewRange);
 
         forestGenerator.Clear();
         GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed, loadAllObjects);

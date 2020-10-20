@@ -8,13 +8,18 @@ public class ForestGenerator : MonoBehaviour {
     public int numTrees;
     public float slopeThreshold;
 
-    public GameObject viewer;
-    public float viewRange;
-
     List<GameObject> trees = new List<GameObject>();
 
     System.Random rng;
 
+    GameObject viewer;
+    float viewRange;
+
+
+    public void Init(GameObject view, float range) {
+        viewer = view;
+        viewRange = range;
+    }
 
     public void Update() {
         Vector2 position = new Vector2(viewer.transform.position.x, viewer.transform.position.z);

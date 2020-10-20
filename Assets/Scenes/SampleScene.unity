@@ -458,5 +458,21 @@ PrefabInstance:
       propertyPath: viewer
       value: 
       objectReference: {fileID: 62512092}
-    m_RemovedComponents: []
+    - target: {fileID: 5871110956056948535, guid: 2ad7b4aa76016dc4db01fe2e7bb6ea76,
+        type: 3}
+      propertyPath: viewer
+      value: 
+      objectReference: {fileID: 62512092}
+    - target: {fileID: 5871110956056948535, guid: 2ad7b4aa76016dc4db01fe2e7bb6ea76,
+        type: 3}
+      propertyPath: viewRange
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5871110956056948535, guid: 2ad7b4aa76016dc4db01fe2e7bb6ea76,
+        type: 3}
+      propertyPath: objectViewRange
+      value: 200
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5871110955595651416, guid: 2ad7b4aa76016dc4db01fe2e7bb6ea76, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2ad7b4aa76016dc4db01fe2e7bb6ea76, type: 3}
