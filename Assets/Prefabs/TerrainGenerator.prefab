@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5871110956056948532}
   - component: {fileID: 5871110956056948535}
+  - component: {fileID: 3166721825118174603}
   - component: {fileID: 5871110956056948491}
   - component: {fileID: 5871110956056948534}
+  - component: {fileID: 5871110955595651416}
   m_Layer: 0
   m_Name: TerrainGenerator
   m_TagString: Untagged
@@ -45,13 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12d6f74e0f5311f43a038760821bf66c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 100
+  seed: 0
   mapWidth: 256
   terrainColourGradient:
     serializedVersion: 2
-    key0: {r: 0.7294118, g: 0.45490196, b: 0.42352942, a: 1}
-    key1: {r: 0.45882353, g: 0.39215687, b: 0.35686275, a: 1}
-    key2: {r: 0.65882355, g: 0.6627451, b: 0.5686275, a: 0}
+    key0: {r: 0.7264151, g: 0.39738452, b: 0.35978106, a: 1}
+    key1: {r: 0.4433962, g: 0.34903777, b: 0.2990833, a: 1}
+    key2: {r: 0.5471698, g: 0.4465112, b: 0.3794055, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -77,20 +79,32 @@ MonoBehaviour:
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   terrainMaterial: {fileID: 2100000, guid: afc43a23e3b0b8b4cbedab7c19542316, type: 2}
-  useFalloff: 0
-  useHydraulicErosion: 1
   createForest: 1
+  createWater: 1
+  waterMaterial: {fileID: 2100000, guid: 4d1ec5d9ab1198646a96a6f081b245c4, type: 2}
+  waterLevel: 10
+  position: {x: 0, y: 0}
+--- !u!114 &3166721825118174603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82b8200e845bda1488b10f236378215c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   noiseScale: 2
   noiseOctaves: 4
   persistence: 0.5
   lacunarity: 1.6
   mapDepth: 80
   noiseRedistributionFactor: 2
-  normalizeLocal: 0
-  createWater: 1
-  waterMaterial: {fileID: 2100000, guid: 4d1ec5d9ab1198646a96a6f081b245c4, type: 2}
-  waterLevel: 10
-  position: {x: 0, y: 0}
+  normalizeLocal: 1
+  useFalloff: 0
+  useHydraulicErosion: 1
 --- !u!114 &5871110956056948491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +142,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treePrefab: {fileID: 6355307119461563011, guid: 206f6598bde148d4594ec1f9404fa5e3,
     type: 3}
-  numTrees: 400
-  slopeThreshold: 0
+  numTrees: 200
+  slopeThreshold: 45
   viewer: {fileID: 0}
-  viewRange: 0
+  viewRange: 200
+--- !u!114 &5871110955595651416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5871110956056948488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82b8200e845bda1488b10f236378215c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseScale: 0
+  noiseOctaves: 0
+  persistence: 0
+  lacunarity: 0
+  mapDepth: 0
+  noiseRedistributionFactor: 0
+  normalizeLocal: 0
+  useFalloff: 0
+  useHydraulicErosion: 0

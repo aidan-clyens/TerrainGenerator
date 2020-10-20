@@ -10,21 +10,10 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
-    public bool useFalloff;
-    public bool useHydraulicErosion;
     public bool createForest;
-
-    [Header("Perlin Noise Settings")]
-    public float noiseScale;
-    public int noiseOctaves;
-    public float persistence;
-    public float lacunarity;
-    public int mapDepth;
-    public float noiseRedistributionFactor;
-    public bool normalizeLocal;
+    public bool createWater;
 
     [Header("Water Settings")]
-    public bool createWater;
     public Material waterMaterial;
     public float waterLevel;
 
@@ -71,7 +60,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         int mapOffsetX = (int)(position.x * (mapWidth - 1)) + seed;
         int mapOffsetY = (int)(position.y * (mapWidth - 1)) + seed;
 
-        float[,] heightMap = CreateHeightMap(mapOffsetX, mapOffsetY);
+        HeightMapGenerator heightMapGenerator = GetComponent<HeightMapGenerator>();
+        float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, mapWidth, mapOffsetX, mapOffsetY);
 
         GameObject chunkGameObject = new GameObject("TerrainChunk");
         GameObject terrainGameObject = CreateTerrain(heightMap);
@@ -144,37 +134,5 @@ public class TerrainMapGenerator : MonoBehaviour {
         waterGameObject.GetComponent<MeshFilter>().mesh = mesh;
 
         return waterGameObject;
-    }
-
-    float[,] CreateHeightMap(int offsetX, int offsetY) {
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor, normalizeLocal);
-        float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
-
-        if (useHydraulicErosion && normalizeLocal && mapDepth > 0) {
-            HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
-            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
-        }
-        else if (useHydraulicErosion && !normalizeLocal) {
-            Debug.LogWarning("Warning: Cannot use hydraulic erosion in normalize global mode.");
-        }
-
-        float[,] heightMap = new float[mapWidth, mapWidth];
-
-        for (int z = 0; z < mapWidth; z++) {
-            for (int x = 0; x < mapWidth; x++) {
-                if (useFalloff && mapDepth > 0) {
-                    noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);
-                }
-
-                if (mapDepth == 0) {
-                    heightMap[x, z] = 1f;
-                }
-                else {
-                    heightMap[x, z] = noiseMap[x, z] * mapDepth;
-                }
-            }
-        }
-
-        return heightMap;
     }
 }
