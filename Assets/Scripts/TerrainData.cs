@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +14,7 @@ class TerrainData {
     public int noiseOctaves;
     public float persistence;
     public float lacunarity;
+    public float noiseRedistributionFactor;
     public bool normalizeLocal;
     public float waterLevel;
 

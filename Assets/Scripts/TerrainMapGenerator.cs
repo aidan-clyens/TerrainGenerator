@@ -78,6 +78,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainData.persistence = persistence;
         terrainData.lacunarity = lacunarity;
         terrainData.normalizeLocal = normalizeLocal;
+        terrainData.noiseRedistributionFactor = noiseRedistributionFactor;
         terrainData.waterLevel = waterLevel;
         terrainData.useHydraulicErosion = useHydraulicErosion;
         terrainData.useFalloff = useFalloff;
@@ -115,6 +116,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         noiseOctaves = terrainData.noiseOctaves;
         persistence = terrainData.persistence;
         lacunarity = terrainData.lacunarity;
+        noiseRedistributionFactor = terrainData.noiseRedistributionFactor;
         normalizeLocal = terrainData.normalizeLocal;
         waterLevel = terrainData.waterLevel;
         useHydraulicErosion = terrainData.useHydraulicErosion;
