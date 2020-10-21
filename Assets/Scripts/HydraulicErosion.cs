@@ -30,14 +30,8 @@ public class HydraulicErosion : MonoBehaviour {
 
         erosionInfo = InitializeErosionInfo();
 
-        if (erosionBrush == null) {
-            erosionBrush = InitializeErosionBrush(heightMap);
-        }
-
-        if (depositionBrush == null) {
-            depositionBrush = InitializeDepositionBrush(heightMap);
-        }
-
+        erosionBrush = InitializeErosionBrush(heightMap);
+        depositionBrush = InitializeDepositionBrush(heightMap);
 
         for (int i = 0; i < iterations; i++) {
             Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush, depositionBrush);       
