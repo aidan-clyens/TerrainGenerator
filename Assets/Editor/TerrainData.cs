@@ -8,6 +8,7 @@ class TerrainData {
 
     public Vector2 position;
 
+    // Height Map Data
     public int mapWidth;
     public int mapDepth;
     public float noiseScale;
@@ -16,8 +17,9 @@ class TerrainData {
     public float lacunarity;
     public float noiseRedistributionFactor;
     public bool normalizeLocal;
-    public float waterLevel;
 
+    // Terrain Settings
+    public float waterLevel;
     public bool useFalloff;
     public bool useHydraulicErosion;
     public bool createWater;
@@ -25,4 +27,17 @@ class TerrainData {
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public Material waterMaterial;
+
+    // Hydraulic Erosion Data
+    public int iterations;
+    public float gravity;
+    public float inertia;
+    public float capacityFactor;
+    public float minSlope;
+    public float depositionRadius;
+    public float depositionFactor;
+    public float erosionRadius;
+    public float erosionFactor;
+    public float evaporationFactor;
+    public int dropletLifetime;
 }
