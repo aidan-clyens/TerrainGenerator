@@ -7,6 +7,7 @@ public class ForestGenerator : MonoBehaviour {
     public GameObject treePrefab;
     public int numTrees;
     public float slopeThreshold;
+    public float verticalOffset;
 
     List<GameObject> trees = new List<GameObject>();
 
@@ -50,7 +51,7 @@ public class ForestGenerator : MonoBehaviour {
         while (trees.Count < numTrees) {
             int x = rng.Next(0, width - 1);
             int z = rng.Next(0, height - 1);
-            float y = heightMap[x, z] - 1;
+            float y = heightMap[x, z] + verticalOffset;
 
             Vector3 normal = normals[(int)(z*width + x)];
             float angle = Vector3.Angle(normal, new Vector3(0, 1, 0));
