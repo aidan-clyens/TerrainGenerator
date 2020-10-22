@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ForestGenerator : MonoBehaviour {
 
-    public GameObject treePrefab;
+    public List<GameObject> treePrefabs = new List<GameObject>();
     public int numTrees;
     public float slopeThreshold;
     public float verticalOffset;
@@ -61,6 +61,7 @@ public class ForestGenerator : MonoBehaviour {
 
             if (y > waterLevel + 5 && angle < slopeThreshold) {
                 Vector3 position = new Vector3(x, y, z);
+                GameObject treePrefab = treePrefabs[rng.Next(0, treePrefabs.Count)];
                 GameObject tree = Instantiate(treePrefab, position, Quaternion.identity, forestGameObject.transform);
 
                 float scale = (float)rng.NextDouble() + 1f;
