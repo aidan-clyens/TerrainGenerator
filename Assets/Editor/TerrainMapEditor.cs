@@ -13,12 +13,14 @@ public class TerrainMapEditor : Editor {
     TerrainMapGenerator terrainMapGenerator;
     HeightMapGenerator heightMapGenerator;
     HydraulicErosion hydraulicErosion;
+    ForestGenerator forestGenerator;
 
 
     public override void OnInspectorGUI() {
         terrainMapGenerator = (TerrainMapGenerator) target;
         heightMapGenerator = terrainMapGenerator.GetComponent<HeightMapGenerator>();
         hydraulicErosion = terrainMapGenerator.GetComponent<HydraulicErosion>();
+        forestGenerator = terrainMapGenerator.GetComponent<ForestGenerator>();
 
         DrawDefaultInspector();
 
@@ -95,6 +97,10 @@ public class TerrainMapEditor : Editor {
         terrainData.erosionRadius = hydraulicErosion.erosionRadius;
         terrainData.evaporationFactor = hydraulicErosion.evaporationFactor;
         terrainData.dropletLifetime = hydraulicErosion.dropletLifetime;
+        terrainData.treePrefabs = forestGenerator.treePrefabs;
+        terrainData.numTrees = forestGenerator.numTrees;
+        terrainData.slopeThreshold = forestGenerator.slopeThreshold;
+        terrainData.verticalOffset = forestGenerator.verticalOffset;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
         string directory = Application.persistentDataPath + "/worlds"; 
@@ -145,5 +151,9 @@ public class TerrainMapEditor : Editor {
         hydraulicErosion.erosionRadius = terrainData.erosionRadius;
         hydraulicErosion.evaporationFactor = terrainData.evaporationFactor;
         hydraulicErosion.dropletLifetime = terrainData.dropletLifetime;
+        forestGenerator.treePrefabs = terrainData.treePrefabs;
+        forestGenerator.numTrees = terrainData.numTrees;
+        forestGenerator.slopeThreshold = terrainData.slopeThreshold;
+        forestGenerator.verticalOffset = terrainData.verticalOffset;
     }
 }

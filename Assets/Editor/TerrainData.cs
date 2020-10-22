@@ -40,4 +40,10 @@ class TerrainData {
     public float erosionFactor;
     public float evaporationFactor;
     public int dropletLifetime;
+
+    // Forest Generator Settings
+    public List<GameObject> treePrefabs = new List<GameObject>();
+    public int numTrees;
+    public float slopeThreshold;
+    public float verticalOffset;
 }
