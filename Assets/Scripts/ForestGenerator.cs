@@ -45,6 +45,10 @@ public class ForestGenerator : MonoBehaviour {
 
         GameObject forestGameObject = new GameObject("Forest");
 
+        if (treePrefabs.Count == 0) {
+            return forestGameObject; 
+        }
+
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
 
