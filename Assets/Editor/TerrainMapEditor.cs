@@ -42,18 +42,23 @@ public class TerrainMapEditor : Editor {
         }
         EditorGUILayout.EndHorizontal();
 
-        GUILayout.Label("Load Level");
-        EditorGUILayout.BeginHorizontal();
 
         string[] saveFiles = GetSaveFiles();
 
-        levelNameIndex = EditorGUILayout.Popup(levelNameIndex, saveFiles);
-        levelNameLoad = saveFiles[levelNameIndex];
-        if (GUILayout.Button("Load")) {
-            LoadTerrainData(levelNameLoad);
-            terrainMapGenerator.Generate(loadAllObjects: true);
+        if (saveFiles.Length > 0) {
+            GUILayout.Label("Load Level");
+            EditorGUILayout.BeginHorizontal();
+
+            levelNameIndex = EditorGUILayout.Popup(levelNameIndex, saveFiles);
+            levelNameLoad = saveFiles[levelNameIndex];
+
+            if (GUILayout.Button("Load")) {
+                LoadTerrainData(levelNameLoad);
+                terrainMapGenerator.Generate(loadAllObjects: true);
+            }
+
+            EditorGUILayout.EndHorizontal();
         }
-        EditorGUILayout.EndHorizontal();
     }
 
     string[] GetSaveFiles() {
