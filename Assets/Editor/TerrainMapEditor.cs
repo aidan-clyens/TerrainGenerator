@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -57,7 +57,12 @@ public class TerrainMapEditor : Editor {
     }
 
     string[] GetSaveFiles() {
-        string[] files = System.IO.Directory.GetFiles(Application.persistentDataPath + "/worlds");
+        string directory = Application.persistentDataPath + "/worlds";
+        if (!System.IO.Directory.Exists(directory)) {
+            System.IO.Directory.CreateDirectory(directory);
+        }
+
+        string[] files = System.IO.Directory.GetFiles(directory);
 
         for (int i = 0; i < files.Length; i++) {
             files[i] = System.IO.Path.GetFileNameWithoutExtension(files[i]);
