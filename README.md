@@ -2,7 +2,7 @@
 
 ## Getting Started
 ### Installing
-1. Create a new empty Unity 3D project.
+1. Create a new empty Unity 3D project **(Note: Project must use the Universal Render Pipeline)**.
 2. Clone into Unity project with `git clone git@github.com:aidan-clyens/TerrainGenerator.git`.
 
 ### Generating Terrain
