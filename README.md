@@ -1,4 +1,7 @@
 # Procedural Terrain Generator
+![](Images/forest.png)
+![](Images/desert.png)
+![](Images/campfire.png)
 
 ## Getting Started
 ### Installing
