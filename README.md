@@ -23,7 +23,7 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ![](Images/HeightMapGeneratorSettings.png)
 
 ## Hydraulic Erosion
-![](Images/HydraulicErosionSettings.png)
+![](Images/HydraulicErosionSettings.PNG)
 
 ## Forest Generator
 ![](Images/ForestGeneratorSettings.png)
