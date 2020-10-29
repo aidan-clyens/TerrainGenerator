@@ -9,6 +9,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public Vector2 position = new Vector2(0, 0);
     public GameObject viewer;
     public float objectViewRange;
+    public bool infiniteTerrain;
 
     [Header("Terrain Settings")]
     public Gradient terrainColourGradient;
@@ -33,6 +34,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     public void Generate(bool loadAllObjects=false) {
+        if (infiniteTerrain) {
+            GetComponent<HeightMapGenerator>().useHydraulicErosion = false;
+            GetComponent<HeightMapGenerator>().normalizeLocal = false;
+        }
+
         GameObject chunk = CreateTerrainChunk(position, loadAllObjects);
         terrainChunks.Add(chunk);
     }
