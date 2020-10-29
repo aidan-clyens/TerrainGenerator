@@ -8,7 +8,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapWidth;
     public Vector2 position = new Vector2(0, 0);
     public GameObject viewer;
-    public float chunkViewRange;
+    public int chunkViewRange;
     public float objectViewRange;
     public bool infiniteTerrain;
 
@@ -26,7 +26,9 @@ public class TerrainMapGenerator : MonoBehaviour {
 
 
 
-    List<GameObject> terrainChunks = new List<GameObject>();
+    // List<GameObject> terrainChunks = new List<GameObject>();
+    Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
+    List<GameObject> terrainChunksVisibleLastUpdate = new List<GameObject>();
 
 
     public void Start() {
@@ -39,26 +41,45 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         Vector2 viewerPosition = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
 
-        foreach (GameObject chunk in terrainChunks) {
-            Vector2 chunkPosition = new Vector2(chunk.transform.position.x, chunk.transform.position.z);
+        Vector2 viewPositionCoords = new Vector2(
+            Mathf.RoundToInt(viewerPosition.x / mapWidth),
+            Mathf.RoundToInt(viewerPosition.y / mapWidth)
+        );
 
-            if ((viewerPosition - chunkPosition).magnitude < chunkViewRange) {
+        foreach (GameObject chunk in terrainChunksVisibleLastUpdate) {
+            chunk.SetActive(false);
+        }
+        terrainChunksVisibleLastUpdate.Clear();
+
+        for (int yOffset = -chunkViewRange; yOffset <= chunkViewRange; yOffset++) {
+            for (int xOffset = -chunkViewRange; xOffset <= chunkViewRange; xOffset++) {
+                Vector2 viewedChunkCoords = viewPositionCoords + new Vector2(xOffset, yOffset);
+
+                GameObject chunk;
+                if (terrainChunks.ContainsKey(viewedChunkCoords)) {
+                    chunk = terrainChunks[viewedChunkCoords];
+                }
+                else {
+                    position = viewedChunkCoords;
+                    chunk = Generate();
+                }
                 chunk.SetActive(true);
-            }
-            else {
-                chunk.SetActive(false);
+
+                terrainChunksVisibleLastUpdate.Add(chunk);
             }
         }
     }
 
-    public void Generate(bool loadAllObjects=false) {
+    public GameObject Generate(bool loadAllObjects=false) {
         if (infiniteTerrain) {
             GetComponent<HeightMapGenerator>().useHydraulicErosion = false;
             GetComponent<HeightMapGenerator>().normalizeLocal = false;
         }
 
         GameObject chunk = CreateTerrainChunk(position, loadAllObjects);
-        terrainChunks.Add(chunk);
+        terrainChunks.Add(position, chunk);
+    
+        return chunk;
     }
 
     public void Clear() {
@@ -105,7 +126,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         chunkGameObject.isStatic = true;
-        chunkGameObject.transform.position = new Vector3(position.x * (mapWidth - 1), 0f, -position.y * (mapWidth - 1));
+        chunkGameObject.transform.position = new Vector3(position.x * (mapWidth - 1), 0f, position.y * (mapWidth - 1));
         chunkGameObject.transform.parent = transform;
 
         return chunkGameObject;
