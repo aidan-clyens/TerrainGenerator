@@ -8,6 +8,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public int mapWidth;
     public Vector2 position = new Vector2(0, 0);
     public GameObject viewer;
+    public float chunkViewRange;
     public float objectViewRange;
     public bool infiniteTerrain;
 
@@ -31,6 +32,23 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void Start() {
         Clear();
         Generate();
+    }
+
+    public void Update() {
+        if (!infiniteTerrain) return;
+
+        Vector2 viewerPosition = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
+
+        foreach (GameObject chunk in terrainChunks) {
+            Vector2 chunkPosition = new Vector2(chunk.transform.position.x, chunk.transform.position.z);
+
+            if ((viewerPosition - chunkPosition).magnitude < chunkViewRange) {
+                chunk.SetActive(true);
+            }
+            else {
+                chunk.SetActive(false);
+            }
+        }
     }
 
     public void Generate(bool loadAllObjects=false) {
