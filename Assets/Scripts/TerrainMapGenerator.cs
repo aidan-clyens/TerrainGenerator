@@ -27,8 +27,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
 
     // List<GameObject> terrainChunks = new List<GameObject>();
-    Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
-    List<GameObject> terrainChunksVisibleLastUpdate = new List<GameObject>();
+    Dictionary<Vector2, TerrainChunk> terrainChunks = new Dictionary<Vector2, TerrainChunk>();
+    List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
 
     public void Start() {
@@ -46,8 +46,8 @@ public class TerrainMapGenerator : MonoBehaviour {
             Mathf.RoundToInt(viewerPosition.y / mapWidth)
         );
 
-        foreach (GameObject chunk in terrainChunksVisibleLastUpdate) {
-            chunk.SetActive(false);
+        foreach (TerrainChunk chunk in terrainChunksVisibleLastUpdate) {
+            chunk.Update(viewerPosition);
         }
         terrainChunksVisibleLastUpdate.Clear();
 
@@ -55,17 +55,15 @@ public class TerrainMapGenerator : MonoBehaviour {
             for (int xOffset = -chunkViewRange; xOffset <= chunkViewRange; xOffset++) {
                 Vector2 viewedChunkCoords = viewPositionCoords + new Vector2(xOffset, yOffset);
 
-                GameObject chunk;
                 if (terrainChunks.ContainsKey(viewedChunkCoords)) {
-                    chunk = terrainChunks[viewedChunkCoords];
+                    terrainChunks[viewedChunkCoords].Update(viewerPosition);
+                    if (terrainChunks[viewedChunkCoords].IsVisible()) {
+                        terrainChunksVisibleLastUpdate.Add(terrainChunks[viewedChunkCoords]);
+                    }
                 }
                 else {
-                    position = viewedChunkCoords;
-                    chunk = Generate();
+                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(viewedChunkCoords, mapWidth, chunkViewRange, transform));
                 }
-                chunk.SetActive(true);
-
-                terrainChunksVisibleLastUpdate.Add(chunk);
             }
         }
     }
@@ -182,5 +180,42 @@ public class TerrainMapGenerator : MonoBehaviour {
         waterGameObject.GetComponent<MeshFilter>().mesh = mesh;
 
         return waterGameObject;
+    }
+
+
+    public class TerrainChunk {
+
+        GameObject meshObject;
+        Vector3 positionV3;
+        Vector2 positionV2;
+        int size;
+
+        Vector2 viewerPosition;
+        int chunkViewRange;
+
+
+        public TerrainChunk(Vector2 position, int size, int chunkViewRange, Transform parent) {
+            this.size = size;
+            this.chunkViewRange = chunkViewRange;
+
+            positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
+            positionV2 = new Vector2(positionV3.x, positionV3.z);
+
+            meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            meshObject.transform.position = positionV3;
+            meshObject.transform.localScale = Vector3.one * size / 10f;
+            meshObject.transform.parent = parent;
+
+            meshObject.SetActive(false);
+        }
+
+        public void Update(Vector2 viewerPosition) {
+            bool visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
+            meshObject.SetActive(visible);
+        }
+
+        public bool IsVisible() {
+            return meshObject.activeSelf;
+        }
     }
 }
