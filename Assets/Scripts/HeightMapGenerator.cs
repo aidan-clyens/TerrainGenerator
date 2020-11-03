@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,12 +14,18 @@ public class HeightMapGenerator : MonoBehaviour {
     public bool useHydraulicErosion;
 
 
+    static HydraulicErosion hydraulicErosion;
+
+
+    public void Start() {
+        hydraulicErosion = GetComponent<HydraulicErosion>();
+    }
+
     public float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
         float[,] noiseMap = Noise.GeneratePerlinNoiseMap(mapWidth, mapWidth, noiseScale, offsetX, offsetY, noiseOctaves, persistence, lacunarity, noiseRedistributionFactor, normalizeLocal);
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
         if (useHydraulicErosion && normalizeLocal && mapDepth > 0) {
-            HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
         else if (useHydraulicErosion && !normalizeLocal) {
