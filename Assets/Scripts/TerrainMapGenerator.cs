@@ -28,7 +28,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     static HeightMapGenerator heightMapGenerator;
 
 
-    static Queue<TerrainChunkThreadInfo> terrainChunkThreadInfoQueue = new Queue<TerrainMapGenerator.TerrainChunkThreadInfo>();
+    static Queue<ThreadInfo<HeightMapData>> heightMapThreadInfoQueue = new Queue<ThreadInfo<HeightMapData>>();
 
 
     Dictionary<Vector2, TerrainChunk> terrainChunks = new Dictionary<Vector2, TerrainChunk>();
@@ -49,9 +49,9 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void Update() {
         if (!infiniteTerrain) return;
 
-        if (terrainChunkThreadInfoQueue.Count > 0) {
-            for (int i = 0; i < terrainChunkThreadInfoQueue.Count; i++) {
-                TerrainChunkThreadInfo info = terrainChunkThreadInfoQueue.Dequeue();
+        if (heightMapThreadInfoQueue.Count > 0) {
+            for (int i = 0; i < heightMapThreadInfoQueue.Count; i++) {
+                ThreadInfo<HeightMapData> info = heightMapThreadInfoQueue.Dequeue();
                 info.callback(info.parameter);
             }
         }
@@ -115,9 +115,9 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    GameObject CreateTerrainChunk(TerrainChunkData terrainChunkData, bool loadAllObjects) {
+    GameObject CreateTerrainChunk(HeightMapData heightMapData, bool loadAllObjects) {
         GameObject chunkGameObject = new GameObject("TerrainChunk");
-        GameObject terrainGameObject = CreateTerrain(terrainChunkData.heightMap);
+        GameObject terrainGameObject = CreateTerrain(heightMapData.heightMap);
         terrainGameObject.transform.parent = chunkGameObject.transform;
 
         if (createWater) {
@@ -127,12 +127,12 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         if (createForest) {
             Vector3[] normals = terrainGameObject.GetComponent<MeshFilter>().sharedMesh.normals;
-            GameObject forestGameObject = CreateForest(terrainChunkData.heightMap, normals, loadAllObjects);
+            GameObject forestGameObject = CreateForest(heightMapData.heightMap, normals, loadAllObjects);
             forestGameObject.transform.parent = chunkGameObject.transform;
         }
 
         chunkGameObject.isStatic = true;
-        chunkGameObject.transform.position = new Vector3(terrainChunkData.position.x * (mapWidth - 1), 0f, terrainChunkData.position.y * (mapWidth - 1));
+        chunkGameObject.transform.position = new Vector3(heightMapData.position.x * (mapWidth - 1), 0f, heightMapData.position.y * (mapWidth - 1));
         chunkGameObject.transform.parent = transform;
 
         return chunkGameObject;
@@ -191,22 +191,22 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
 
-    public struct TerrainChunkData {
+    public struct HeightMapData {
         public readonly float[,] heightMap;
         public readonly Vector2 position;
 
-        public TerrainChunkData(float[,] heightMap, Vector2 position) {
+        public HeightMapData(float[,] heightMap, Vector2 position) {
             this.heightMap = heightMap;
             this.position = position;
         }
     }
 
 
-    struct TerrainChunkThreadInfo {
-        public readonly Action<TerrainChunkData> callback;
-        public readonly TerrainChunkData parameter;
+    struct ThreadInfo<T> {
+        public readonly Action<T> callback;
+        public readonly T parameter;
 
-        public TerrainChunkThreadInfo(Action<TerrainChunkData> callback, TerrainChunkData parameter) {
+        public ThreadInfo(Action<T> callback, T parameter) {
             this.callback = callback;
             this.parameter = parameter;
         }
@@ -233,7 +233,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
 
-            RequestTerrainChunkData(OnTerrainChunkDataReceived);
+            RequestHeightMapData(OnHeightMapDataReceived);
 
             meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
             meshObject.transform.position = positionV3;
@@ -252,28 +252,28 @@ public class TerrainMapGenerator : MonoBehaviour {
             return meshObject.activeSelf;
         }
 
-        public void RequestTerrainChunkData(Action<TerrainChunkData> callback) {
+        public void RequestHeightMapData(Action<HeightMapData> callback) {
             ThreadStart threadStart = delegate {
-                CreateTerrainChunkDataThread(callback);
+                CreateHeightMapDataThread(callback);
             };
             new Thread(threadStart).Start();
         }
 
-        public void CreateTerrainChunkDataThread(Action<TerrainChunkData> callback) {
+        public void CreateHeightMapDataThread(Action<HeightMapData> callback) {
             int mapOffsetX = (int)(positionV2.x * (size - 1)) + seed;
             int mapOffsetY = (int)(positionV2.y * (size - 1)) + seed;
 
             float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, size, mapOffsetX, mapOffsetY);
 
-            TerrainChunkData terrainChunkData = new TerrainChunkData(heightMap, positionV2);
+            HeightMapData heightMapData = new HeightMapData(heightMap, positionV2);
 
-            lock (terrainChunkThreadInfoQueue) {
-                terrainChunkThreadInfoQueue.Enqueue(new TerrainChunkThreadInfo(callback, terrainChunkData));
+            lock (heightMapThreadInfoQueue) {
+                heightMapThreadInfoQueue.Enqueue(new ThreadInfo<HeightMapData>(callback, heightMapData));
             }
         }
 
-        public void OnTerrainChunkDataReceived(TerrainChunkData terrainChunkData) {
-            Debug.Log("Created TerrainChunkData");
+        public void OnHeightMapDataReceived(HeightMapData heightMapData) {
+            Debug.Log("Created HeightMapData");
         }
     }
 }
