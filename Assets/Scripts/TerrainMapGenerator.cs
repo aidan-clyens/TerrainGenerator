@@ -220,6 +220,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         Vector2 positionV2;
         int size;
         int seed;
+        bool visible;
 
         Vector2 viewerPosition;
         int chunkViewRange;
@@ -229,22 +230,17 @@ public class TerrainMapGenerator : MonoBehaviour {
             this.seed = seed;
             this.size = size;
             this.chunkViewRange = chunkViewRange;
+            this.parent = parent;
+            this.visible = editor;
 
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
 
             RequestHeightMapData(OnHeightMapDataReceived);
-
-            meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            meshObject.transform.position = positionV3;
-            meshObject.transform.localScale = Vector3.one * size / 10f;
-            meshObject.transform.parent = parent;
-
-            meshObject.SetActive(editor);
         }
 
         public void Update(Vector2 viewerPosition) {
-            bool visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
+            visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
             meshObject.SetActive(visible);
         }
 
@@ -274,6 +270,12 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         public void OnHeightMapDataReceived(HeightMapData heightMapData) {
             Debug.Log("Created HeightMapData");
+
+            meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            meshObject.transform.position = positionV3;
+            meshObject.transform.localScale = Vector3.one * size / 10f;
+            meshObject.transform.parent = parent;
+
+            meshObject.SetActive(visible);
         }
-    }
 }
