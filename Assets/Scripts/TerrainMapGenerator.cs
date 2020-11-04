@@ -29,6 +29,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
 
     static Queue<ThreadInfo<HeightMapData>> heightMapThreadInfoQueue = new Queue<ThreadInfo<HeightMapData>>();
+    static Queue<ThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<ThreadInfo<MeshData>>();
 
 
     Dictionary<Vector2, TerrainChunk> terrainChunks = new Dictionary<Vector2, TerrainChunk>();
@@ -52,6 +53,13 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (heightMapThreadInfoQueue.Count > 0) {
             for (int i = 0; i < heightMapThreadInfoQueue.Count; i++) {
                 ThreadInfo<HeightMapData> info = heightMapThreadInfoQueue.Dequeue();
+                info.callback(info.parameter);
+            }
+        }
+
+        if (meshDataThreadInfoQueue.Count > 0) {
+            for (int i = 0; i < meshDataThreadInfoQueue.Count; i++) {
+                ThreadInfo<MeshData> info = meshDataThreadInfoQueue.Dequeue();
                 info.callback(info.parameter);
             }
         }
@@ -215,12 +223,12 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public class TerrainChunk {
 
-        GameObject meshObject;
+        GameObject terrainGameObject;
+        Transform parent;
         Vector3 positionV3;
         Vector2 positionV2;
         int size;
         int seed;
-        bool visible;
 
         Vector2 viewerPosition;
         int chunkViewRange;
@@ -231,21 +239,31 @@ public class TerrainMapGenerator : MonoBehaviour {
             this.size = size;
             this.chunkViewRange = chunkViewRange;
             this.parent = parent;
-            this.visible = editor;
 
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
+
+            terrainGameObject = new GameObject("Terrain");
+            terrainGameObject.AddComponent<MeshFilter>();
+            terrainGameObject.AddComponent<MeshRenderer>();
+            terrainGameObject.AddComponent<MeshCollider>();
+
+            terrainGameObject.transform.position = positionV3;
+            terrainGameObject.transform.parent = parent;
+            terrainGameObject.isStatic = true;
+
+            terrainGameObject.SetActive(editor);
 
             RequestHeightMapData(OnHeightMapDataReceived);
         }
 
         public void Update(Vector2 viewerPosition) {
-            visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
-            meshObject.SetActive(visible);
+            bool visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
+            terrainGameObject.SetActive(visible);
         }
 
         public bool IsVisible() {
-            return meshObject.activeSelf;
+            return terrainGameObject.activeSelf;
         }
 
         public void RequestHeightMapData(Action<HeightMapData> callback) {
@@ -269,13 +287,32 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         public void OnHeightMapDataReceived(HeightMapData heightMapData) {
-            Debug.Log("Created HeightMapData");
-
-            meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            meshObject.transform.position = positionV3;
-            meshObject.transform.localScale = Vector3.one * size / 10f;
-            meshObject.transform.parent = parent;
-
-            meshObject.SetActive(visible);
+            RequestMeshData(heightMapData, OnMeshDataReceived);
         }
+
+        public void RequestMeshData(HeightMapData heightMapData, Action<MeshData> callback) {
+            ThreadStart threadStart = delegate {
+                CreateMeshDataThread(heightMapData, callback);
+            };
+
+            new Thread(threadStart).Start();
+        }
+
+        public void CreateMeshDataThread(HeightMapData heightMapData, Action<MeshData> callback) {
+            MeshData meshData = MeshGenerator.Generate(heightMapData.heightMap);
+
+            lock (meshDataThreadInfoQueue) {
+                meshDataThreadInfoQueue.Enqueue(new ThreadInfo<MeshData>(callback, meshData));
+            }
+        }
+
+        public void OnMeshDataReceived(MeshData meshData) {
+            Debug.Log("Created MeshData");
+            Mesh mesh = meshData.CreateMesh();
+
+            // terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
+            terrainGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
+            terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        }
+    }
 }
