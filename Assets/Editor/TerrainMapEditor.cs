@@ -27,7 +27,7 @@ public class TerrainMapEditor : Editor {
         // Buttons
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         if (GUILayout.Button("Generate")) {
-            terrainMapGenerator.Generate(loadAllObjects: true);
+            terrainMapGenerator.GenerateEditor(loadAllObjects: true);
         }
 
         if (GUILayout.Button("Clear")) {
@@ -54,7 +54,7 @@ public class TerrainMapEditor : Editor {
 
             if (GUILayout.Button("Load")) {
                 LoadTerrainData(levelNameLoad);
-                terrainMapGenerator.Generate(loadAllObjects: true);
+                terrainMapGenerator.GenerateEditor(loadAllObjects: true);
             }
 
             EditorGUILayout.EndHorizontal();
@@ -79,7 +79,6 @@ public class TerrainMapEditor : Editor {
     void SaveTerrainData(string levelName) {
         TerrainData terrainData = new TerrainData();
         terrainData.seed = terrainMapGenerator.seed;
-        terrainData.position = terrainMapGenerator.position;
         terrainData.mapWidth = terrainMapGenerator.mapWidth;
         terrainData.mapDepth = heightMapGenerator.mapDepth;
         terrainData.noiseScale = heightMapGenerator.noiseScale;
@@ -133,7 +132,6 @@ public class TerrainMapEditor : Editor {
         Debug.Log("Loaded terrain from: " + filePath);
 
         terrainMapGenerator.seed = terrainData.seed;
-        terrainMapGenerator.position = terrainData.position;
         terrainMapGenerator.mapWidth = terrainData.mapWidth;
         heightMapGenerator.mapDepth = terrainData.mapDepth;
         heightMapGenerator.noiseScale = terrainData.noiseScale;

@@ -6,8 +6,6 @@ using UnityEngine;
 class TerrainData {
     public int seed;
 
-    public Vector2 position;
-
     // Height Map Data
     public int mapWidth;
     public int mapDepth;
