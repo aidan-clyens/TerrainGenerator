@@ -87,7 +87,7 @@ public class TerrainMapGenerator : MonoBehaviour {
                     }
                 }
                 else {
-                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(seed, viewedChunkCoords, mapWidth, chunkViewRange, transform));
+                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(seed, viewedChunkCoords, mapWidth, chunkViewRange, transform, terrainColourGradient, terrainMaterial));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             GetComponent<HeightMapGenerator>().normalizeLocal = false;
         }
 
-        TerrainChunk chunk = new TerrainChunk(seed, new Vector2(0, 0), mapWidth, 1, transform, true);
+        TerrainChunk chunk = new TerrainChunk(seed, new Vector2(0, 0), mapWidth, 1, transform, terrainColourGradient, terrainMaterial, true);
     }
 
     public void Clear() {
@@ -229,16 +229,20 @@ public class TerrainMapGenerator : MonoBehaviour {
         Vector2 positionV2;
         int size;
         int seed;
+        Gradient terrainColourGradient;
+        Material terrainMaterial;
 
         Vector2 viewerPosition;
         int chunkViewRange;
 
 
-        public TerrainChunk(int seed, Vector2 position, int size, int chunkViewRange, Transform parent, bool editor=false) {
+        public TerrainChunk(int seed, Vector2 position, int size, int chunkViewRange, Transform parent, Gradient terrainColourGradient, Material terrainMaterial, bool editor=false) {
             this.seed = seed;
             this.size = size;
             this.chunkViewRange = chunkViewRange;
             this.parent = parent;
+            this.terrainColourGradient = terrainColourGradient;
+            this.terrainMaterial = terrainMaterial;
 
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
@@ -299,7 +303,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         public void CreateMeshDataThread(HeightMapData heightMapData, Action<MeshData> callback) {
-            MeshData meshData = MeshGenerator.Generate(heightMapData.heightMap);
+            MeshData meshData = MeshGenerator.Generate(heightMapData.heightMap, terrainColourGradient);
 
             lock (meshDataThreadInfoQueue) {
                 meshDataThreadInfoQueue.Enqueue(new ThreadInfo<MeshData>(callback, meshData));
@@ -307,10 +311,9 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         public void OnMeshDataReceived(MeshData meshData) {
-            Debug.Log("Created MeshData");
             Mesh mesh = meshData.CreateMesh();
 
-            // terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
+            terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
             terrainGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
         }
