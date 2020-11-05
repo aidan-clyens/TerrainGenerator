@@ -278,8 +278,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         public void CreateHeightMapDataThread(Action<HeightMapData> callback) {
-            int mapOffsetX = (int)(positionV2.x * (size - 1)) + seed;
-            int mapOffsetY = (int)(positionV2.y * (size - 1)) + seed;
+            int mapOffsetX = seed;
+            int mapOffsetY = seed;
 
             float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, size, mapOffsetX, mapOffsetY);
 
