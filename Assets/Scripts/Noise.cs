@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Noise {
-    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor, bool normalizeLocal) {
+    public static float[,] GeneratePerlinNoiseMap(int seed, int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor, bool normalizeLocal) {
         float[,] noiseMap = new float[width, height];
 
         // Use local min and max to normalize locally, does not work well with other chunks
@@ -13,6 +13,11 @@ public class Noise {
         float maxPossibleHeight = 0f;
         float amplitude = 1;
         float frequency = 1;
+
+        System.Random rng = new System.Random(seed);
+
+        offsetX = rng.Next(-100000, 1000000) + offsetX;
+        offsetY = rng.Next(-100000, 1000000) - offsetY;
 
         // Find max possible height to normalize heightmap globally
         for (int i = 0; i < octaves; i++) {
