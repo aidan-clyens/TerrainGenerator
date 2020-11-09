@@ -223,7 +223,9 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public class TerrainChunk {
 
+        GameObject terrainChunkGameObject;
         GameObject terrainGameObject;
+        GameObject waterGameObject;
         Transform parent;
         Vector3 positionV3;
         Vector2 positionV2;
@@ -247,23 +249,37 @@ public class TerrainMapGenerator : MonoBehaviour {
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
 
+            terrainChunkGameObject = new GameObject("TerrainChunk");
+            terrainChunkGameObject.transform.position = positionV3;
+            terrainChunkGameObject.transform.parent = parent;
+
+            terrainChunkGameObject.SetActive(editor);
+
+            // Create Terrain
             terrainGameObject = new GameObject("Terrain");
             terrainGameObject.AddComponent<MeshFilter>();
             terrainGameObject.AddComponent<MeshRenderer>();
             terrainGameObject.AddComponent<MeshCollider>();
 
             terrainGameObject.transform.position = positionV3;
-            terrainGameObject.transform.parent = parent;
+            terrainGameObject.transform.parent = terrainChunkGameObject.transform;
             terrainGameObject.isStatic = true;
 
-            terrainGameObject.SetActive(editor);
+            // Create Water
+            waterGameObject = new GameObject("Water");
+            waterGameObject.AddComponent<MeshFilter>();
+            waterGameObject.AddComponent<MeshRenderer>();
+
+            waterGameObject.transform.position = positionV3;
+            waterGameObject.transform.parent = terrainChunkGameObject.transform;
+            waterGameObject.isStatic = true;
 
             RequestHeightMapData(OnHeightMapDataReceived);
         }
 
         public void Update(Vector2 viewerPosition) {
             bool visible = ((viewerPosition - positionV2).magnitude < chunkViewRange * size);
-            terrainGameObject.SetActive(visible);
+            terrainChunkGameObject.SetActive(visible);
         }
 
         public bool IsVisible() {
