@@ -87,7 +87,7 @@ public class TerrainMapGenerator : MonoBehaviour {
                     }
                 }
                 else {
-                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(seed, viewedChunkCoords, mapWidth, chunkViewRange, transform, terrainColourGradient, terrainMaterial, waterMaterial));
+                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(seed, viewedChunkCoords, mapWidth, chunkViewRange, waterLevel, transform, terrainColourGradient, terrainMaterial, waterMaterial));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             GetComponent<HeightMapGenerator>().normalizeLocal = false;
         }
 
-        TerrainChunk chunk = new TerrainChunk(seed, new Vector2(0, 0), mapWidth, 1, transform, terrainColourGradient, terrainMaterial, waterMaterial, true);
+        TerrainChunk chunk = new TerrainChunk(seed, new Vector2(0, 0), mapWidth, 1, waterLevel, transform, terrainColourGradient, terrainMaterial, waterMaterial, true);
     }
 
     public void Clear() {
@@ -230,16 +230,18 @@ public class TerrainMapGenerator : MonoBehaviour {
         Vector2 positionV2;
         int size;
         int seed;
+        float waterLevel;
         Gradient terrainColourGradient;
 
         Vector2 viewerPosition;
         int chunkViewRange;
 
 
-        public TerrainChunk(int seed, Vector2 position, int size, int chunkViewRange, Transform parent, Gradient terrainColourGradient, Material terrainMaterial, Material waterMaterial, bool editor=false) {
+        public TerrainChunk(int seed, Vector2 position, int size, int chunkViewRange, float waterLevel, Transform parent, Gradient terrainColourGradient, Material terrainMaterial, Material waterMaterial, bool editor=false) {
             this.seed = seed;
             this.size = size;
             this.chunkViewRange = chunkViewRange;
+            this.waterLevel = waterLevel;
             this.terrainColourGradient = terrainColourGradient;
 
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
@@ -307,7 +309,19 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         public void OnHeightMapDataReceived(HeightMapData heightMapData) {
-            RequestMeshData(heightMapData, OnMeshDataReceived);
+            RequestMeshData(heightMapData, OnTerrainMeshDataReceived);
+
+            // Create water
+            float[,] heightMap = new float[size, size];
+
+            for (int z = 0; z < size; z++) {
+                for (int x = 0; x < size; x++) {
+                    heightMap[x, z] = waterLevel;
+                }
+            }
+
+            HeightMapData waterHeightMapData = new HeightMapData(heightMap, positionV2);
+            RequestMeshData(waterHeightMapData, OnWaterMeshDataReceived);
         }
 
         public void RequestMeshData(HeightMapData heightMapData, Action<MeshData> callback) {
@@ -326,11 +340,17 @@ public class TerrainMapGenerator : MonoBehaviour {
             }
         }
 
-        public void OnMeshDataReceived(MeshData meshData) {
+        public void OnTerrainMeshDataReceived(MeshData meshData) {
             Mesh mesh = meshData.CreateMesh();
 
             terrainGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        }
+
+        public void OnWaterMeshDataReceived(MeshData meshData) {
+            Mesh mesh = meshData.CreateMesh();
+
+            waterGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
         }
     }
 }
