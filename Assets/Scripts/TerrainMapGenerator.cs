@@ -27,6 +27,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     ForestGenerator forestGenerator;
     static HeightMapGenerator heightMapGenerator;
 
+    TerrainSettings terrainSettings;
+
 
     static Queue<ThreadInfo<HeightMapData>> heightMapThreadInfoQueue = new Queue<ThreadInfo<HeightMapData>>();
     static Queue<ThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<ThreadInfo<MeshData>>();
@@ -38,6 +40,8 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public void Start() {
         heightMapGenerator = GetComponent<HeightMapGenerator>();
+
+        terrainSettings = new TerrainSettings(seed, mapWidth, chunkViewRange, waterLevel, transform, terrainColourGradient, terrainMaterial, waterMaterial);
 
         if (infiniteTerrain) {
             GetComponent<HeightMapGenerator>().useHydraulicErosion = false;
@@ -87,7 +91,7 @@ public class TerrainMapGenerator : MonoBehaviour {
                     }
                 }
                 else {
-                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(seed, viewedChunkCoords, mapWidth, chunkViewRange, waterLevel, transform, terrainColourGradient, terrainMaterial, waterMaterial));
+                    terrainChunks.Add(viewedChunkCoords, new TerrainChunk(terrainSettings, viewedChunkCoords));
                 }
             }
         }
@@ -99,7 +103,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             GetComponent<HeightMapGenerator>().normalizeLocal = false;
         }
 
-        TerrainChunk chunk = new TerrainChunk(seed, new Vector2(0, 0), mapWidth, 1, waterLevel, transform, terrainColourGradient, terrainMaterial, waterMaterial, true);
+        TerrainChunk chunk = new TerrainChunk(terrainSettings, new Vector2(0, 0), true);
     }
 
     public void Clear() {
@@ -221,6 +225,29 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
 
+    public struct TerrainSettings {
+        public readonly int seed;
+        public readonly int size;
+        public readonly int chunkViewRange;
+        public readonly float waterLevel;
+        public readonly Transform parent;
+        public readonly Gradient terrainColourGradient;
+        public readonly Material terrainMaterial;
+        public readonly Material waterMaterial;
+    
+        public TerrainSettings(int seed, int size, int chunkViewRange, float waterLevel, Transform parent, Gradient terrainColourGradient, Material terrainMaterial, Material waterMaterial) {
+            this.seed = seed;
+            this.size = size;
+            this.chunkViewRange = chunkViewRange;
+            this.waterLevel = waterLevel;
+            this.parent = parent;
+            this.terrainColourGradient = terrainColourGradient;
+            this.terrainMaterial = terrainMaterial;
+            this.waterMaterial = waterMaterial;
+        }
+    }
+
+
     public class TerrainChunk {
 
         GameObject terrainChunkGameObject;
@@ -237,19 +264,19 @@ public class TerrainMapGenerator : MonoBehaviour {
         int chunkViewRange;
 
 
-        public TerrainChunk(int seed, Vector2 position, int size, int chunkViewRange, float waterLevel, Transform parent, Gradient terrainColourGradient, Material terrainMaterial, Material waterMaterial, bool editor=false) {
-            this.seed = seed;
-            this.size = size;
-            this.chunkViewRange = chunkViewRange;
-            this.waterLevel = waterLevel;
-            this.terrainColourGradient = terrainColourGradient;
+        public TerrainChunk(TerrainSettings settings, Vector2 position, bool editor=false) {
+            this.seed = settings.seed;
+            this.size = settings.size;
+            this.chunkViewRange = settings.chunkViewRange;
+            this.waterLevel = settings.waterLevel;
+            this.terrainColourGradient = settings.terrainColourGradient;
 
             positionV3 = new Vector3(position.x * (size - 1), 0f, position.y * (size - 1));
             positionV2 = new Vector2(positionV3.x, positionV3.z);
 
             terrainChunkGameObject = new GameObject("TerrainChunk");
             terrainChunkGameObject.transform.position = positionV3;
-            terrainChunkGameObject.transform.parent = parent;
+            terrainChunkGameObject.transform.parent = settings.parent;
 
             terrainChunkGameObject.SetActive(editor);
 
@@ -259,7 +286,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             terrainGameObject.AddComponent<MeshRenderer>();
             terrainGameObject.AddComponent<MeshCollider>();
 
-            terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
+            terrainGameObject.GetComponent<MeshRenderer>().material = settings.terrainMaterial;
 
             terrainGameObject.transform.position = positionV3;
             terrainGameObject.transform.parent = terrainChunkGameObject.transform;
@@ -270,7 +297,7 @@ public class TerrainMapGenerator : MonoBehaviour {
             waterGameObject.AddComponent<MeshFilter>();
             waterGameObject.AddComponent<MeshRenderer>();
 
-            waterGameObject.GetComponent<MeshRenderer>().material = waterMaterial;
+            waterGameObject.GetComponent<MeshRenderer>().material = settings.waterMaterial;
 
             waterGameObject.transform.position = positionV3;
             waterGameObject.transform.parent = terrainChunkGameObject.transform;
