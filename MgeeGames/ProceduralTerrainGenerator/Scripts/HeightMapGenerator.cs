@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,5 +44,14 @@ public class HeightMapGenerator : MonoBehaviour {
         }
 
         return heightMap;
+    }
+
+    public void Randomize() {
+        noiseScale = Random.Range(1f, 5f);
+        noiseOctaves = Random.Range(1, 6);
+        persistence = Random.Range(0.1f, 0.5f);
+        lacunarity = Random.Range(1f, 2f);
+        noiseRedistributionFactor = Random.Range(1f, 3f);
+        mapDepth = Random.Range(30, 100);
     }
 }

@@ -58,6 +58,14 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
+    public void Randomize() {
+        seed = Random.Range(0, 1000);
+        waterLevel = Random.Range(0, 30);
+
+        HeightMapGenerator heightMapGenerator = GetComponent<HeightMapGenerator>();
+        heightMapGenerator.Randomize();
+    }
+
     GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {
         int mapOffsetX = (int)(position.x * (mapWidth - 1)) + seed;
         int mapOffsetY = (int)(position.y * (mapWidth - 1)) + seed;

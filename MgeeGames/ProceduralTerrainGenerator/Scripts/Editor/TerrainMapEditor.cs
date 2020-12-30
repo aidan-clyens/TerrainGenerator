@@ -26,6 +26,11 @@ public class TerrainMapEditor : Editor {
 
         // Buttons
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        if (GUILayout.Button("Randomize")) {
+            terrainMapGenerator.Randomize();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         if (GUILayout.Button("Generate")) {
             terrainMapGenerator.Generate(loadAllObjects: true);
         }
