@@ -25,6 +25,9 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
     - Set water material
     - Set water level
 
+- Randomize:
+    - Randomize terrain settings (seed, water level, and Height Map Generator settings)
+
 - Generate:
     - Generate new terrain chunk
 
@@ -63,7 +66,7 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ## Forest Generator ##
 - Parameters:
     - Select tree prefabs to generate
-    - Number of trees
+    - Density of trees
     - Slope threshold for tree placement
     - Vertical offset for tree prefabs
 

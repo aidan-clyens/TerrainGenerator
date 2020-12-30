@@ -13,8 +13,9 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ### Generating Terrain
 1. Add TerrainGenerator prefab into scene.
 2. Configure settings and click "Generate" to create terrain.
-3. Save terrain by entering a name and clicking "Save".
-4. Saved terrains can be loading by selecting a name and clicking "Load".
+3. Randomize terrain settings by clicking "Randomize".
+4. Save terrain by entering a name and clicking "Save".
+5. Saved terrains can be loading by selecting a name and clicking "Load".
 
 ## Terrain Generator
 ![](Images/TerrainGeneratorSettings.png)
