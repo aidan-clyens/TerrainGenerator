@@ -43,27 +43,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12d6f74e0f5311f43a038760821bf66c, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c53c946615cacc45ae789fd5dad3c51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 0
-  mapWidth: 256
+  seed: 1
+  mapWidth: 0
   position: {x: 0, y: 0}
   viewer: {fileID: 0}
-  viewRange: 0
+  objectViewRange: 0
   terrainColourGradient:
     serializedVersion: 2
-    key0: {r: 0.7264151, g: 0.39738452, b: 0.35978106, a: 1}
-    key1: {r: 0.4433962, g: 0.34903777, b: 0.2990833, a: 1}
-    key2: {r: 0.5471698, g: 0.4465112, b: 0.3794055, a: 0}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 26985
-    ctime2: 65535
+    ctime1: 65535
+    ctime2: 0
     ctime3: 0
     ctime4: 0
     ctime5: 0
@@ -78,13 +78,13 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 3
+    m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  terrainMaterial: {fileID: 2100000, guid: afc43a23e3b0b8b4cbedab7c19542316, type: 2}
-  createForest: 1
-  createWater: 1
-  waterMaterial: {fileID: 2100000, guid: 4d1ec5d9ab1198646a96a6f081b245c4, type: 2}
-  waterLevel: 10
+  terrainMaterial: {fileID: 0}
+  createForest: 0
+  createWater: 0
+  waterMaterial: {fileID: 0}
+  waterLevel: 0
 --- !u!114 &3166721825118174603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,18 +94,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82b8200e845bda1488b10f236378215c, type: 3}
+  m_Script: {fileID: 11500000, guid: bc4ad6410d0acff44b2f34a8a961694e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noiseScale: 2
-  noiseOctaves: 4
-  persistence: 0.5
-  lacunarity: 1.6
-  mapDepth: 80
-  noiseRedistributionFactor: 2
-  normalizeLocal: 1
+  noiseScale: 0
+  noiseOctaves: 0
+  persistence: 0
+  lacunarity: 0
+  mapDepth: 0
+  noiseRedistributionFactor: 0
+  normalizeLocal: 0
   useFalloff: 0
-  useHydraulicErosion: 1
+  useHydraulicErosion: 0
 --- !u!114 &5871110956056948491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,19 +115,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d15f74b50c26f347a44d1ee306d3129, type: 3}
+  m_Script: {fileID: 11500000, guid: be46abecb2fc9c942ab91a6377b83174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iterations: 100000
-  inertia: 0.2
+  iterations: 50000
+  inertia: 0.1
   gravity: 4
   minSlope: 0.01
-  capacityFactor: 4
+  capacityFactor: 8
   depositionFactor: 0.1
   erosionFactor: 0.1
-  evaporationFactor: 0.1
+  evaporationFactor: 0.05
   erosionRadius: 5
-  depositionRadius: 3
+  depositionRadius: 5
   dropletLifetime: 30
 --- !u!114 &5871110956056948534
 MonoBehaviour:
@@ -138,10 +138,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cc581be1e6a65c4983892b3a2102443, type: 3}
+  m_Script: {fileID: 11500000, guid: 470d496b9f5eb0c498bb3fc9b80c3b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 6355307119461563011, guid: 206f6598bde148d4594ec1f9404fa5e3,
-    type: 3}
-  numTrees: 200
-  slopeThreshold: 45
+  treePrefabs: []
+  numTrees: 0
+  slopeThreshold: 0
+  verticalOffset: 0
