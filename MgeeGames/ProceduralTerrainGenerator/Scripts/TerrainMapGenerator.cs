@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
-    public int seed = 1;
+    public int seed;
     public int mapWidth;
     public Vector2 position = new Vector2(0, 0);
     public GameObject viewer;
@@ -56,14 +56,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (forestGenerator != null) {
             forestGenerator.Clear();
         }
-    }
-
-    public void Randomize() {
-        seed = Random.Range(0, 1000);
-        waterLevel = Random.Range(0, 30);
-
-        HeightMapGenerator heightMapGenerator = GetComponent<HeightMapGenerator>();
-        heightMapGenerator.Randomize();
     }
 
     GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {

@@ -27,7 +27,9 @@ public class TerrainMapEditor : Editor {
         // Buttons
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         if (GUILayout.Button("Randomize")) {
-            terrainMapGenerator.Randomize();
+            Randomize();
+            terrainMapGenerator.Clear();
+            terrainMapGenerator.Generate(loadAllObjects: true);
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -64,6 +66,30 @@ public class TerrainMapEditor : Editor {
 
             EditorGUILayout.EndHorizontal();
         }
+    }
+
+    void Randomize() {
+        terrainMapGenerator = (TerrainMapGenerator) target;
+        heightMapGenerator = terrainMapGenerator.GetComponent<HeightMapGenerator>();
+
+        SerializedObject serializedTerrainGenerator = new SerializedObject(terrainMapGenerator);
+        SerializedObject serializedHeightMapGenerator = new SerializedObject(heightMapGenerator);
+
+        EditorGUI.BeginChangeCheck();
+
+        serializedTerrainGenerator.FindProperty("seed").intValue = Random.Range(0, 1000);
+        serializedTerrainGenerator.FindProperty("waterLevel").floatValue = Random.Range(0, 30);
+
+        serializedHeightMapGenerator.FindProperty("noiseScale").floatValue = Random.Range(1f, 5f);
+        serializedHeightMapGenerator.FindProperty("noiseOctaves").intValue = Random.Range(1, 6);
+        serializedHeightMapGenerator.FindProperty("persistence").floatValue = Random.Range(0.1f, 0.5f);
+        serializedHeightMapGenerator.FindProperty("lacunarity").floatValue = Random.Range(1f, 2f);
+        serializedHeightMapGenerator.FindProperty("noiseRedistributionFactor").floatValue = Random.Range(1f, 3f);
+        serializedHeightMapGenerator.FindProperty("mapDepth").intValue = Random.Range(30, 100);
+
+        EditorGUI.EndChangeCheck();
+        serializedTerrainGenerator.ApplyModifiedProperties();
+        serializedHeightMapGenerator.ApplyModifiedProperties();
     }
 
     string[] GetSaveFiles() {
