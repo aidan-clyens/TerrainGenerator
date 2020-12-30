@@ -113,7 +113,7 @@ public class TerrainMapEditor : Editor {
         terrainData.evaporationFactor = hydraulicErosion.evaporationFactor;
         terrainData.dropletLifetime = hydraulicErosion.dropletLifetime;
         terrainData.treePrefabs = forestGenerator.treePrefabs;
-        terrainData.numTrees = forestGenerator.numTrees;
+        terrainData.density = forestGenerator.density;
         terrainData.slopeThreshold = forestGenerator.slopeThreshold;
         terrainData.verticalOffset = forestGenerator.verticalOffset;
 
@@ -167,7 +167,7 @@ public class TerrainMapEditor : Editor {
         hydraulicErosion.evaporationFactor = terrainData.evaporationFactor;
         hydraulicErosion.dropletLifetime = terrainData.dropletLifetime;
         forestGenerator.treePrefabs = terrainData.treePrefabs;
-        forestGenerator.numTrees = terrainData.numTrees;
+        forestGenerator.density = terrainData.density;
         forestGenerator.slopeThreshold = terrainData.slopeThreshold;
         forestGenerator.verticalOffset = terrainData.verticalOffset;
     }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -43,7 +43,7 @@ class TerrainData {
 
     // Forest Generator Settings
     public List<GameObject> treePrefabs = new List<GameObject>();
-    public int numTrees;
+    public float density;
     public float slopeThreshold;
     public float verticalOffset;
 }

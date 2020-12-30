@@ -5,7 +5,7 @@ using UnityEngine;
 public class ForestGenerator : MonoBehaviour {
 
     public List<GameObject> treePrefabs = new List<GameObject>();
-    public int numTrees;
+    public float density;
     public float slopeThreshold;
     public float verticalOffset;
 
@@ -40,6 +40,19 @@ public class ForestGenerator : MonoBehaviour {
     public GameObject Generate(float[,] heightMap, Vector3[] normals, float waterLevel, int seed, bool loadAllObjects) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
+
+        // Get area of land above water level (number of vertices)
+        int areaAboveWater = 0;
+        for (int z = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                if (heightMap[z, x] > waterLevel) {
+                    areaAboveWater++;
+                }
+            }
+        }
+        
+        // Calculate number of trees based on area and density
+        int numTrees = (int)((areaAboveWater / 100f) * density);
 
         rng = new System.Random(seed);
 
