@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water
-  m_Shader: {fileID: -6465566751694194690, guid: b928668e5270bab43a83e782fc163258,
+  m_Shader: {fileID: -6465566751694194690, guid: 89a01244679b65c4cb74f7ab20fd092e,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -21,11 +21,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_693D09E8:
-        m_Texture: {fileID: 2800000, guid: e731d7ffaff320842b6bac285cbbcc7e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5ed72fc2fff866d47bd79da07d116bee, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_B30420E9:
-        m_Texture: {fileID: 2800000, guid: e494fafb3c5bd554f93d5cb181fa3bab, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7787aa585b4c51a4a96e391e31554a68, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
