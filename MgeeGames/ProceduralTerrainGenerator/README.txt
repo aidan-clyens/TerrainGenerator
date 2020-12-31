@@ -3,6 +3,11 @@
 ##########################################
 This is a Procedural Terrain Generator for use in Unity projects. Using random noise algorithms, physics simulation, random object placement, custom materials, textures, and colours an endless variety of worlds can be created using this tool. This tool can create a terrain mesh, water mesh, and randomly place objects among a scene. The following images are scenes created based upon terrains created using this Procedural Terrain Generator.
 
+## Getting Started ##
+- To use the included sample materials and shaders, install the Universal Render Pipeline and ShaderGraph
+- Create a new Universal Render Pipeline Asset with Depth Texture and Opaque Texture enabled
+- Go to Project Settings > Graphics and update the Scriptable Render Pipeline Settings
+
 ## Generating Terrain ##
 1. Add TerrainGenerator prefab into scene.
 2. Configure settings and click "Generate" to create terrain.
