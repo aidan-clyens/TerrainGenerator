@@ -43,18 +43,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c53c946615cacc45ae789fd5dad3c51, type: 3}
+  m_Script: {fileID: 11500000, guid: 12c0ad2107399c04997ffa6bbc70a55a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 1
-  mapWidth: 0
+  seed: 0
+  mapWidth: 256
   position: {x: 0, y: 0}
   viewer: {fileID: 0}
-  objectViewRange: 0
+  objectViewRange: 300
   terrainColourGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0.7254902, g: 0.39607844, b: 0.36078432, a: 1}
+    key1: {r: 0.54901963, g: 0.44705883, b: 0.38039216, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -80,11 +80,11 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  terrainMaterial: {fileID: 0}
-  createForest: 0
-  createWater: 0
-  waterMaterial: {fileID: 0}
-  waterLevel: 0
+  terrainMaterial: {fileID: 2100000, guid: 66119e6e253e06348b4183c154fc9145, type: 2}
+  createForest: 1
+  createWater: 1
+  waterMaterial: {fileID: 2100000, guid: 8080844e158309d43b8d19b979ec1e2a, type: 2}
+  waterLevel: 10
 --- !u!114 &3166721825118174603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,18 +94,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc4ad6410d0acff44b2f34a8a961694e, type: 3}
+  m_Script: {fileID: 11500000, guid: b237e9d9141c54d43ac6ea637687c7a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noiseScale: 0
-  noiseOctaves: 0
-  persistence: 0
-  lacunarity: 0
-  mapDepth: 0
-  noiseRedistributionFactor: 0
-  normalizeLocal: 0
+  noiseScale: 2
+  noiseOctaves: 5
+  persistence: 0.5
+  lacunarity: 1.6
+  mapDepth: 80
+  noiseRedistributionFactor: 2
+  normalizeLocal: 1
   useFalloff: 0
-  useHydraulicErosion: 0
+  useHydraulicErosion: 1
 --- !u!114 &5871110956056948491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be46abecb2fc9c942ab91a6377b83174, type: 3}
+  m_Script: {fileID: 11500000, guid: 9507f4ab6a1a7c34cbda0cb397a3c3e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iterations: 50000
@@ -138,10 +138,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 470d496b9f5eb0c498bb3fc9b80c3b70, type: 3}
+  m_Script: {fileID: 11500000, guid: ab1e530e45de3384a8008f73cefb51ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefabs: []
-  numTrees: 0
-  slopeThreshold: 0
-  verticalOffset: 0
+  treePrefabs:
+  - {fileID: 9059283181100108450, guid: e5e9d3e1b803c2b4bb45eddb6e11dcec, type: 3}
+  - {fileID: 834719096341616055, guid: 3cf88de7474016d4a85d113f2bc629f0, type: 3}
+  density: 0.7
+  slopeThreshold: 45
+  verticalOffset: -0.6
