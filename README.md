@@ -12,8 +12,8 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 
 ### Setup Universal Render Pipeline (Optional)
 1. Install the Universal Render Pipeline and ShaderGraph to use sample materials and shaders.
-2. Create a new Universal Render Pipeline Asset with Depth Texture and Opaque Texture enabled.
-3. Go to Project Settings > Graphics and update the Scriptable Render Pipeline Settings
+2. Create a new Universal Render Pipeline Asset with Depth Texture and Opaque Texture enabled (this is included under the "Settings" folder).
+3. Go to Project Settings > Graphics and update the Scriptable Render Pipeline Settings.
 
 ### Generating Terrain
 1. Add TerrainGenerator prefab into scene.
