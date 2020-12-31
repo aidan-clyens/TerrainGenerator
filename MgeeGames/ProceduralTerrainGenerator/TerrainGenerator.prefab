@@ -43,7 +43,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12c0ad2107399c04997ffa6bbc70a55a, type: 3}
+  m_Script: {fileID: 11500000, guid: d69b0101d8074584ba52c41fb6ada7f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
@@ -80,10 +80,10 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  terrainMaterial: {fileID: 2100000, guid: 66119e6e253e06348b4183c154fc9145, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: 2a8e460f578b53142aec534fe04c10a4, type: 2}
   createForest: 1
   createWater: 1
-  waterMaterial: {fileID: 2100000, guid: 8080844e158309d43b8d19b979ec1e2a, type: 2}
+  waterMaterial: {fileID: 2100000, guid: 73f651092fcd15c42a908fb2a1aeadd0, type: 2}
   waterLevel: 10
 --- !u!114 &3166721825118174603
 MonoBehaviour:
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b237e9d9141c54d43ac6ea637687c7a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 410c57c3629ebf4478032ca893623057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   noiseScale: 2
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9507f4ab6a1a7c34cbda0cb397a3c3e0, type: 3}
+  m_Script: {fileID: 11500000, guid: e7e1380a6137cb343bc2655bd4075755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iterations: 50000
@@ -138,12 +138,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab1e530e45de3384a8008f73cefb51ed, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f6e62711c7fea64ba126560df38479c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   treePrefabs:
-  - {fileID: 9059283181100108450, guid: e5e9d3e1b803c2b4bb45eddb6e11dcec, type: 3}
-  - {fileID: 834719096341616055, guid: 3cf88de7474016d4a85d113f2bc629f0, type: 3}
+  - {fileID: 9059283181100108450, guid: 266483bc3acb1334c90e019cbae77053, type: 3}
+  - {fileID: 834719096341616055, guid: d8e8de4934bf1c74fa298146f992c65b, type: 3}
   density: 0.7
   slopeThreshold: 45
   verticalOffset: -0.6
