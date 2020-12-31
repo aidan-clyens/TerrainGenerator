@@ -107,7 +107,12 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals, bool loadAllObjects) {
         forestGenerator = GetComponent<ForestGenerator>();
-        forestGenerator.Init(viewer, objectViewRange);
+        if (viewer != null) {
+            forestGenerator.Init(viewer, objectViewRange);
+        }
+        else {
+            loadAllObjects = true;
+        }
 
         forestGenerator.Clear();
         GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed, loadAllObjects);

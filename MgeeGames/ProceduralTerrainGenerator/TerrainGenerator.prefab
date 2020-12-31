@@ -142,8 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   treePrefabs:
-  - {fileID: 9059283181100108450, guid: 266483bc3acb1334c90e019cbae77053, type: 3}
-  - {fileID: 834719096341616055, guid: d8e8de4934bf1c74fa298146f992c65b, type: 3}
+  - {fileID: 5404429270751900361, guid: 266483bc3acb1334c90e019cbae77053, type: 3}
+  - {fileID: 3223038354055179910, guid: d8e8de4934bf1c74fa298146f992c65b, type: 3}
   density: 0.7
   slopeThreshold: 45
   verticalOffset: -0.6

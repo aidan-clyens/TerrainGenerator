@@ -23,6 +23,8 @@ public class ForestGenerator : MonoBehaviour {
     }
 
     public void Update() {
+        if (viewer == null) return;
+
         Vector2 position = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
 
         foreach (GameObject tree in trees) {
