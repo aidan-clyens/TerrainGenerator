@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water
-  m_Shader: {fileID: -6465566751694194690, guid: 7ecf02fb03bc730439cb6d798b9eaad6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 72639a5e569f5db4c9251962381520df, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -56,6 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Boolean_C554BEF7: 0
     - Vector1_4614540D: 0.75
     - Vector1_56D596FC: 0.8
     - Vector1_63D336DF: 30
@@ -82,6 +83,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
+    - _Offset: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
@@ -89,6 +91,8 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _WaveSpeed: 1
+    - _WaveStrength: 0.1
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
