@@ -94,7 +94,7 @@
             "typeInfo": {
                 "fullName": "UnityEditor.ShaderGraph.Internal.BooleanShaderProperty"
             },
-            "JSONnodeData": "{\n    \"m_Guid\": {\n        \"m_GuidSerialized\": \"d38f64ce-64ef-4313-9652-ecccd58367c8\"\n    },\n    \"m_Name\": \"Use Script Offset\",\n    \"m_DefaultReferenceName\": \"Boolean_C554BEF7\",\n    \"m_OverrideReferenceName\": \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_Precision\": 0,\n    \"m_GPUInstanced\": false,\n    \"m_Hidden\": false,\n    \"m_Value\": false\n}"
+            "JSONnodeData": "{\n    \"m_Guid\": {\n        \"m_GuidSerialized\": \"d38f64ce-64ef-4313-9652-ecccd58367c8\"\n    },\n    \"m_Name\": \"Use Script Offset\",\n    \"m_DefaultReferenceName\": \"Boolean_C554BEF7\",\n    \"m_OverrideReferenceName\": \"_UseScriptOffset\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_Precision\": 0,\n    \"m_GPUInstanced\": false,\n    \"m_Hidden\": false,\n    \"m_Value\": false\n}"
         },
         {
             "typeInfo": {

@@ -19,6 +19,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Water Settings")]
     public Material waterMaterial;
     public float waterLevel;
+    public float waveSpeed;
+    public float waveStrength;
 
     ForestGenerator forestGenerator;
 
@@ -134,6 +136,11 @@ public class TerrainMapGenerator : MonoBehaviour {
         GameObject waterGameObject = new GameObject("Water");
         waterGameObject.AddComponent<MeshFilter>();
         waterGameObject.AddComponent<MeshRenderer>();
+        waterGameObject.AddComponent<WaterManager>();
+
+        waterGameObject.GetComponent<WaterManager>().waterLevel = waterLevel;
+        waterGameObject.GetComponent<WaterManager>().waveSpeed = waveSpeed;
+        waterGameObject.GetComponent<WaterManager>().waveStrength = waveStrength;
 
         MeshData meshData = MeshGenerator.Generate(heightMap);
         Mesh mesh = meshData.CreateMesh();
