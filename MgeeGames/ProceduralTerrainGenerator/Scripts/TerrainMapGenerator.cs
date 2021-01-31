@@ -72,7 +72,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         terrainGameObject.transform.parent = chunkGameObject.transform;
 
         if (createWater) {
-            GameObject waterGameObject = CreateWater();
+            // Waves are in the X-direction, so add X offset
+            GameObject waterGameObject = CreateWater(position.x * (mapWidth - 1));
             waterGameObject.transform.parent = chunkGameObject.transform;
         }
 
@@ -124,7 +125,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         return forestGameObject;
     }
 
-    GameObject CreateWater() {
+    GameObject CreateWater(float offset) {
         float[,] heightMap = new float[mapWidth, mapWidth];
 
         for (int z = 0; z < mapWidth; z++) {
@@ -141,6 +142,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         waterGameObject.GetComponent<WaterManager>().waterLevel = waterLevel;
         waterGameObject.GetComponent<WaterManager>().waveSpeed = waveSpeed;
         waterGameObject.GetComponent<WaterManager>().waveStrength = waveStrength;
+        waterGameObject.GetComponent<WaterManager>().offset = offset;
 
         MeshData meshData = MeshGenerator.Generate(heightMap);
         Mesh mesh = meshData.CreateMesh();

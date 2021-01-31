@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,10 +7,11 @@ public class WaterManager : MonoBehaviour {
     public float waveStrength;
     public float waveSpeed;
     
+    // Waves are in the X-direction
+    public float offset = 0;
+
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
-
-    float offset;
 
     void Awake() {
         meshFilter = GetComponent<MeshFilter>();
@@ -19,6 +20,7 @@ public class WaterManager : MonoBehaviour {
         meshRenderer.material.SetInt("_UseScriptOffset", 1);
         meshRenderer.material.SetFloat("_WaveStrength", waveStrength);
         meshRenderer.material.SetFloat("_WaveSpeed", waveSpeed);
+        meshRenderer.material.SetFloat("_Offset", offset);
     }
 
     void Update() {
