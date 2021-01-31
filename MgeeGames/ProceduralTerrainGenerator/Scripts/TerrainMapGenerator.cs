@@ -148,7 +148,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         Mesh mesh = meshData.CreateMesh();
 
         waterGameObject.GetComponent<MeshRenderer>().material = waterMaterial;
-        waterGameObject.GetComponent<MeshFilter>().mesh = mesh;
+        waterGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
 
         return waterGameObject;
     }
