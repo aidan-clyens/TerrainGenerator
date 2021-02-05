@@ -29,6 +29,8 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 - Water Settings:
     - Set water material
     - Set water level
+    - Set wave speed
+    - Set wave strength
 
 - Randomize:
     - Randomize terrain settings (seed, water level, and Height Map Generator settings)
