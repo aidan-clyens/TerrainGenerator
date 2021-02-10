@@ -77,5 +77,13 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
     - Slope threshold for tree placement
     - Vertical offset for tree prefabs
 
+## Change Log ##
+v1.0
+- Initial release.
+
+v1.1
+- Fixed sample models imported from Blender.
+- Added WaterManager script, which is attached to the Water mesh and used to synchronize waves produced using the sample Water shader. The WaterManager provides the time offset to the Water shader so that the same wave equation may be accessed by script.
+
 ## Author ##
 Aidan Clyens
