@@ -147,6 +147,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - Color_70ABB855: {r: 0.56752694, g: 0.7264151, b: 0.18845676, a: 1}
     - Color_969585A2: {r: 0.5411765, g: 0.5803922, b: 0.19215687, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
