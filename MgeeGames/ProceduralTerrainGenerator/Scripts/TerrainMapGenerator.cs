@@ -24,9 +24,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     ForestGenerator forestGenerator;
 
-
-
-    List<GameObject> terrainChunks = new List<GameObject>();
+    Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
 
     public void Start() {
@@ -36,12 +34,19 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public void Generate(bool loadAllObjects=false) {
         GameObject chunk = CreateTerrainChunk(position, loadAllObjects);
-        terrainChunks.Add(chunk);
+        if (terrainChunks.ContainsKey(position)) {
+            DestroyImmediate(terrainChunks[position], true);
+            terrainChunks[position] = chunk;
+        }
+        else {
+            terrainChunks.Add(position, chunk);
+        }
     }
 
     public void Clear() {
         Transform[] chunkTransforms = GetComponentsInChildren<Transform>();
         GameObject[] chunks = new GameObject[chunkTransforms.Length - 1];
+        terrainChunks.Clear();
 
         int index = 0;
         foreach (Transform chunk in chunkTransforms) {
