@@ -5,6 +5,7 @@ using UnityEngine;
 public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed;
+    [Range (0, 256)]
     public int mapWidth;
     public Vector2 position = new Vector2(0, 0);
     public GameObject viewer;
@@ -30,6 +31,10 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void Start() {
         Clear();
         Generate();
+    }
+
+    public void OnValidate() {
+        mapWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(mapWidth) / Mathf.Log(2)));
     }
 
     public void Generate(bool loadAllObjects=false) {
