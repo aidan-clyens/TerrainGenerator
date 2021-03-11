@@ -28,11 +28,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
 
-    public void Start() {
-        Clear();
-        Generate();
-    }
-
     public void OnValidate() {
         mapWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(mapWidth) / Mathf.Log(2)));
     }
