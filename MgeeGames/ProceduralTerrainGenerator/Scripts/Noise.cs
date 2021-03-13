@@ -54,8 +54,7 @@ public class Noise {
                     noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
                 }
                 else {
-                    float normalizedHeight = (noiseMap[x, y] + 1) / (2f * maxPossibleHeight / 2f);
-                    noiseMap[x, y] = normalizedHeight;
+                    noiseMap[x, y] = Mathf.InverseLerp(-maxPossibleHeight, maxPossibleHeight, noiseMap[x, y]);
                 }
 
                 noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], noiseRedistributionFactor);
