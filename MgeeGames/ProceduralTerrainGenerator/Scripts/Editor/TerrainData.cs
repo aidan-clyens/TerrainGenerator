@@ -7,6 +7,8 @@ class TerrainData {
     public int seed;
 
     public Vector2 centerPosition;
+    public int chunkGridWidth;
+
 
     // Height Map Data
     public int chunkWidth;

@@ -111,6 +111,7 @@ public class TerrainMapEditor : Editor {
         TerrainData terrainData = new TerrainData();
         terrainData.seed = terrainMapGenerator.seed;
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
+        terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
         terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
         terrainData.mapDepth = heightMapGenerator.mapDepth;
         terrainData.noiseScale = heightMapGenerator.noiseScale;
@@ -164,6 +165,7 @@ public class TerrainMapEditor : Editor {
 
         terrainMapGenerator.seed = terrainData.seed;
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
+        terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
         terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
         heightMapGenerator.mapDepth = terrainData.mapDepth;
         heightMapGenerator.noiseScale = terrainData.noiseScale;
