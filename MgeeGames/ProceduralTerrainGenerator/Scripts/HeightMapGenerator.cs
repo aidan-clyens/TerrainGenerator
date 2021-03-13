@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,7 +54,7 @@ public class HeightMapGenerator : MonoBehaviour {
                     heightMap[x, z] = 1f;
                 }
                 else {
-                    heightMap[x, z] = noiseMap[x, z] * mapDepth * widthFactor;
+                    heightMap[x, z] = noiseMap[x, z] * mapDepth;
                 
                     // Multiply map depth by 2 is normalizing globally to compensate for lost depth
                     if (!normalizeLocal) {
