@@ -117,7 +117,6 @@ public class TerrainMapEditor : Editor {
         terrainData.noiseOctaves = heightMapGenerator.noiseOctaves;
         terrainData.persistence = heightMapGenerator.persistence;
         terrainData.lacunarity = heightMapGenerator.lacunarity;
-        terrainData.normalizeLocal = heightMapGenerator.normalizeLocal;
         terrainData.noiseRedistributionFactor = heightMapGenerator.noiseRedistributionFactor;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
         terrainData.useHydraulicErosion = heightMapGenerator.useHydraulicErosion;
@@ -172,7 +171,6 @@ public class TerrainMapEditor : Editor {
         heightMapGenerator.persistence = terrainData.persistence;
         heightMapGenerator.lacunarity = terrainData.lacunarity;
         heightMapGenerator.noiseRedistributionFactor = terrainData.noiseRedistributionFactor;
-        heightMapGenerator.normalizeLocal = terrainData.normalizeLocal;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
         heightMapGenerator.useHydraulicErosion = terrainData.useHydraulicErosion;
         heightMapGenerator.useFalloff = terrainData.useFalloff;

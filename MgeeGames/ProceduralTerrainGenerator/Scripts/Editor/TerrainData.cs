@@ -16,7 +16,6 @@ class TerrainData {
     public float persistence;
     public float lacunarity;
     public float noiseRedistributionFactor;
-    public bool normalizeLocal;
 
     // Terrain Settings
     public float waterLevel;

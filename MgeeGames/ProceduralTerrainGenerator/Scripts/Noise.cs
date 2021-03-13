@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Noise {
-    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor, bool normalizeLocal) {
+    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
         float[,] noiseMap = new float[width, height];
-
-        // Use local min and max to normalize locally, does not work well with other chunks
-        float maxNoiseHeight = float.MinValue;
-        float minNoiseHeight = float.MaxValue;
 
         float maxPossibleHeight = 0f;
         float amplitude = 1;
@@ -37,26 +33,14 @@ public class Noise {
                     frequency *= lacunarity;
                 }
 
-                if (noiseHeight > maxNoiseHeight) {
-                    maxNoiseHeight = noiseHeight;
-                }
-                else if (noiseHeight < minNoiseHeight) {
-                    minNoiseHeight = noiseHeight;
-                }
-
                 noiseMap[x, y] = noiseHeight;
             }   
         }
 
+        // Normalize map and apply noise redistribution
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (normalizeLocal) {
-                    noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
-                }
-                else {
-                    noiseMap[x, y] = Mathf.InverseLerp(-maxPossibleHeight, maxPossibleHeight, noiseMap[x, y]);
-                }
-
+                noiseMap[x, y] = Mathf.InverseLerp(-maxPossibleHeight, maxPossibleHeight, noiseMap[x, y]);
                 noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], noiseRedistributionFactor);
             }
         }
