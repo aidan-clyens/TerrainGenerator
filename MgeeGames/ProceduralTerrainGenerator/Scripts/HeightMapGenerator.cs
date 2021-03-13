@@ -43,6 +43,7 @@ public class HeightMapGenerator : MonoBehaviour {
 
         float[,] heightMap = new float[mapWidth, mapWidth];
 
+        // Determine map depth
         for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
                 if (useFalloff && mapDepth > 0) {
@@ -54,6 +55,11 @@ public class HeightMapGenerator : MonoBehaviour {
                 }
                 else {
                     heightMap[x, z] = noiseMap[x, z] * mapDepth * widthFactor;
+                
+                    // Multiply map depth by 2 is normalizing globally to compensate for lost depth
+                    if (!normalizeLocal) {
+                        heightMap[x, z] *= 2;
+                    }
                 }
             }
         }
