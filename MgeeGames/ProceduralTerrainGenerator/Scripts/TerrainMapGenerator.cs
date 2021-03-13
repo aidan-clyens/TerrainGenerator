@@ -8,6 +8,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Range (0, 256)]
     public int chunkWidth;
     public Vector2 centerPosition = new Vector2(0, 0);
+    [Range (0, 5)]
+    public int chunkGridWidth = 1;
     public GameObject viewer;
     public float objectViewRange;
 
@@ -31,16 +33,27 @@ public class TerrainMapGenerator : MonoBehaviour {
     public void OnValidate() {
         // Round map width to nearest power of 2
         chunkWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(chunkWidth) / Mathf.Log(2)));
+        // Round chunk grid width to nearest odd number >= 1
+        if (chunkGridWidth % 2 == 0) {
+            chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
+        }
     }
 
     public void Generate(bool loadAllObjects=false) {
-        GameObject chunk = CreateTerrainChunk(centerPosition, loadAllObjects);
-        if (terrainChunks.ContainsKey(centerPosition)) {
-            DestroyImmediate(terrainChunks[centerPosition], true);
-            terrainChunks[centerPosition] = chunk;
-        }
-        else {
-            terrainChunks.Add(centerPosition, chunk);
+        // Generate grid of chunks
+        int w = (int)Mathf.Round(chunkGridWidth / 2);
+        for (int x = -w; x <= w; x++) {
+            for (int y = -w; y <= w; y++) {
+                Vector2 pos = new Vector2(centerPosition.x + x, centerPosition.y + y);
+                GameObject chunk = CreateTerrainChunk(pos, loadAllObjects);
+                if (terrainChunks.ContainsKey(pos)) {
+                    DestroyImmediate(terrainChunks[pos], true);
+                    terrainChunks[pos] = chunk;
+                }
+                else {
+                    terrainChunks.Add(pos, chunk);
+                }
+            }
         }
     }
 
