@@ -110,8 +110,8 @@ public class TerrainMapEditor : Editor {
     void SaveTerrainData(string levelName) {
         TerrainData terrainData = new TerrainData();
         terrainData.seed = terrainMapGenerator.seed;
-        terrainData.position = terrainMapGenerator.position;
-        terrainData.mapWidth = terrainMapGenerator.mapWidth;
+        terrainData.centerPosition = terrainMapGenerator.centerPosition;
+        terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
         terrainData.mapDepth = heightMapGenerator.mapDepth;
         terrainData.noiseScale = heightMapGenerator.noiseScale;
         terrainData.noiseOctaves = heightMapGenerator.noiseOctaves;
@@ -164,8 +164,8 @@ public class TerrainMapEditor : Editor {
         Debug.Log("Loaded terrain from: " + filePath);
 
         terrainMapGenerator.seed = terrainData.seed;
-        terrainMapGenerator.position = terrainData.position;
-        terrainMapGenerator.mapWidth = terrainData.mapWidth;
+        terrainMapGenerator.centerPosition = terrainData.centerPosition;
+        terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
         heightMapGenerator.mapDepth = terrainData.mapDepth;
         heightMapGenerator.noiseScale = terrainData.noiseScale;
         heightMapGenerator.noiseOctaves = terrainData.noiseOctaves;

@@ -6,10 +6,10 @@ using UnityEngine;
 class TerrainData {
     public int seed;
 
-    public Vector2 position;
+    public Vector2 centerPosition;
 
     // Height Map Data
-    public int mapWidth;
+    public int chunkWidth;
     public int mapDepth;
     public float noiseScale;
     public int noiseOctaves;

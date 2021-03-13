@@ -6,8 +6,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed;
     [Range (0, 256)]
-    public int mapWidth;
-    public Vector2 position = new Vector2(0, 0);
+    public int chunkWidth;
+    public Vector2 centerPosition = new Vector2(0, 0);
     public GameObject viewer;
     public float objectViewRange;
 
@@ -29,17 +29,18 @@ public class TerrainMapGenerator : MonoBehaviour {
 
 
     public void OnValidate() {
-        mapWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(mapWidth) / Mathf.Log(2)));
+        // Round map width to nearest power of 2
+        chunkWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(chunkWidth) / Mathf.Log(2)));
     }
 
     public void Generate(bool loadAllObjects=false) {
-        GameObject chunk = CreateTerrainChunk(position, loadAllObjects);
-        if (terrainChunks.ContainsKey(position)) {
-            DestroyImmediate(terrainChunks[position], true);
-            terrainChunks[position] = chunk;
+        GameObject chunk = CreateTerrainChunk(centerPosition, loadAllObjects);
+        if (terrainChunks.ContainsKey(centerPosition)) {
+            DestroyImmediate(terrainChunks[centerPosition], true);
+            terrainChunks[centerPosition] = chunk;
         }
         else {
-            terrainChunks.Add(position, chunk);
+            terrainChunks.Add(centerPosition, chunk);
         }
     }
 
@@ -66,11 +67,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {
-        int mapOffsetX = (int)(position.x * (mapWidth - 1)) + seed;
-        int mapOffsetY = (int)(position.y * (mapWidth - 1)) + seed;
+        int mapOffsetX = (int)(position.x * (chunkWidth - 1)) + seed;
+        int mapOffsetY = (int)(position.y * (chunkWidth - 1)) + seed;
 
         HeightMapGenerator heightMapGenerator = GetComponent<HeightMapGenerator>();
-        float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, mapWidth, mapOffsetX, mapOffsetY);
+        float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, chunkWidth, mapOffsetX, mapOffsetY);
 
         GameObject chunkGameObject = new GameObject("TerrainChunk");
         GameObject terrainGameObject = CreateTerrain(heightMap);
@@ -78,7 +79,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         if (createWater) {
             // Waves are in the X-direction, so add X offset
-            GameObject waterGameObject = CreateWater(position.x * (mapWidth - 1));
+            GameObject waterGameObject = CreateWater(position.x * (chunkWidth - 1));
             waterGameObject.transform.parent = chunkGameObject.transform;
         }
 
@@ -89,7 +90,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
 
         chunkGameObject.isStatic = true;
-        chunkGameObject.transform.position = new Vector3(position.x * (mapWidth - 1), 0f, -position.y * (mapWidth - 1));
+        chunkGameObject.transform.position = new Vector3(position.x * (chunkWidth - 1), 0f, -position.y * (chunkWidth - 1));
         chunkGameObject.transform.parent = transform;
 
         return chunkGameObject;
@@ -131,10 +132,10 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     GameObject CreateWater(float offset) {
-        float[,] heightMap = new float[mapWidth, mapWidth];
+        float[,] heightMap = new float[chunkWidth, chunkWidth];
 
-        for (int z = 0; z < mapWidth; z++) {
-            for (int x = 0; x < mapWidth; x++) {
+        for (int z = 0; z < chunkWidth; z++) {
+            for (int x = 0; x < chunkWidth; x++) {
                 heightMap[x, z] = waterLevel;
             }
         }
