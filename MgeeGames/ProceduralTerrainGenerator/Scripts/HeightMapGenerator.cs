@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HeightMapGenerator : MonoBehaviour {
+    public NoiseType noiseType;
     public float noiseScale;
     public int noiseOctaves;
     public float persistence;
@@ -17,7 +18,8 @@ public class HeightMapGenerator : MonoBehaviour {
 
     public float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
         float widthFactor = (float)mapWidth / (float)maxWidth;
-        float[,] noiseMap = Noise.GeneratePerlinNoiseMap(
+        float[,] noiseMap = Noise.GenerateNoiseMap(
+            noiseType,
             mapWidth,
             mapWidth,
             noiseScale * widthFactor,

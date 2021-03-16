@@ -2,8 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NoiseType {
+    Perlin,
+    Simplex
+};
+
 public class Noise {
-    public static float[,] GeneratePerlinNoiseMap(int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
+
+    static SimplexNoiseGenerator simplexNoiseGenerator = new SimplexNoiseGenerator();
+
+    public static float[,] GenerateNoiseMap(NoiseType noiseType, int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
         float[,] noiseMap = new float[width, height];
 
         float maxPossibleHeight = 0f;
@@ -26,8 +34,18 @@ public class Noise {
                     float sampleX = (float)(x + offsetX) / (float)width * scale * frequency;
                     float sampleY = (float)(y + offsetY) / (float)height * scale * frequency;
 
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
-                    noiseHeight += perlinValue * amplitude;
+                    float noiseValue;
+                    if (noiseType == NoiseType.Perlin) {
+                        noiseValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    }
+                    else if (noiseType == NoiseType.Simplex) {
+                        noiseValue = simplexNoiseGenerator.noise(sampleX, sampleY, 0) * 2;
+                    }
+                    else {
+                        noiseValue = 0f;
+                    }
+
+                    noiseHeight += noiseValue * amplitude;
 
                     amplitude *= persistence;
                     frequency *= lacunarity;

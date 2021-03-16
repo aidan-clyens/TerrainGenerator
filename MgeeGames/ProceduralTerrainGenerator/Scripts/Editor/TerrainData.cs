@@ -13,6 +13,7 @@ class TerrainData {
     // Height Map Data
     public int chunkWidth;
     public int mapDepth;
+    public NoiseType noiseType;
     public float noiseScale;
     public int noiseOctaves;
     public float persistence;

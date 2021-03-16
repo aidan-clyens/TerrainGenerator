@@ -43,5 +43,8 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 - Fixed sample models imported from Blender.
 - Added WaterManager script, which is attached to the Water mesh and used to synchronize waves produced using the sample Water shader. The WaterManager provides the time offset to the Water shader so that the same wave equation may be accessed by script.
 
+## Credit
+- Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)
+
 ## Author
 Aidan Clyens

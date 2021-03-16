@@ -41,20 +41,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     public void Generate(bool loadAllObjects=false) {
         // Generate grid of chunks
-        int w = (int)Mathf.Round(chunkGridWidth / 2);
-        for (int x = -w; x <= w; x++) {
-            for (int y = -w; y <= w; y++) {
-                Vector2 pos = new Vector2(centerPosition.x + x, centerPosition.y + y);
-                GameObject chunk = CreateTerrainChunk(pos, loadAllObjects);
-                if (terrainChunks.ContainsKey(pos)) {
-                    DestroyImmediate(terrainChunks[pos], true);
-                    terrainChunks[pos] = chunk;
-                }
-                else {
-                    terrainChunks.Add(pos, chunk);
-                }
-            }
-        }
+        CreateChunkGrid(loadAllObjects);
     }
 
     public void Clear() {
@@ -76,6 +63,23 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         if (forestGenerator != null) {
             forestGenerator.Clear();
+        }
+    }
+
+    void CreateChunkGrid(bool loadAllObjects) {
+        int w = (int)Mathf.Round(chunkGridWidth / 2);
+        for (int x = -w; x <= w; x++) {
+            for (int y = -w; y <= w; y++) {
+                Vector2 pos = new Vector2(centerPosition.x + x, centerPosition.y + y);
+                GameObject chunk = CreateTerrainChunk(pos, loadAllObjects);
+                if (terrainChunks.ContainsKey(pos)) {
+                    DestroyImmediate(terrainChunks[pos], true);
+                    terrainChunks[pos] = chunk;
+                }
+                else {
+                    terrainChunks.Add(pos, chunk);
+                }
+            }
         }
     }
 
