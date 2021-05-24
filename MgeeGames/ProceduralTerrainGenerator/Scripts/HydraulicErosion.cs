@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HydraulicErosion : MonoBehaviour {
+    public bool useHydraulicErosion;
+
     public int iterations = 50000;
     [Range (0, 1)]
     public float inertia = 0.1f;

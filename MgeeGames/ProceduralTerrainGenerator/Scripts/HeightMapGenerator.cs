@@ -11,7 +11,6 @@ public class HeightMapGenerator : MonoBehaviour {
     public int mapDepth;
     public float noiseRedistributionFactor;
     public bool useFalloff;
-    public bool useHydraulicErosion;
 
     int maxWidth = 256;
 
@@ -33,6 +32,7 @@ public class HeightMapGenerator : MonoBehaviour {
 
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
+        bool useHydraulicErosion = GetComponent<HydraulicErosion>().useHydraulicErosion;
         if (useHydraulicErosion && mapDepth > 0) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
