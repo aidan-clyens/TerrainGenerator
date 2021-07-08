@@ -45,8 +45,10 @@ public class TerrainMapGenerator : MonoBehaviour {
         foreach (KeyValuePair<Vector2, GameObject> chunkEntry in terrainChunks) {
             Transform forestTransform = chunkEntry.Value.transform.Find("Forest");
 
-            foreach (Transform treeTransform in forestTransform) {
-                trees.Add(treeTransform.gameObject);
+            if (forestTransform != null) {
+                foreach (Transform treeTransform in forestTransform) {
+                    trees.Add(treeTransform.gameObject);
+                }   
             }
         }
 
