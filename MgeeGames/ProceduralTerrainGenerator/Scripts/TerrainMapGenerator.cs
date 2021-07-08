@@ -30,7 +30,29 @@ public class TerrainMapGenerator : MonoBehaviour {
     Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
 
-    public void OnValidate() {
+    void Start() {
+        // Get all Terrain Chunks
+        foreach (Transform child in transform) {
+            Vector2 position = new Vector2(child.position.x / chunkWidth, child.position.z / chunkWidth);
+            if (!terrainChunks.ContainsKey(position)) {
+                terrainChunks.Add(position, child.gameObject);
+            }
+        }
+
+        // Initialize Forest Generator
+        List<GameObject> trees = new List<GameObject>();
+        foreach (KeyValuePair<Vector2, GameObject> chunkEntry in terrainChunks) {
+            Transform forestTransform = chunkEntry.Value.transform.Find("Forest");
+
+            foreach (Transform treeTransform in forestTransform) {
+                trees.Add(treeTransform.gameObject);
+            }
+        }
+
+        GetComponent<ForestGenerator>().Init(trees, viewer, objectViewRange);
+    }
+
+    void OnValidate() {
         // Round map width to nearest power of 2
         chunkWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(chunkWidth) / Mathf.Log(2)));
         // Round chunk grid width to nearest odd number >= 1

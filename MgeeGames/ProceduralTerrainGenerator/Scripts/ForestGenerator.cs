@@ -22,6 +22,12 @@ public class ForestGenerator : MonoBehaviour {
         viewRange = range;
     }
 
+    public void Init(List<GameObject> currentTrees, GameObject view, float range) {
+        trees = currentTrees;
+        viewer = view;
+        viewRange = range;
+    }
+
     public void Update() {
         if (viewer == null) return;
 
