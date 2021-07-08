@@ -43,6 +43,15 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 - Fixed sample models imported from Blender.
 - Added WaterManager script, which is attached to the Water mesh and used to synchronize waves produced using the sample Water shader. The WaterManager provides the time offset to the Water shader so that the same wave equation may be accessed by script.
 
+### v1.2
+- Add option to change terrain chunk width at powers of 2
+- Add option to generate terrain chunks in a grid
+- Add options for more non-uniform terrain generation
+- Fix viewer for multi-chunk generation
+- Add view range for terrain chunk objects as well as forest objects
+- Remove "Normalize Local" option and just normalize all terrain chunks globally
+- Add OpenSimplex noise as well as Perlin noise for terrain generation
+
 ## Credit
 - Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)
 

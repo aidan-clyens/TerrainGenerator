@@ -50,20 +50,21 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ## Height Map Generator ##
 - Noise Map Parameters:
     - Scale, octaves, persistence, lacunarity
-    - Map depth
     - Noise redistribution factor
 
-- Normalize Local:
-    - Normalize the height map using the minimum and maximum height of the current terrain chunk
-
-- Falloff:
+- Height Map Settings:
+    - Map depth
     - Enable falloff to create islands
 
-- Hydraulic Erosion:
-    - Enable hydraulic erosion to create for realistic looking height maps
+- Biome Height Map Settings:
+    - Biome noise scale factor:
+        - Biome noise scale is a factor of noise scale
+    - Biome depth factor:
+        - Biome depth is a factor of map depth
 
 ## Hydraulic Erosion ##
 - Simulation Parameters:
+    - Enable or disable Hydraulic Erosion
     - Number of iterations
     - Intertia, gravity, minimum slope
     - Capacity factor, deposition factor, erosion factor, evapouration factor
@@ -84,6 +85,15 @@ v1.0
 v1.1
 - Fixed sample models imported from Blender.
 - Added WaterManager script, which is attached to the Water mesh and used to synchronize waves produced using the sample Water shader. The WaterManager provides the time offset to the Water shader so that the same wave equation may be accessed by script.
+
+v1.2
+- Add option to change terrain chunk width at powers of 2
+- Add option to generate terrain chunks in a grid
+- Add options for more non-uniform terrain generation
+- Fix viewer for multi-chunk generation
+- Add view range for terrain chunk objects as well as forest objects
+- Remove "Normalize Local" option and just normalize all terrain chunks globally
+- Add OpenSimplex noise as well as Perlin noise for terrain generation
 
 ## Author ##
 Aidan Clyens
