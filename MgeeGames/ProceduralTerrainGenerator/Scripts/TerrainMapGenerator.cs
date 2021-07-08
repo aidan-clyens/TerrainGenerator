@@ -11,6 +11,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Range (0, 5)]
     public int chunkGridWidth = 1;
     public GameObject viewer;
+    public float chunkViewRange;
     public float objectViewRange;
 
     [Header("Terrain Settings")]
@@ -58,6 +59,25 @@ public class TerrainMapGenerator : MonoBehaviour {
         // Round chunk grid width to nearest odd number >= 1
         if (chunkGridWidth % 2 == 0) {
             chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
+        }
+    }
+
+    void Update() {
+        if (viewer == null) return;
+
+        Vector2 position = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
+
+        // Only show Terrain Chunks in range of viewer
+        foreach (KeyValuePair<Vector2, GameObject> chunkEntry in terrainChunks) {
+            GameObject chunk = chunkEntry.Value;
+            Vector2 chunkPosition = new Vector2(chunk.transform.position.x, chunk.transform.position.z);
+
+            if ((position - chunkPosition).magnitude < chunkViewRange) {
+                chunk.SetActive(true);
+            }
+            else {
+                chunk.SetActive(false);
+            }
         }
     }
 
