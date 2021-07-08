@@ -8,7 +8,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Range (0, 1024)]
     public int chunkWidth;
     public Vector2 centerPosition = new Vector2(0, 0);
-    [Range (0, 5)]
+    [Range (0, 10)]
     public int chunkGridWidth = 1;
     public GameObject viewer;
     public float chunkViewRange;
