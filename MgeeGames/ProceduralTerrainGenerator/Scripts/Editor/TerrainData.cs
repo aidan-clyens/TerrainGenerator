@@ -19,6 +19,8 @@ class TerrainData {
     public float persistence;
     public float lacunarity;
     public float noiseRedistributionFactor;
+    public float biomeNoiseScaleFactor;
+    public float biomeDepthFactor; 
 
     // Terrain Settings
     public float waterLevel;
