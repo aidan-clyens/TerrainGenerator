@@ -80,12 +80,7 @@ public class TerrainMapEditor : Editor {
         serializedTerrainGenerator.FindProperty("seed").intValue = Random.Range(0, 1000);
         serializedTerrainGenerator.FindProperty("waterLevel").floatValue = Random.Range(0, 30);
 
-        serializedHeightMapGenerator.FindProperty("noiseScale").floatValue = Random.Range(1f, 5f);
-        serializedHeightMapGenerator.FindProperty("noiseOctaves").intValue = Random.Range(1, 6);
-        serializedHeightMapGenerator.FindProperty("persistence").floatValue = Random.Range(0.1f, 0.5f);
-        serializedHeightMapGenerator.FindProperty("lacunarity").floatValue = Random.Range(1f, 2f);
-        serializedHeightMapGenerator.FindProperty("noiseRedistributionFactor").floatValue = Random.Range(1f, 3f);
-        serializedHeightMapGenerator.FindProperty("mapDepth").intValue = Random.Range(30, 100);
+        heightMapGenerator.heightMapSettings.Randomize();
 
         EditorGUI.EndChangeCheck();
         serializedTerrainGenerator.ApplyModifiedProperties();
@@ -113,17 +108,8 @@ public class TerrainMapEditor : Editor {
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
         terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
         terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
-        terrainData.mapDepth = heightMapGenerator.mapDepth;
-        terrainData.noiseType = heightMapGenerator.noiseType;
-        terrainData.noiseScale = heightMapGenerator.noiseScale;
-        terrainData.noiseOctaves = heightMapGenerator.noiseOctaves;
-        terrainData.persistence = heightMapGenerator.persistence;
-        terrainData.lacunarity = heightMapGenerator.lacunarity;
-        terrainData.noiseRedistributionFactor = heightMapGenerator.noiseRedistributionFactor;
-        terrainData.biomeNoiseScaleFactor = heightMapGenerator.biomeNoiseScaleFactor;
-        terrainData.biomeDepthFactor = heightMapGenerator.biomeDepthFactor;
+        terrainData.heightMapSettings = heightMapGenerator.heightMapSettings;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
-        terrainData.useFalloff = heightMapGenerator.useFalloff;
         terrainData.createWater = terrainMapGenerator.createWater;
         terrainData.createForest = terrainMapGenerator.createForest;
         terrainData.terrainColourGradient = terrainMapGenerator.terrainColourGradient;
@@ -170,17 +156,8 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
         terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
         terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
-        heightMapGenerator.mapDepth = terrainData.mapDepth;
-        heightMapGenerator.noiseType = terrainData.noiseType;
-        heightMapGenerator.noiseScale = terrainData.noiseScale;
-        heightMapGenerator.noiseOctaves = terrainData.noiseOctaves;
-        heightMapGenerator.persistence = terrainData.persistence;
-        heightMapGenerator.lacunarity = terrainData.lacunarity;
-        heightMapGenerator.noiseRedistributionFactor = terrainData.noiseRedistributionFactor;
-        heightMapGenerator.biomeNoiseScaleFactor = terrainData.biomeNoiseScaleFactor;
-        heightMapGenerator.biomeDepthFactor = terrainData.biomeDepthFactor;
+        heightMapGenerator.heightMapSettings = terrainData.heightMapSettings;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
-        heightMapGenerator.useFalloff = terrainData.useFalloff;
         terrainMapGenerator.createWater = terrainData.createWater;
         terrainMapGenerator.createForest = terrainData.createForest;
         terrainMapGenerator.terrainColourGradient = terrainData.terrainColourGradient;

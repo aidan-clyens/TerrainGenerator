@@ -2,22 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HeightMapGenerator : MonoBehaviour {
-    [Header("Noise Map Settings")]
+[System.Serializable]
+public class HeightMapSettings {
+    [HideInInspector]
+    public int chunkWidth;
+    public int mapDepth;
     public NoiseType noiseType;
     public float noiseScale;
     public int noiseOctaves;
     public float persistence;
     public float lacunarity;
     public float noiseRedistributionFactor;
-
-    [Header("Height Map Settings")]
-    public int mapDepth;
     public bool useFalloff;
 
-    [Header("Biome Height Map Settings")]
-    public float biomeNoiseScaleFactor = 10f;
-    public float biomeDepthFactor = 5f; 
+    public void Randomize() {
+        noiseScale = Random.Range(1f, 5f);
+        noiseOctaves = Random.Range(1, 6);
+        persistence = Random.Range(0.1f, 0.5f);
+        lacunarity = Random.Range(1f, 2f);
+        noiseRedistributionFactor = Random.Range(1f, 3f);
+        mapDepth = Random.Range(30, 100);
+    }
+}
+
+public class HeightMapGenerator : MonoBehaviour {
+    public HeightMapSettings heightMapSettings;
 
     const int maxWidth = 256;
 
@@ -26,39 +35,26 @@ public class HeightMapGenerator : MonoBehaviour {
 
 
     public float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
+        heightMapSettings.chunkWidth = mapWidth;
+
         float widthFactor = (float)mapWidth / (float)maxWidth;
         float[,] noiseMap = Noise.GenerateNoiseMap(
-            noiseType,
+            heightMapSettings.noiseType,
             mapWidth,
             mapWidth,
-            noiseScale * widthFactor,
+            heightMapSettings.noiseScale * widthFactor,
             offsetX,
             offsetY,
-            noiseOctaves,
-            persistence,
-            lacunarity,
-            noiseRedistributionFactor
-        );
-
-        biomeNoiseScale = noiseScale / biomeNoiseScaleFactor;
-        biomeDepth = mapDepth * biomeDepthFactor;
-        float[,] biomeMap = Noise.GenerateNoiseMap(
-            noiseType,
-            mapWidth,
-            mapWidth,
-            (biomeNoiseScale * widthFactor),
-            offsetX,
-            offsetY,
-            noiseOctaves,
-            persistence,
-            lacunarity,
-            noiseRedistributionFactor
+            heightMapSettings.noiseOctaves,
+            heightMapSettings.persistence,
+            heightMapSettings.lacunarity,
+            heightMapSettings.noiseRedistributionFactor
         );
 
         float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
 
         bool useHydraulicErosion = GetComponent<HydraulicErosion>().useHydraulicErosion;
-        if (useHydraulicErosion && mapDepth > 0) {
+        if (useHydraulicErosion && heightMapSettings.mapDepth > 0) {
             HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
@@ -68,17 +64,15 @@ public class HeightMapGenerator : MonoBehaviour {
         // Determine map depth
         for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
-                if (useFalloff && mapDepth > 0) {
+                if (heightMapSettings.useFalloff && heightMapSettings.mapDepth > 0) {
                     noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);
                 }
 
-                if (mapDepth == 0) {
+                if (heightMapSettings.mapDepth == 0) {
                     heightMap[x, z] = 1f;
                 }
                 else {
-                    heightMap[x, z] = 2 * (noiseMap[x, z] * mapDepth);
-                    heightMap[x, z] += (biomeMap[x, z] * biomeDepth);
-                    heightMap[x, z] -= (biomeDepth / 2f);
+                    heightMap[x, z] = 2 * (noiseMap[x, z] * heightMapSettings.mapDepth);
                 }
             }
         }

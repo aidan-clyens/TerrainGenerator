@@ -8,19 +8,10 @@ class TerrainData {
 
     public Vector2 centerPosition;
     public int chunkGridWidth;
-
+    public int chunkWidth;
 
     // Height Map Data
-    public int chunkWidth;
-    public int mapDepth;
-    public NoiseType noiseType;
-    public float noiseScale;
-    public int noiseOctaves;
-    public float persistence;
-    public float lacunarity;
-    public float noiseRedistributionFactor;
-    public float biomeNoiseScaleFactor;
-    public float biomeDepthFactor; 
+    public HeightMapSettings heightMapSettings;
 
     // Terrain Settings
     public float waterLevel;
