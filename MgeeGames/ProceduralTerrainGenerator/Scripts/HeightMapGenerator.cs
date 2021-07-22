@@ -51,7 +51,10 @@ public class HeightMapGenerator : MonoBehaviour {
             heightMapSettings.noiseRedistributionFactor
         );
 
-        float[,] falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
+        float[,] falloffMap = null;
+        if (heightMapSettings.useFalloff) {
+            falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
+        }
 
         bool useHydraulicErosion = GetComponent<HydraulicErosion>().useHydraulicErosion;
         if (useHydraulicErosion && heightMapSettings.mapDepth > 0) {
