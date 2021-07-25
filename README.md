@@ -51,6 +51,7 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 - Add view range for terrain chunk objects as well as forest objects
 - Remove "Normalize Local" option and just normalize all terrain chunks globally
 - Add OpenSimplex noise as well as Perlin noise for terrain generation
+- Add multiple layers of noise in Height Map Generator
 
 ## Credit
 - Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)
