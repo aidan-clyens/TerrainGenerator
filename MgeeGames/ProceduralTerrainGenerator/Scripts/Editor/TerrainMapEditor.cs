@@ -69,22 +69,13 @@ public class TerrainMapEditor : Editor {
     }
 
     void Randomize() {
-        terrainMapGenerator = (TerrainMapGenerator) target;
-        heightMapGenerator = terrainMapGenerator.GetComponent<HeightMapGenerator>();
-
-        SerializedObject serializedTerrainGenerator = new SerializedObject(terrainMapGenerator);
-        SerializedObject serializedHeightMapGenerator = new SerializedObject(heightMapGenerator);
-
-        EditorGUI.BeginChangeCheck();
-
-        serializedTerrainGenerator.FindProperty("seed").intValue = Random.Range(0, 1000);
-        serializedTerrainGenerator.FindProperty("waterLevel").floatValue = Random.Range(0, 30);
+        terrainMapGenerator.seed = Random.Range(0, 1000);
+        terrainMapGenerator.waterLevel = Random.Range(0, 30);
 
         heightMapGenerator.Randomize();
 
-        EditorGUI.EndChangeCheck();
-        serializedTerrainGenerator.ApplyModifiedProperties();
-        serializedHeightMapGenerator.ApplyModifiedProperties();
+        EditorUtility.SetDirty(terrainMapGenerator);
+        EditorUtility.SetDirty(heightMapGenerator);
     }
 
     string[] GetSaveFiles() {
@@ -181,5 +172,10 @@ public class TerrainMapEditor : Editor {
         forestGenerator.density = terrainData.density;
         forestGenerator.slopeThreshold = terrainData.slopeThreshold;
         forestGenerator.verticalOffset = terrainData.verticalOffset;
+
+        EditorUtility.SetDirty(terrainMapGenerator);
+        EditorUtility.SetDirty(heightMapGenerator);
+        EditorUtility.SetDirty(hydraulicErosion);
+        EditorUtility.SetDirty(forestGenerator);
     }
 }
