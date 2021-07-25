@@ -80,7 +80,7 @@ public class TerrainMapEditor : Editor {
         serializedTerrainGenerator.FindProperty("seed").intValue = Random.Range(0, 1000);
         serializedTerrainGenerator.FindProperty("waterLevel").floatValue = Random.Range(0, 30);
 
-        heightMapGenerator.heightMapSettings.Randomize();
+        heightMapGenerator.Randomize();
 
         EditorGUI.EndChangeCheck();
         serializedTerrainGenerator.ApplyModifiedProperties();
@@ -108,7 +108,8 @@ public class TerrainMapEditor : Editor {
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
         terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
         terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
-        terrainData.heightMapSettings = heightMapGenerator.heightMapSettings;
+        // terrainData.heightMapSettings = heightMapGenerator.heightMapSettings;
+        terrainData.heightMapSettingsList = heightMapGenerator.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
         terrainData.createWater = terrainMapGenerator.createWater;
         terrainData.createForest = terrainMapGenerator.createForest;
@@ -156,7 +157,8 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
         terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
         terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
-        heightMapGenerator.heightMapSettings = terrainData.heightMapSettings;
+        // heightMapGenerator.heightMapSettings = terrainData.heightMapSettings;
+        heightMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
         terrainMapGenerator.createWater = terrainData.createWater;
         terrainMapGenerator.createForest = terrainData.createForest;

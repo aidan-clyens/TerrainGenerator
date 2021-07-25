@@ -11,7 +11,8 @@ class TerrainData {
     public int chunkWidth;
 
     // Height Map Data
-    public HeightMapSettings heightMapSettings;
+    public List<HeightMapSettings> heightMapSettingsList;
+    // public HeightMapSettings heightMapSettings;
 
     // Terrain Settings
     public float waterLevel;
