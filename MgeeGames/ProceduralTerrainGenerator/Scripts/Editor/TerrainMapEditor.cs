@@ -108,7 +108,7 @@ public class TerrainMapEditor : Editor {
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
         terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
         terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
-        // terrainData.heightMapSettings = heightMapGenerator.heightMapSettings;
+        terrainData.averageMapDepth = heightMapGenerator.averageMapDepth;
         terrainData.heightMapSettingsList = heightMapGenerator.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
         terrainData.createWater = terrainMapGenerator.createWater;
@@ -157,7 +157,7 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
         terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
         terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
-        // heightMapGenerator.heightMapSettings = terrainData.heightMapSettings;
+        heightMapGenerator.averageMapDepth = terrainData.averageMapDepth;
         heightMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
         terrainMapGenerator.createWater = terrainData.createWater;

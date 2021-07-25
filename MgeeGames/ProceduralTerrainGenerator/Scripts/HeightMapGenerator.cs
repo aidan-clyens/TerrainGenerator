@@ -28,6 +28,7 @@ public class HeightMapSettings {
 }
 
 public class HeightMapGenerator : MonoBehaviour {
+    public float averageMapDepth;
     public List<HeightMapSettings> heightMapSettingsList;
 
     const int maxWidth = 256;
@@ -50,29 +51,26 @@ public class HeightMapGenerator : MonoBehaviour {
         }
 
         // Add each height map layer together
-        float combinedAverageHeightSum = 0f;
+        float totalMapDepth = 0f;
         foreach (HeightMapSettings settings in heightMapSettingsList) {
             float[,] layer = CreateHeightMapLayer(settings, seed, mapWidth, offsetX, offsetY);
-        
-            float heightSum = 0f;
+            totalMapDepth += settings.mapDepth;
+
             // Determine map depth
             for (int z = 0; z < mapWidth; z++) {
                 for (int x = 0; x < mapWidth; x++) {
                     heightMap[x, z] += layer[x, z];
-                    heightSum += heightMap[x, z];
                 }
             }
-
-            float averageHeight = heightSum / (mapWidth * mapWidth);
-            combinedAverageHeightSum += averageHeight;
         }
 
-        float combinedAverageHeight = combinedAverageHeightSum / heightMapSettingsList.Count;
+        float actualAverageMapDepth = totalMapDepth / heightMapSettingsList.Count;
+        float averageMapDepthDifference = Mathf.Abs(actualAverageMapDepth - averageMapDepth);
 
-        // Adjust average height
+        // Adjust map depth to obtain targeted average map depth
         for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
-                heightMap[x, z] -= combinedAverageHeight;
+                heightMap[x, z] -= averageMapDepthDifference;
             }
         }
 
