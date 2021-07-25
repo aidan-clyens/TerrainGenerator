@@ -42,6 +42,8 @@ public class HeightMapGenerator : MonoBehaviour {
     }
 
     public float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
+        Noise.CreateNewSimplexNoiseGenerator(seed);
+
         float[,] heightMap = new float[mapWidth, mapWidth];
         // Initialize height map values
         for (int z = 0; z < mapWidth; z++) {

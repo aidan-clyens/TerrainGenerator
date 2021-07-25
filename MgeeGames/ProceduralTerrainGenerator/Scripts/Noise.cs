@@ -11,6 +11,17 @@ public class Noise {
 
     static SimplexNoiseGenerator simplexNoiseGenerator = new SimplexNoiseGenerator();
 
+    public static void CreateNewSimplexNoiseGenerator(int seed) {
+        int[] seedArray = new int[8];
+        System.Random rand = new System.Random(seed);
+
+        for (int i = 0; i < 8; i++) {
+            seedArray[i] = rand.Next();
+        }
+
+        simplexNoiseGenerator = new SimplexNoiseGenerator(seedArray);
+    }
+
     public static float[,] GenerateNoiseMap(NoiseType noiseType, int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
         float[,] noiseMap = new float[width, height];
 
