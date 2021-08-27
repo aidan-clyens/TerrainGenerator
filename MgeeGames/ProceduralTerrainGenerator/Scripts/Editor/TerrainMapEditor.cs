@@ -107,18 +107,7 @@ public class TerrainMapEditor : Editor {
         terrainData.terrainColourGradient = terrainMapGenerator.terrainColourGradient;
         terrainData.terrainMaterial = terrainMapGenerator.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator.waterMaterial;
-        terrainData.useHydraulicErosion = hydraulicErosion.useHydraulicErosion;
-        terrainData.iterations = hydraulicErosion.iterations;
-        terrainData.gravity = hydraulicErosion.gravity;
-        terrainData.inertia = hydraulicErosion.inertia;
-        terrainData.capacityFactor = hydraulicErosion.capacityFactor;
-        terrainData.minSlope = hydraulicErosion.minSlope;
-        terrainData.erosionFactor = hydraulicErosion.erosionFactor;
-        terrainData.depositionRadius = hydraulicErosion.depositionRadius;
-        terrainData.depositionFactor = hydraulicErosion.depositionFactor;
-        terrainData.erosionRadius = hydraulicErosion.erosionRadius;
-        terrainData.evaporationFactor = hydraulicErosion.evaporationFactor;
-        terrainData.dropletLifetime = hydraulicErosion.dropletLifetime;
+        terrainData.hydraulicErosionSettings = hydraulicErosion.settings;
         terrainData.forestGeneratorSettings = forestGenerator.settings;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
@@ -153,18 +142,7 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.terrainColourGradient = terrainData.terrainColourGradient;
         terrainMapGenerator.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator.waterMaterial = terrainData.waterMaterial;
-        hydraulicErosion.useHydraulicErosion = terrainData.useHydraulicErosion;
-        hydraulicErosion.iterations = terrainData.iterations;
-        hydraulicErosion.gravity = terrainData.gravity;
-        hydraulicErosion.inertia = terrainData.inertia;
-        hydraulicErosion.capacityFactor = terrainData.capacityFactor;
-        hydraulicErosion.minSlope = terrainData.minSlope;
-        hydraulicErosion.erosionFactor = terrainData.erosionFactor;
-        hydraulicErosion.depositionRadius = terrainData.depositionRadius;
-        hydraulicErosion.depositionFactor = terrainData.depositionFactor;
-        hydraulicErosion.erosionRadius = terrainData.erosionRadius;
-        hydraulicErosion.evaporationFactor = terrainData.evaporationFactor;
-        hydraulicErosion.dropletLifetime = terrainData.dropletLifetime;
+        hydraulicErosion.settings = terrainData.hydraulicErosionSettings;
         forestGenerator.settings = terrainData.forestGeneratorSettings;
 
         EditorUtility.SetDirty(terrainMapGenerator);

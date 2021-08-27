@@ -25,17 +25,7 @@ class TerrainData {
     public Material waterMaterial;
 
     // Hydraulic Erosion Data
-    public int iterations;
-    public float gravity;
-    public float inertia;
-    public float capacityFactor;
-    public float minSlope;
-    public float depositionRadius;
-    public float depositionFactor;
-    public float erosionRadius;
-    public float erosionFactor;
-    public float evaporationFactor;
-    public int dropletLifetime;
+    public HydraulicErosionSettings hydraulicErosionSettings;
 
     // Forest Generator Settings
     public ForestGeneratorSettings forestGeneratorSettings;

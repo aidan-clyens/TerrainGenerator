@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HydraulicErosion : MonoBehaviour {
+[System.Serializable]
+public class HydraulicErosionSettings {
     public bool useHydraulicErosion;
 
     public int iterations = 50000;
@@ -20,6 +21,10 @@ public class HydraulicErosion : MonoBehaviour {
     public float erosionRadius = 5f;
     public float depositionRadius = 5f;
     public int dropletLifetime = 30;
+}
+
+public class HydraulicErosion : MonoBehaviour {
+    public HydraulicErosionSettings settings;
 
     ErosionInfo erosionInfo;
     ErosionBrush erosionBrush;
@@ -35,7 +40,7 @@ public class HydraulicErosion : MonoBehaviour {
         erosionBrush = InitializeErosionBrush(heightMap);
         depositionBrush = InitializeDepositionBrush(heightMap);
 
-        for (int i = 0; i < iterations; i++) {
+        for (int i = 0; i < settings.iterations; i++) {
             Droplet droplet = new Droplet(heightMap, erosionInfo, erosionBrush, depositionBrush);       
             droplet.Update();
         }
@@ -52,8 +57,8 @@ public class HydraulicErosion : MonoBehaviour {
         Vector2 position = new Vector2();
         Vector2 v = new Vector2();
 
-        float[] xOffsets = new float[(int)erosionRadius * (int)erosionRadius * 4];
-        float[] yOffsets = new float[(int)erosionRadius * (int)erosionRadius * 4];
+        float[] xOffsets = new float[(int)settings.erosionRadius * (int)settings.erosionRadius * 4];
+        float[] yOffsets = new float[(int)settings.erosionRadius * (int)settings.erosionRadius * 4];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -66,9 +71,9 @@ public class HydraulicErosion : MonoBehaviour {
 
                 float weightSum = 0f;
                 int numVertices = 0;
-                for (int i = -(int)erosionRadius; i <= erosionRadius; i++) {
+                for (int i = -(int)settings.erosionRadius; i <= settings.erosionRadius; i++) {
                     int xCoord = x + i;
-                    for (int j = -(int)erosionRadius; j <= erosionRadius; j++) {
+                    for (int j = -(int)settings.erosionRadius; j <= settings.erosionRadius; j++) {
                         int yCoord = y + j;
 
                         v.x = xCoord;
@@ -76,8 +81,8 @@ public class HydraulicErosion : MonoBehaviour {
 
                         if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height) continue;
                         
-                        if ((v - position).magnitude <= erosionRadius) {
-                            weightSum += Mathf.Max(0f, erosionRadius - (v - position).magnitude);
+                        if ((v - position).magnitude <= settings.erosionRadius) {
+                            weightSum += Mathf.Max(0f, settings.erosionRadius - (v - position).magnitude);
                             numVertices++;
 
                             xOffsets[index] = i;
@@ -95,7 +100,7 @@ public class HydraulicErosion : MonoBehaviour {
                     v.x = x + xOffsets[n];
                     v.y = y + yOffsets[n];
                 
-                    float weight = Mathf.Max(0, erosionRadius - (v - position).magnitude) / weightSum;
+                    float weight = Mathf.Max(0, settings.erosionRadius - (v - position).magnitude) / weightSum;
                     erosionBrush.erosionBrushVertices[y * width + x][n] = v.y * width + v.x;
                     erosionBrush.erosionBrushWeights[y * width + x][n] = weight;
                 }
@@ -114,8 +119,8 @@ public class HydraulicErosion : MonoBehaviour {
         Vector2 position = new Vector2();
         Vector2 v = new Vector2();
 
-        float[] xOffsets = new float[(int)depositionRadius * (int)depositionRadius * 4];
-        float[] yOffsets = new float[(int)depositionRadius * (int)depositionRadius * 4];
+        float[] xOffsets = new float[(int)settings.depositionRadius * (int)settings.depositionRadius * 4];
+        float[] yOffsets = new float[(int)settings.depositionRadius * (int)settings.depositionRadius * 4];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -128,9 +133,9 @@ public class HydraulicErosion : MonoBehaviour {
 
                 float weightSum = 0f;
                 int numVertices = 0;
-                for (int i = -(int)depositionRadius; i <= depositionRadius; i++) {
+                for (int i = -(int)settings.depositionRadius; i <= settings.depositionRadius; i++) {
                     int xCoord = x + i;
-                    for (int j = -(int)depositionRadius; j <= depositionRadius; j++) {
+                    for (int j = -(int)settings.depositionRadius; j <= settings.depositionRadius; j++) {
                         int yCoord = y + j;
 
                         v.x = xCoord;
@@ -138,8 +143,8 @@ public class HydraulicErosion : MonoBehaviour {
 
                         if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height) continue;
                         
-                        if ((v - position).magnitude <= depositionRadius) {
-                            weightSum += Mathf.Max(0f, depositionRadius - (v - position).magnitude);
+                        if ((v - position).magnitude <= settings.depositionRadius) {
+                            weightSum += Mathf.Max(0f, settings.depositionRadius - (v - position).magnitude);
                             numVertices++;
 
                             xOffsets[index] = i;
@@ -157,7 +162,7 @@ public class HydraulicErosion : MonoBehaviour {
                     v.x = x + xOffsets[n];
                     v.y = y + yOffsets[n];
                 
-                    float weight = Mathf.Max(0, depositionRadius - (v - position).magnitude) / weightSum;
+                    float weight = Mathf.Max(0, settings.depositionRadius - (v - position).magnitude) / weightSum;
                     depositionBrush.depositionBrushVertices[y * width + x][n] = v.y * width + v.x;
                     depositionBrush.depositionBrushWeights[y * width + x][n] = weight;
                 }
@@ -170,15 +175,15 @@ public class HydraulicErosion : MonoBehaviour {
     ErosionInfo InitializeErosionInfo() {
         ErosionInfo erosionInfo;
 
-        erosionInfo.inertia = inertia;
-        erosionInfo.gravity = gravity;
-        erosionInfo.minSlope = minSlope;
-        erosionInfo.capacityFactor = capacityFactor;
-        erosionInfo.depositionFactor = depositionFactor;
-        erosionInfo.erosionFactor = erosionFactor;
-        erosionInfo.evaporationFactor = evaporationFactor;
-        erosionInfo.erosionRadius = erosionRadius;
-        erosionInfo.dropletLifetime = dropletLifetime;
+        erosionInfo.inertia = settings.inertia;
+        erosionInfo.gravity = settings.gravity;
+        erosionInfo.minSlope = settings.minSlope;
+        erosionInfo.capacityFactor = settings.capacityFactor;
+        erosionInfo.depositionFactor = settings.depositionFactor;
+        erosionInfo.erosionFactor = settings.erosionFactor;
+        erosionInfo.evaporationFactor = settings.evaporationFactor;
+        erosionInfo.erosionRadius = settings.erosionRadius;
+        erosionInfo.dropletLifetime = settings.dropletLifetime;
         erosionInfo.rng = rng;
 
         return erosionInfo;
