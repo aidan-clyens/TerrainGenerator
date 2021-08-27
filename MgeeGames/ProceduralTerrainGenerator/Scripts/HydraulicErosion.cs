@@ -24,6 +24,7 @@ public class HydraulicErosionSettings {
 }
 
 public class HydraulicErosion : MonoBehaviour {
+    [HideInInspector]
     public HydraulicErosionSettings settings;
 
     ErosionInfo erosionInfo;

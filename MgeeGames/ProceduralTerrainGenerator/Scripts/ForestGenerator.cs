@@ -11,6 +11,7 @@ public class ForestGeneratorSettings {
 }
 
 public class ForestGenerator : MonoBehaviour {
+    [HideInInspector]
     public ForestGeneratorSettings settings;
 
     List<GameObject> trees = new List<GameObject>();

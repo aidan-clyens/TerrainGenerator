@@ -20,13 +20,26 @@ public class TerrainMapGenerator : MonoBehaviour {
     public bool createForest;
     public bool createWater;
 
+    [Header("Height Map Settings")]
+    public float averageMapDepth;
+    public List<HeightMapSettings> heightMapSettingsList;
+
+    [Header("Hydraulic Erosion Settings")]
+    public HydraulicErosionSettings hydraulicErosionSettings;
+
+    [Header("Forest Settings")]
+    public ForestGeneratorSettings forestGeneratorSettings;
+
     [Header("Water Settings")]
     public Material waterMaterial;
     public float waterLevel;
     public float waveSpeed;
     public float waveStrength;
 
+    HeightMapGenerator heightMapGenerator;
     ForestGenerator forestGenerator;
+    HydraulicErosion hydraulicErosion;
+
 
     Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
@@ -52,16 +65,37 @@ public class TerrainMapGenerator : MonoBehaviour {
             }
         }
 
-        GetComponent<ForestGenerator>().Init(trees, viewer, objectViewRange);
+        forestGenerator.Init(trees, viewer, objectViewRange);
     }
 
     void OnValidate() {
+        // Get components
+        if (heightMapGenerator == null) {
+            heightMapGenerator = GetComponent<HeightMapGenerator>();
+        }
+
+        if (forestGenerator == null) {
+            forestGenerator = GetComponent<ForestGenerator>();
+        }
+
+        if (hydraulicErosion == null) {
+            hydraulicErosion = GetComponent<HydraulicErosion>();
+        }
+
         // Round map width to nearest power of 2
         chunkWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(chunkWidth) / Mathf.Log(2)));
         // Round chunk grid width to nearest odd number >= 1
         if (chunkGridWidth % 2 == 0) {
             chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
         }
+
+        // Update component settings
+        heightMapGenerator.averageMapDepth = averageMapDepth;
+        heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
+    
+        forestGenerator.settings = forestGeneratorSettings;
+
+        hydraulicErosion.settings = hydraulicErosionSettings;
     }
 
     void Update() {
@@ -110,6 +144,21 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
+    public void Randomize() {
+        seed = Random.Range(0, 1000);
+        waterLevel = Random.Range(0, 30);
+
+        heightMapSettingsList.Clear();
+
+        int numLayers = Random.Range(1, 4);
+        for (int i = 0; i < numLayers; i++) {
+            HeightMapSettings settings = new HeightMapSettings();
+            settings.Randomize();
+
+            heightMapSettingsList.Add(settings);
+        }
+    }
+
     void CreateChunkGrid(bool loadAllObjects) {
         int w = (int)Mathf.Round(chunkGridWidth / 2);
         for (int x = -w; x <= w; x++) {
@@ -131,7 +180,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         int mapOffsetX = (int)(position.x * (chunkWidth - 1)) + seed;
         int mapOffsetY = (int)(position.y * (chunkWidth - 1)) + seed;
 
-        HeightMapGenerator heightMapGenerator = GetComponent<HeightMapGenerator>();
         float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, chunkWidth, mapOffsetX, mapOffsetY);
 
         GameObject chunkGameObject = new GameObject("TerrainChunk");
@@ -176,7 +224,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals, bool loadAllObjects) {
-        forestGenerator = GetComponent<ForestGenerator>();
         if (viewer != null) {
             forestGenerator.Init(viewer, objectViewRange);
         }

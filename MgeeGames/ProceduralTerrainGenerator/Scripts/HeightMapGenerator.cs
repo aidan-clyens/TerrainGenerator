@@ -28,7 +28,9 @@ public class HeightMapSettings {
 }
 
 public class HeightMapGenerator : MonoBehaviour {
+    [HideInInspector]
     public float averageMapDepth;
+    [HideInInspector]
     public List<HeightMapSettings> heightMapSettingsList;
 
     const int maxWidth = 256;
@@ -77,18 +79,6 @@ public class HeightMapGenerator : MonoBehaviour {
         }
 
         return heightMap;
-    }
-
-    public void Randomize() {
-        heightMapSettingsList.Clear();
-
-        int numLayers = Random.Range(1, 4);
-        for (int i = 0; i < numLayers; i++) {
-            HeightMapSettings settings = new HeightMapSettings();
-            settings.Randomize();
-
-            heightMapSettingsList.Add(settings);
-        }
     }
 
     float[,] CreateHeightMapLayer(HeightMapSettings settings, int seed, int mapWidth, int offsetX, int offsetY) {

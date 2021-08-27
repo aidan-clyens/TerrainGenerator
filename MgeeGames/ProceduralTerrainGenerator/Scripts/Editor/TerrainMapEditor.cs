@@ -69,10 +69,7 @@ public class TerrainMapEditor : Editor {
     }
 
     void Randomize() {
-        terrainMapGenerator.seed = Random.Range(0, 1000);
-        terrainMapGenerator.waterLevel = Random.Range(0, 30);
-
-        heightMapGenerator.Randomize();
+        terrainMapGenerator.Randomize();
 
         EditorUtility.SetDirty(terrainMapGenerator);
         EditorUtility.SetDirty(heightMapGenerator);
@@ -99,16 +96,16 @@ public class TerrainMapEditor : Editor {
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
         terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
         terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
-        terrainData.averageMapDepth = heightMapGenerator.averageMapDepth;
-        terrainData.heightMapSettingsList = heightMapGenerator.heightMapSettingsList;
+        terrainData.averageMapDepth = terrainMapGenerator.averageMapDepth;
+        terrainData.heightMapSettingsList = terrainMapGenerator.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
         terrainData.createWater = terrainMapGenerator.createWater;
         terrainData.createForest = terrainMapGenerator.createForest;
         terrainData.terrainColourGradient = terrainMapGenerator.terrainColourGradient;
         terrainData.terrainMaterial = terrainMapGenerator.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator.waterMaterial;
-        terrainData.hydraulicErosionSettings = hydraulicErosion.settings;
-        terrainData.forestGeneratorSettings = forestGenerator.settings;
+        terrainData.hydraulicErosionSettings = terrainMapGenerator.hydraulicErosionSettings;
+        terrainData.forestGeneratorSettings = terrainMapGenerator.forestGeneratorSettings;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
         string directory = Application.persistentDataPath + "/worlds"; 
@@ -134,16 +131,16 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
         terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
         terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
-        heightMapGenerator.averageMapDepth = terrainData.averageMapDepth;
-        heightMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
+        terrainMapGenerator.averageMapDepth = terrainData.averageMapDepth;
+        terrainMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
         terrainMapGenerator.createWater = terrainData.createWater;
         terrainMapGenerator.createForest = terrainData.createForest;
         terrainMapGenerator.terrainColourGradient = terrainData.terrainColourGradient;
         terrainMapGenerator.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator.waterMaterial = terrainData.waterMaterial;
-        hydraulicErosion.settings = terrainData.hydraulicErosionSettings;
-        forestGenerator.settings = terrainData.forestGeneratorSettings;
+        terrainMapGenerator.hydraulicErosionSettings = terrainData.hydraulicErosionSettings;
+        terrainMapGenerator.forestGeneratorSettings = terrainData.forestGeneratorSettings;
 
         EditorUtility.SetDirty(terrainMapGenerator);
         EditorUtility.SetDirty(heightMapGenerator);
