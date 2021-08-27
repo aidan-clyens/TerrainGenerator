@@ -119,10 +119,7 @@ public class TerrainMapEditor : Editor {
         terrainData.erosionRadius = hydraulicErosion.erosionRadius;
         terrainData.evaporationFactor = hydraulicErosion.evaporationFactor;
         terrainData.dropletLifetime = hydraulicErosion.dropletLifetime;
-        terrainData.treePrefabs = forestGenerator.treePrefabs;
-        terrainData.density = forestGenerator.density;
-        terrainData.slopeThreshold = forestGenerator.slopeThreshold;
-        terrainData.verticalOffset = forestGenerator.verticalOffset;
+        terrainData.forestGeneratorSettings = forestGenerator.settings;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
         string directory = Application.persistentDataPath + "/worlds"; 
@@ -168,10 +165,7 @@ public class TerrainMapEditor : Editor {
         hydraulicErosion.erosionRadius = terrainData.erosionRadius;
         hydraulicErosion.evaporationFactor = terrainData.evaporationFactor;
         hydraulicErosion.dropletLifetime = terrainData.dropletLifetime;
-        forestGenerator.treePrefabs = terrainData.treePrefabs;
-        forestGenerator.density = terrainData.density;
-        forestGenerator.slopeThreshold = terrainData.slopeThreshold;
-        forestGenerator.verticalOffset = terrainData.verticalOffset;
+        forestGenerator.settings = terrainData.forestGeneratorSettings;
 
         EditorUtility.SetDirty(terrainMapGenerator);
         EditorUtility.SetDirty(heightMapGenerator);

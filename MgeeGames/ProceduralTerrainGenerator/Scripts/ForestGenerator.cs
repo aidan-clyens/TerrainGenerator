@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ForestGenerator : MonoBehaviour {
-
+[System.Serializable]
+public class ForestGeneratorSettings {
     public List<GameObject> treePrefabs = new List<GameObject>();
     public float density;
     public float slopeThreshold;
     public float verticalOffset;
+}
+
+public class ForestGenerator : MonoBehaviour {
+    public ForestGeneratorSettings settings;
 
     List<GameObject> trees = new List<GameObject>();
 
@@ -60,13 +64,13 @@ public class ForestGenerator : MonoBehaviour {
         }
         
         // Calculate number of trees based on area and density
-        int numTrees = (int)((areaAboveWater / 100f) * density);
+        int numTrees = (int)((areaAboveWater / 100f) * settings.density);
 
         rng = new System.Random(seed);
 
         GameObject forestGameObject = new GameObject("Forest");
 
-        if (treePrefabs.Count == 0) {
+        if (settings.treePrefabs.Count == 0) {
             return forestGameObject; 
         }
 
@@ -76,7 +80,7 @@ public class ForestGenerator : MonoBehaviour {
         while (trees.Count < numTrees) {
             int x = rng.Next(0, width - 1);
             int z = rng.Next(0, height - 1);
-            float y = heightMap[x, z] + verticalOffset;
+            float y = heightMap[x, z] + settings.verticalOffset;
 
             Vector3 normal = normals[(int)(z*width + x)];
             float angle = Vector3.Angle(normal, new Vector3(0, 1, 0));
@@ -84,9 +88,9 @@ public class ForestGenerator : MonoBehaviour {
             x = (int)topLeftX + x;
             z = (int)topLeftZ - z;
 
-            if (y > waterLevel + 5 && angle < slopeThreshold) {
+            if (y > waterLevel + 5 && angle < settings.slopeThreshold) {
                 Vector3 position = new Vector3(x, y, z);
-                GameObject treePrefab = treePrefabs[rng.Next(0, treePrefabs.Count)];
+                GameObject treePrefab = settings.treePrefabs[rng.Next(0, settings.treePrefabs.Count)];
                 GameObject tree = Instantiate(treePrefab, position, Quaternion.identity, forestGameObject.transform);
 
                 float scale = (float)rng.NextDouble() + 1f;

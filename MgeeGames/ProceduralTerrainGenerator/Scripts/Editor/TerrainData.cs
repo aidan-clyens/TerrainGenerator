@@ -38,8 +38,5 @@ class TerrainData {
     public int dropletLifetime;
 
     // Forest Generator Settings
-    public List<GameObject> treePrefabs = new List<GameObject>();
-    public float density;
-    public float slopeThreshold;
-    public float verticalOffset;
+    public ForestGeneratorSettings forestGeneratorSettings;
 }
