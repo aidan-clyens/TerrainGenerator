@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
+    [Space(10)]
     public int seed;
     [Range (16, 1024)]
     public int chunkWidth;
@@ -15,22 +16,27 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float objectViewRange;
 
     [Header("Terrain Settings")]
+    [Space(10)]
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public bool createForest;
     public bool createWater;
 
     [Header("Height Map Settings")]
+    [Space(10)]
     public float averageMapDepth;
     public List<HeightMapSettings> heightMapSettingsList;
 
     [Header("Hydraulic Erosion Settings")]
+    [Space(10)]
     public HydraulicErosionSettings hydraulicErosionSettings;
 
     [Header("Forest Settings")]
+    [Space(10)]
     public ForestGeneratorSettings forestGeneratorSettings;
 
     [Header("Water Settings")]
+    [Space(10)]
     public Material waterMaterial;
     public float waterLevel;
     public float waveSpeed;
