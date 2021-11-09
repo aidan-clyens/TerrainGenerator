@@ -1,10 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System;
 using UnityEngine;
 
 public static class MeshGenerator {
 
-    public static MeshData Generate(float[,] heightMap, Gradient gradient=null) {
+    public static void RequestMeshData(Vector2 position, float[,] heightMap, Action<Vector2, MeshData> callback, Gradient gradient=null) {
+        ThreadStart threadStart = delegate {
+            MeshDataThread(position, heightMap, callback, gradient);
+        };
+
+        new Thread(threadStart).Start();
+    }
+
+    static void MeshDataThread(Vector2 position, float[,] heightMap, Action<Vector2, MeshData> callback, Gradient gradient=null) {
+        MeshData meshData = Generate(heightMap, gradient);
+
+        callback(position, meshData);
+    }
+
+    static MeshData Generate(float[,] heightMap, Gradient gradient=null) {
         int meshWidth = heightMap.GetLength(0);
         int meshHeight = heightMap.GetLength(1);
 
@@ -57,6 +73,17 @@ public static class MeshGenerator {
         }
 
         return meshData;
+    }
+}
+
+
+public class MeshDataThreadInfo {
+    public Vector2 position;
+    public MeshData meshData;
+
+    public MeshDataThreadInfo(Vector2 position, MeshData meshData) {
+        this.position = position;
+        this.meshData = meshData;
     }
 }
 

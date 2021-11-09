@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -14,16 +16,16 @@ public class HeightMapSettings {
     public bool useFalloff;
 
     public HeightMapSettings() {
-        noiseType = NoiseType.Simplex;
+        noiseType = NoiseType.Perlin;
     }
 
     public void Randomize() {
-        noiseScale = Random.Range(1f, 5f);
-        noiseOctaves = Random.Range(1, 6);
-        persistence = Random.Range(0.1f, 0.5f);
-        lacunarity = Random.Range(1f, 2f);
-        noiseRedistributionFactor = Random.Range(1f, 3f);
-        mapDepth = Random.Range(30, 100);
+        noiseScale = UnityEngine.Random.Range(1f, 5f);
+        noiseOctaves = UnityEngine.Random.Range(1, 6);
+        persistence = UnityEngine.Random.Range(0.1f, 0.5f);
+        lacunarity = UnityEngine.Random.Range(1f, 2f);
+        noiseRedistributionFactor = UnityEngine.Random.Range(1f, 3f);
+        mapDepth = UnityEngine.Random.Range(30, 100);
     }
 }
 
@@ -33,17 +35,44 @@ public class HeightMapGenerator : MonoBehaviour {
     [HideInInspector]
     public List<HeightMapSettings> heightMapSettingsList;
 
+    HydraulicErosion hydraulicErosion;
+
     const int maxWidth = 256;
 
     float biomeNoiseScale;
     float biomeDepth;
+
+    Queue<HeightMapThreadInfo> heightMapDataThreadInfoQueue = new Queue<HeightMapThreadInfo>();
 
     void Start() {
         heightMapSettingsList = new List<HeightMapSettings>();
         heightMapSettingsList.Add(new HeightMapSettings());
     }
 
-    public float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
+    void OnValidate() {
+        if (hydraulicErosion == null) {
+            hydraulicErosion = GetComponent<HydraulicErosion>();
+        }
+    }
+
+    public void RequestHeightMapData(int seed, int mapWidth, Vector2 position, Action<Vector2, float[,]> callback) {
+        ThreadStart threadStart = delegate {
+            HeightMapDataThread(seed, mapWidth, position, callback);
+        };
+
+        new Thread(threadStart).Start();
+    }
+
+    void HeightMapDataThread(int seed, int mapWidth, Vector2 position, Action<Vector2, float[,]> callback) {
+        int mapOffsetX = (int)(position.x * (mapWidth - 1)) + seed;
+        int mapOffsetY = (int)(position.y * (mapWidth - 1)) + seed;
+
+        float[,] heightMap = CreateHeightMap(seed, mapWidth, mapOffsetX, mapOffsetY);
+
+        callback(position, heightMap);
+    }
+
+    float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
         Noise.CreateNewSimplexNoiseGenerator(seed);
 
         float[,] heightMap = new float[mapWidth, mapWidth];
@@ -101,9 +130,8 @@ public class HeightMapGenerator : MonoBehaviour {
             falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
         }
 
-        bool useHydraulicErosion = GetComponent<HydraulicErosion>().settings.useHydraulicErosion;
+        bool useHydraulicErosion = hydraulicErosion.settings.useHydraulicErosion;
         if (useHydraulicErosion && settings.mapDepth > 0) {
-            HydraulicErosion hydraulicErosion = GetComponent<HydraulicErosion>();
             noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
         }
 
@@ -126,5 +154,16 @@ public class HeightMapGenerator : MonoBehaviour {
         }
 
         return heightMap;
+    }
+}
+
+
+public class HeightMapThreadInfo {
+    public Vector2 position;
+    public float[,] heightMap;
+
+    public HeightMapThreadInfo(Vector2 position, float[,] heightMap) {
+        this.position = position;
+        this.heightMap = heightMap;
     }
 }
