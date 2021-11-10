@@ -132,14 +132,16 @@ public class TerrainMapGenerator : MonoBehaviour {
             for (int i = 0; i < meshDataThreadInfoQueue.Count; i++) {
                 MeshDataThreadInfo info = meshDataThreadInfoQueue.Dequeue();
 
-                GameObject chunk = CreateTerrainChunk(info.position, info.meshData);
-                if (terrainChunks.ContainsKey(info.position)) {
-                    DestroyImmediate(terrainChunks[info.position], true);
-                    terrainChunks[info.position] = chunk;
+                GameObject chunk;
+                if (info.type == MeshType.Water) {
+                    chunk = CreateWater(info.position, info.meshData);
                 }
                 else {
-                    terrainChunks.Add(info.position, chunk);
+                    chunk = CreateTerrainChunk(info.position, info.meshData);   
                 }
+
+                chunk.transform.parent = terrainChunks[info.position].transform;
+                chunk.transform.localPosition = new Vector3(0f, 0f, chunk.transform.position.z);
             }
         }
 
@@ -214,6 +216,20 @@ public class TerrainMapGenerator : MonoBehaviour {
         for (int x = -w; x <= w; x++) {
             for (int y = -w; y <= w; y++) {
                 Vector2 pos = new Vector2(centerPosition.x + x, centerPosition.y + y);
+                GameObject chunk = new GameObject("TerrainChunk");
+
+                chunk.isStatic = true;
+                chunk.transform.parent = transform;
+                chunk.transform.position = new Vector3(pos.x * (chunkWidth - 1), 0f, -pos.y * (chunkWidth - 1));
+
+                if (terrainChunks.ContainsKey(pos)) {
+                    DestroyImmediate(terrainChunks[pos], true);
+                    terrainChunks[pos] = chunk;
+                }
+                else {
+                    terrainChunks.Add(pos, chunk);
+                }
+
                 RequestTerrainChunk(pos, loadAllObjects);
             }
         }
@@ -221,6 +237,18 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     void RequestTerrainChunk(Vector2 position, bool loadAllObjects) {
         heightMapGenerator.RequestHeightMapData(seed, chunkWidth, position, OnHeightMapDataReceived);
+
+        if (createWater) {
+            float[,] heightMap = new float[chunkWidth, chunkWidth];
+
+            for (int z = 0; z < chunkWidth; z++) {
+                for (int x = 0; x < chunkWidth; x++) {
+                    heightMap[x, z] = waterLevel;
+                }
+            }
+
+            MeshGenerator.RequestMeshData(position, heightMap, OnWaterMeshDataReceived);
+        }
     }
 
     // GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {
@@ -252,24 +280,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     //     return chunkGameObject;
     // }
 
-    // GameObject CreateTerrain(float[,] heightMap) {
-    //     GameObject terrainGameObject = new GameObject("Terrain");
-    //     terrainGameObject.AddComponent<MeshFilter>();
-    //     terrainGameObject.AddComponent<MeshRenderer>();
-    //     terrainGameObject.AddComponent<MeshCollider>();
-
-    //     MeshData meshData = MeshGenerator.Generate(heightMap, terrainColourGradient);
-    //     Mesh mesh = meshData.CreateMesh();
-
-    //     terrainGameObject.GetComponent<MeshRenderer>().material = terrainMaterial;
-    //     terrainGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
-    //     terrainGameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
-    
-    //     terrainGameObject.isStatic = true;
-
-    //     return terrainGameObject;
-    // }
-
     GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals, bool loadAllObjects) {
         if (viewer != null) {
             forestGenerator.Init(viewer, objectViewRange);
@@ -294,14 +304,18 @@ public class TerrainMapGenerator : MonoBehaviour {
 
     void OnTerrainMeshDataReceived(Vector2 position, MeshData meshData) {
         lock (meshDataThreadInfoQueue) {
-            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, meshData));
+            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, meshData, MeshType.Terrain));
+        }
+    }
+
+    void OnWaterMeshDataReceived(Vector2 position, MeshData meshData) {
+        lock (meshDataThreadInfoQueue) {
+            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, meshData, MeshType.Water));
         }
     }
 
     GameObject CreateTerrainChunk(Vector2 position, MeshData meshData) {
         Mesh mesh = meshData.CreateMesh();
-
-        GameObject chunkGameObject = new GameObject("TerrainChunk");
 
         GameObject terrainGameObject = new GameObject("Terrain");
         terrainGameObject.AddComponent<MeshFilter>();
@@ -314,23 +328,11 @@ public class TerrainMapGenerator : MonoBehaviour {
     
         terrainGameObject.isStatic = true;
 
-        terrainGameObject.transform.parent = chunkGameObject.transform;
-
-        chunkGameObject.isStatic = true;
-        chunkGameObject.transform.position = new Vector3(position.x * (chunkWidth - 1), 0f, -position.y * (chunkWidth - 1));
-        chunkGameObject.transform.parent = transform;
-
-        return chunkGameObject;
+        return terrainGameObject;
     }
 
-    GameObject CreateWater(Vector2 position, MeshData meshData, float offset) {
-        float[,] heightMap = new float[chunkWidth, chunkWidth];
-
-        for (int z = 0; z < chunkWidth; z++) {
-            for (int x = 0; x < chunkWidth; x++) {
-                heightMap[x, z] = waterLevel;
-            }
-        }
+    GameObject CreateWater(Vector2 position, MeshData meshData) {
+        float offset = position.x * (chunkWidth - 1);
 
         Mesh mesh = meshData.CreateMesh();
 

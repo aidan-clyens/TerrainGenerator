@@ -4,6 +4,12 @@ using System.Threading;
 using System;
 using UnityEngine;
 
+
+public enum MeshType {
+    Terrain,
+    Water
+}
+
 public static class MeshGenerator {
 
     public static void RequestMeshData(Vector2 position, float[,] heightMap, Action<Vector2, MeshData> callback, Gradient gradient=null) {
@@ -80,10 +86,12 @@ public static class MeshGenerator {
 public class MeshDataThreadInfo {
     public Vector2 position;
     public MeshData meshData;
+    public MeshType type;
 
-    public MeshDataThreadInfo(Vector2 position, MeshData meshData) {
+    public MeshDataThreadInfo(Vector2 position, MeshData meshData, MeshType type) {
         this.position = position;
         this.meshData = meshData;
+        this.type = type;
     }
 }
 
