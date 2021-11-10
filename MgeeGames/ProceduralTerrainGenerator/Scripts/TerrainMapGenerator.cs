@@ -137,7 +137,14 @@ public class TerrainMapGenerator : MonoBehaviour {
                     chunk = CreateWater(info.position, info.meshData);
                 }
                 else {
-                    chunk = CreateTerrainChunk(info.position, info.meshData);   
+                    chunk = CreateTerrainChunk(info.position, info.meshData);
+
+                    if (createForest) {
+                        Vector3[] normals = chunk.GetComponent<MeshFilter>().sharedMesh.normals;
+                        GameObject forestGameObject = CreateForest(info.heightMap, normals);
+                        forestGameObject.transform.parent = terrainChunks[info.position].transform;
+                        forestGameObject.transform.localPosition = new Vector3(0f, 0f, forestGameObject.transform.position.z);
+                    }
                 }
 
                 chunk.transform.parent = terrainChunks[info.position].transform;
@@ -251,45 +258,9 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    // GameObject CreateTerrainChunk(Vector2 position, bool loadAllObjects) {
-    //     int mapOffsetX = (int)(position.x * (chunkWidth - 1)) + seed;
-    //     int mapOffsetY = (int)(position.y * (chunkWidth - 1)) + seed;
-
-    //     float[,] heightMap = heightMapGenerator.CreateHeightMap(seed, chunkWidth, mapOffsetX, mapOffsetY);
-
-    //     GameObject chunkGameObject = new GameObject("TerrainChunk");
-    //     GameObject terrainGameObject = CreateTerrain(heightMap);
-    //     terrainGameObject.transform.parent = chunkGameObject.transform;
-
-    //     if (createWater) {
-    //         // Waves are in the X-direction, so add X offset
-    //         GameObject waterGameObject = CreateWater(position.x * (chunkWidth - 1));
-    //         waterGameObject.transform.parent = chunkGameObject.transform;
-    //     }
-
-    //     if (createForest) {
-    //         Vector3[] normals = terrainGameObject.GetComponent<MeshFilter>().sharedMesh.normals;
-    //         GameObject forestGameObject = CreateForest(heightMap, normals, loadAllObjects);
-    //         forestGameObject.transform.parent = chunkGameObject.transform;
-    //     }
-
-    //     chunkGameObject.isStatic = true;
-    //     chunkGameObject.transform.position = new Vector3(position.x * (chunkWidth - 1), 0f, -position.y * (chunkWidth - 1));
-    //     chunkGameObject.transform.parent = transform;
-
-    //     return chunkGameObject;
-    // }
-
-    GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals, bool loadAllObjects) {
-        if (viewer != null) {
-            forestGenerator.Init(viewer, objectViewRange);
-        }
-        else {
-            loadAllObjects = true;
-        }
-
+    GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals) {
         forestGenerator.Clear();
-        GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed, loadAllObjects);
+        GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
 
         forestGameObject.isStatic = true;
     
@@ -302,15 +273,15 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    void OnTerrainMeshDataReceived(Vector2 position, MeshData meshData) {
+    void OnTerrainMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
         lock (meshDataThreadInfoQueue) {
-            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, meshData, MeshType.Terrain));
+            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, heightMap, meshData, MeshType.Terrain));
         }
     }
 
-    void OnWaterMeshDataReceived(Vector2 position, MeshData meshData) {
+    void OnWaterMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
         lock (meshDataThreadInfoQueue) {
-            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, meshData, MeshType.Water));
+            meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, heightMap, meshData, MeshType.Water));
         }
     }
 

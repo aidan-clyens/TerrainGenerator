@@ -50,7 +50,7 @@ public class ForestGenerator : MonoBehaviour {
         }
     }
 
-    public GameObject Generate(float[,] heightMap, Vector3[] normals, float waterLevel, int seed, bool loadAllObjects) {
+    public GameObject Generate(float[,] heightMap, Vector3[] normals, float waterLevel, int seed) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
 
@@ -98,7 +98,6 @@ public class ForestGenerator : MonoBehaviour {
                 tree.transform.localScale = new Vector3(scale, scale, scale);
 
                 tree.isStatic = true;
-                tree.SetActive(loadAllObjects);
 
                 trees.Add(tree);
             }

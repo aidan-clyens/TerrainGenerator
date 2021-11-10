@@ -12,7 +12,7 @@ public enum MeshType {
 
 public static class MeshGenerator {
 
-    public static void RequestMeshData(Vector2 position, float[,] heightMap, Action<Vector2, MeshData> callback, Gradient gradient=null) {
+    public static void RequestMeshData(Vector2 position, float[,] heightMap, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
         ThreadStart threadStart = delegate {
             MeshDataThread(position, heightMap, callback, gradient);
         };
@@ -20,10 +20,10 @@ public static class MeshGenerator {
         new Thread(threadStart).Start();
     }
 
-    static void MeshDataThread(Vector2 position, float[,] heightMap, Action<Vector2, MeshData> callback, Gradient gradient=null) {
+    static void MeshDataThread(Vector2 position, float[,] heightMap, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
         MeshData meshData = Generate(heightMap, gradient);
 
-        callback(position, meshData);
+        callback(position, heightMap, meshData);
     }
 
     static MeshData Generate(float[,] heightMap, Gradient gradient=null) {
@@ -85,11 +85,13 @@ public static class MeshGenerator {
 
 public class MeshDataThreadInfo {
     public Vector2 position;
+    public float[,] heightMap;
     public MeshData meshData;
     public MeshType type;
 
-    public MeshDataThreadInfo(Vector2 position, MeshData meshData, MeshType type) {
+    public MeshDataThreadInfo(Vector2 position, float[,] heightMap, MeshData meshData, MeshType type) {
         this.position = position;
+        this.heightMap = heightMap;
         this.meshData = meshData;
         this.type = type;
     }
