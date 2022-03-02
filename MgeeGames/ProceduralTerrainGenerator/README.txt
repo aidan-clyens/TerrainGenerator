@@ -99,5 +99,9 @@ v1.2
 - Add OpenSimplex noise as well as Perlin noise for terrain generation
 - Add multiple layers of noise in Height Map Generator
 
+v1.2.1
+- Edited README
+- Do not allow chunk width of 0
+
 ## Author ##
 Aidan Clyens

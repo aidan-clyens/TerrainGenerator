@@ -5,10 +5,10 @@ using UnityEngine;
 public class TerrainMapGenerator : MonoBehaviour {
     [Header("Generator Settings")]
     public int seed;
-    [Range (0, 1024)]
+    [Range (16, 1024)]
     public int chunkWidth;
     public Vector2 centerPosition = new Vector2(0, 0);
-    [Range (0, 10)]
+    [Range (1, 10)]
     public int chunkGridWidth = 1;
     public GameObject viewer;
     public float chunkViewRange;

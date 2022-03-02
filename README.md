@@ -8,7 +8,7 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ## Getting Started
 ### Installing
 1. Create a new empty Unity 3D project.
-2. Clone into Unity project with `git clone git@github.com:aidan-clyens/TerrainGenerator.git` in the Assets folder.
+2. Clone into Unity project with `git clone https://github.com/aidan-clyens/TerrainGenerator.git` in the Assets folder.
 
 ### Setup Universal Render Pipeline (Optional but required to use sample materials and shaders)
 1. Install the Universal Render Pipeline and ShaderGraph to use sample materials and shaders.
@@ -52,6 +52,10 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 - Remove "Normalize Local" option and just normalize all terrain chunks globally
 - Add OpenSimplex noise as well as Perlin noise for terrain generation
 - Add multiple layers of noise in Height Map Generator
+
+### v1.2.1
+- Edited README
+- Do not allow chunk width of 0
 
 ## Credit
 - Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)
