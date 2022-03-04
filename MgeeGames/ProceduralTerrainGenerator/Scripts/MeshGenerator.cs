@@ -12,25 +12,28 @@ public enum MeshType {
 
 public static class MeshGenerator {
 
-    public static void RequestMeshData(Vector2 position, float[,] heightMap, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
+    public static void RequestMeshData(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
         ThreadStart threadStart = delegate {
-            MeshDataThread(position, heightMap, callback, gradient);
+            MeshDataThread(position, heightMap, levelOfDetail, callback, gradient);
         };
 
         new Thread(threadStart).Start();
     }
 
-    static void MeshDataThread(Vector2 position, float[,] heightMap, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
-        MeshData meshData = Generate(heightMap, gradient);
+    static void MeshDataThread(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
+        MeshData meshData = Generate(heightMap, levelOfDetail, gradient);
 
         callback(position, heightMap, meshData);
     }
 
-    static MeshData Generate(float[,] heightMap, Gradient gradient=null) {
+    static MeshData Generate(float[,] heightMap, int levelOfDetail, Gradient gradient=null) {
         int meshWidth = heightMap.GetLength(0);
         int meshHeight = heightMap.GetLength(1);
 
-        MeshData meshData = new MeshData(meshWidth, meshHeight);
+        int lod = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
+        int verticesPerLine = (meshWidth - 1) / lod + 1;
+
+        MeshData meshData = new MeshData(verticesPerLine, verticesPerLine);
 
         float minDepth = float.MaxValue;
         float maxDepth = float.MinValue;
@@ -39,15 +42,15 @@ public static class MeshGenerator {
         float topLeftZ = (meshHeight - 1) / 2f;
 
         int index = 0;
-        for (int z = 0; z < meshHeight; z++) {
-            for (int x = 0; x < meshWidth; x++) {
+        for (int z = 0; z < meshHeight; z += lod) {
+            for (int x = 0; x < meshWidth; x += lod) {
                 // Create vertex
                 meshData.vertices[index] = new Vector3(topLeftX + x, heightMap[x, z], topLeftZ - z);
 
                 // Create triangles
                 if (x < (meshWidth - 1) && z < (meshHeight - 1)) {
-                    meshData.CreateTriangle(index, index + meshWidth + 1, index + meshWidth);
-                    meshData.CreateTriangle(index + meshWidth + 1, index, index + 1);
+                    meshData.CreateTriangle(index, index + verticesPerLine + 1, index + verticesPerLine);
+                    meshData.CreateTriangle(index + verticesPerLine + 1, index, index + 1);
                 }
 
                 if (heightMap[x, z] < minDepth) {
@@ -67,8 +70,8 @@ public static class MeshGenerator {
 
         index = 0;
         if (gradient != null) {
-            for (int z = 0; z < meshHeight; z++) {
-                for (int x = 0; x < meshWidth; x++) {
+            for (int z = 0; z < verticesPerLine; z++) {
+                for (int x = 0; x < verticesPerLine; x++) {
                     // Set vertex colour
                     float y = Mathf.InverseLerp(minDepth, maxDepth, meshData.vertices[index].y);
                     meshData.colours[index] = gradient.Evaluate(y);
@@ -114,8 +117,8 @@ public class MeshData {
         meshWidth = width;
         meshHeight = height;
 
-        vertices = new Vector3[meshWidth * meshHeight];
-        triangles = new int[(meshWidth - 1) * (meshHeight - 1) * 6];
+        vertices = new Vector3[width * height];
+        triangles = new int[(width - 1) * (height - 1) * 6];
         colours = new Color[vertices.Length];
         uvs = new Vector2[vertices.Length];
     }

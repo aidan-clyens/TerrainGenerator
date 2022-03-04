@@ -4,11 +4,13 @@ using UnityEngine;
 
 [System.Serializable]
 class TerrainData {
+    public string version = "";
+
     public int seed;
 
     public Vector2 centerPosition;
     public int chunkGridWidth;
-    public int chunkWidth;
+    public int levelOfDetail;
 
     // Height Map Data
     public float averageMapDepth;
@@ -16,8 +18,6 @@ class TerrainData {
 
     // Terrain Settings
     public float waterLevel;
-    public bool useFalloff;
-    public bool useHydraulicErosion;
     public bool createWater;
     public bool createForest;
     public Gradient terrainColourGradient;

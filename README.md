@@ -24,16 +24,23 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 6. Saved terrains can be loading by selecting a name and clicking "Load".
 
 ## Terrain Generator
-![](Images/TerrainGeneratorSettings.png)
+![](Images/TerrainSettings.png)
 
-## Height Map Generator
-![](Images/HeightMapGeneratorSettings.png)
+### Height Map Settings
+![](Images/HeightMapSettings.png)
 
-## Hydraulic Erosion
-![](Images/HydraulicErosionSettings.PNG)
+### Hydraulic Erosion Settings
+**Note:** Hydraulic Erosion is only enabled for single chunks (i.e. Chunk Grid Width = 1)
+![](Images/HydraulicErosionSettings.png)
 
-## Forest Generator
-![](Images/ForestGeneratorSettings.png)
+### Forest Settings
+![](Images/ForestSettings.png)
+
+### Water Settings
+![](Images/WaterSettings.png)
+
+### Generate/Save/Load
+![](Images/TerrainSettingsButtons.png)
 
 ## Change Log
 ### v1.0
@@ -56,6 +63,13 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 ### v1.2.1
 - Edited README
 - Do not allow chunk width of 0
+
+### v1.3
+- Run chunk generation in a separate thread to improve performance
+- Add Level of Detail setting to terrain mesh
+- Add Height Map Settings, Hydraulic Erosion Settings, Forest Settings, and Water Settings all to TerrainMapGenerator prefab
+- Make all settings objects serializable
+- **WARNING:** Previously saved Level files will not be compatible with v1.3 of the TerrainMapGenerator
 
 ## Credit
 - Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)

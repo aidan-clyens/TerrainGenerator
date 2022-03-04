@@ -7,14 +7,16 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 public class TerrainMapGenerator : MonoBehaviour {
+    public const string VERSION = "1.3";
+
     [Header("Generator Settings")]
     [Space(10)]
     public int seed;
-    [Range (16, 1024)]
-    public int chunkWidth;
     public Vector2 centerPosition = new Vector2(0, 0);
     [Range (1, 10)]
     public int chunkGridWidth = 1;
+    [Range (0, 6)]
+    public int levelOfDetail;
     public GameObject viewer;
     public float chunkViewRange;
     public float objectViewRange;
@@ -45,6 +47,8 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float waterLevel;
     public float waveSpeed;
     public float waveStrength;
+
+    const int chunkWidth = 241;
 
     HeightMapGenerator heightMapGenerator;
     ForestGenerator forestGenerator;
@@ -102,8 +106,6 @@ public class TerrainMapGenerator : MonoBehaviour {
             hydraulicErosion = GetComponent<HydraulicErosion>();
         }
 
-        // Round map width to nearest power of 2
-        chunkWidth = (int)Mathf.Pow(2, Mathf.Round(Mathf.Log(chunkWidth) / Mathf.Log(2)));
         // Round chunk grid width to nearest odd number >= 1
         if (chunkGridWidth % 2 == 0) {
             chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
@@ -116,6 +118,11 @@ public class TerrainMapGenerator : MonoBehaviour {
         forestGenerator.settings = forestGeneratorSettings;
 
         hydraulicErosion.settings = hydraulicErosionSettings;
+
+        if (hydraulicErosion.settings.useHydraulicErosion && chunkGridWidth > 1) {
+            Debug.LogWarning("Can only use Hydraulic Erosion for single chunks");
+            hydraulicErosion.settings.useHydraulicErosion = false;
+        }
     }
 
     void Update() {
@@ -123,7 +130,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (heightMapDataThreadInfoQueue.Count > 0) {
             for (int i = 0; i < heightMapDataThreadInfoQueue.Count; i++) {
                 HeightMapThreadInfo info = heightMapDataThreadInfoQueue.Dequeue();
-                MeshGenerator.RequestMeshData(info.position, info.heightMap, OnTerrainMeshDataReceived, terrainColourGradient);
+                MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
             }
         }
 
@@ -254,7 +261,7 @@ public class TerrainMapGenerator : MonoBehaviour {
                 }
             }
 
-            MeshGenerator.RequestMeshData(position, heightMap, OnWaterMeshDataReceived);
+            MeshGenerator.RequestMeshData(position, heightMap, levelOfDetail, OnWaterMeshDataReceived);
         }
     }
 

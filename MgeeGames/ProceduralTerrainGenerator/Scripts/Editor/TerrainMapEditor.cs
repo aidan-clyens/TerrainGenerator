@@ -92,10 +92,12 @@ public class TerrainMapEditor : Editor {
 
     void SaveTerrainData(string levelName) {
         TerrainData terrainData = new TerrainData();
+        terrainData.version = TerrainMapGenerator.VERSION;
+
         terrainData.seed = terrainMapGenerator.seed;
         terrainData.centerPosition = terrainMapGenerator.centerPosition;
         terrainData.chunkGridWidth = terrainMapGenerator.chunkGridWidth;
-        terrainData.chunkWidth = terrainMapGenerator.chunkWidth;
+        terrainData.levelOfDetail = terrainMapGenerator.levelOfDetail;
         terrainData.averageMapDepth = terrainMapGenerator.averageMapDepth;
         terrainData.heightMapSettingsList = terrainMapGenerator.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
@@ -127,10 +129,14 @@ public class TerrainMapEditor : Editor {
         TerrainData terrainData = JsonUtility.FromJson<TerrainData>(terrainDataJson);
         Debug.Log("Loaded terrain from: " + filePath);
 
+        if (!TerrainMapGenerator.VERSION.Equals(terrainData.version)) {
+            Debug.LogWarning("Attempting to load Terrain Data from a different version. Data may not load correctly.");
+        }
+
         terrainMapGenerator.seed = terrainData.seed;
         terrainMapGenerator.centerPosition = terrainData.centerPosition;
         terrainMapGenerator.chunkGridWidth = terrainData.chunkGridWidth;
-        terrainMapGenerator.chunkWidth = terrainData.chunkWidth;
+        terrainMapGenerator.levelOfDetail = terrainData.levelOfDetail;
         terrainMapGenerator.averageMapDepth = terrainData.averageMapDepth;
         terrainMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
