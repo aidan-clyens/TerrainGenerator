@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ForestGeneratorSettings {
-    public List<GameObject> treePrefabs = new List<GameObject>();
+public class ProceduralObjectGeneratorSettings {
+    public List<GameObject> prefabs = new List<GameObject>();
     public float density;
     public float slopeThreshold;
     public float verticalOffset;
 }
 
-public class ForestGenerator : MonoBehaviour {
+public class ProceduralObjectGenerator : MonoBehaviour {
     [HideInInspector]
-    public ForestGeneratorSettings settings;
+    public ProceduralObjectGeneratorSettings settings;
 
-    List<GameObject> trees = new List<GameObject>();
+    List<GameObject> objects = new List<GameObject>();
 
     System.Random rng;
 
@@ -27,8 +27,8 @@ public class ForestGenerator : MonoBehaviour {
         viewRange = range;
     }
 
-    public void Init(List<GameObject> currentTrees, GameObject view, float range) {
-        trees = currentTrees;
+    public void Init(List<GameObject> currentobjects, GameObject view, float range) {
+        objects = currentobjects;
         viewer = view;
         viewRange = range;
     }
@@ -38,14 +38,14 @@ public class ForestGenerator : MonoBehaviour {
 
         Vector2 position = new Vector2(viewer.transform.position.x, viewer.transform.position.z);
 
-        foreach (GameObject tree in trees) {
-            Vector2 treePosition = new Vector2(tree.transform.position.x, tree.transform.position.z);
+        foreach (GameObject obj in objects) {
+            Vector2 objPosition = new Vector2(obj.transform.position.x, obj.transform.position.z);
 
-            if ((position - treePosition).magnitude < viewRange) {
-                tree.SetActive(true);
+            if ((position - objPosition).magnitude < viewRange) {
+                obj.SetActive(true);
             }
             else {
-                tree.SetActive(false);
+                obj.SetActive(false);
             }
         }
     }
@@ -64,21 +64,21 @@ public class ForestGenerator : MonoBehaviour {
             }
         }
         
-        // Calculate number of trees based on area and density
-        int numTrees = (int)((areaAboveWater / 100f) * settings.density);
+        // Calculate number of objects based on area and density
+        int numobjects = (int)((areaAboveWater / 100f) * settings.density);
 
         rng = new System.Random(seed);
 
-        GameObject forestGameObject = new GameObject("Forest");
+        GameObject parentGameObject = new GameObject("ProceduralObjects");
 
-        if (settings.treePrefabs.Count == 0) {
-            return forestGameObject; 
+        if (settings.prefabs.Count == 0) {
+            return parentGameObject; 
         }
 
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
 
-        while (trees.Count < numTrees) {
+        while (objects.Count < numobjects) {
             int x = rng.Next(0, width - 1);
             int z = rng.Next(0, height - 1);
             float y = heightMap[x, z] + settings.verticalOffset;
@@ -91,22 +91,22 @@ public class ForestGenerator : MonoBehaviour {
 
             if (y > waterLevel + 5 && angle < settings.slopeThreshold) {
                 Vector3 position = new Vector3(x, y, z);
-                GameObject treePrefab = settings.treePrefabs[rng.Next(0, settings.treePrefabs.Count)];
-                GameObject tree = Instantiate(treePrefab, position, Quaternion.identity, forestGameObject.transform);
+                GameObject prefab = settings.prefabs[rng.Next(0, settings.prefabs.Count)];
+                GameObject obj = Instantiate(prefab, position, Quaternion.identity, parentGameObject.transform);
 
                 float scale = (float)rng.NextDouble() + 1f;
-                tree.transform.localScale = new Vector3(scale, scale, scale);
+                obj.transform.localScale = new Vector3(scale, scale, scale);
 
-                tree.isStatic = true;
+                obj.isStatic = true;
 
-                trees.Add(tree);
+                objects.Add(obj);
             }
         }
 
-        return forestGameObject;
+        return parentGameObject;
     }
 
     public void Clear() {
-        trees.Clear();
+        objects.Clear();
     }
 }

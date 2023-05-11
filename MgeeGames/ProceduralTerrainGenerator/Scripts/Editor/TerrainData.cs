@@ -19,7 +19,7 @@ class TerrainData {
     // Terrain Settings
     public float waterLevel;
     public bool createWater;
-    public bool createForest;
+    public bool createProceduralObjects;
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public Material waterMaterial;
@@ -28,5 +28,5 @@ class TerrainData {
     public HydraulicErosionSettings hydraulicErosionSettings;
 
     // Forest Generator Settings
-    public ForestGeneratorSettings forestGeneratorSettings;
+    public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 }

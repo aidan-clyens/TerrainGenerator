@@ -33,7 +33,7 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
 **Note:*single chunks (i.e. Chunk Grid Width = 1)
 ![](HydraulicErosion.png)
 
-### Forest Settings
+### Procedural Object Settings
 ![](Images/ForestSettings.png)
 
 ### Water Settings

@@ -26,14 +26,16 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Space(10)]
     public bool is2D = false;
     public int tilemapWidth;
-    public Tilemap tilemap;
+    public Tilemap groundTilemap;
+    public Tilemap foliageTilemap;
+    public Tilemap collisionTilemap;
     public List<Tile> tiles;
 
     [Header("Terrain Settings")]
     [Space(10)]
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
-    public bool createForest;
+    public bool createProceduralObjects;
     public bool createWater;
 
     [Header("Height Map Settings")]
@@ -46,9 +48,9 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Space(10)]
     public HydraulicErosionSettings hydraulicErosionSettings;
 
-    [Header("Forest Settings")]
+    [Header("Procedural Object Settings")]
     [Space(10)]
-    public ForestGeneratorSettings forestGeneratorSettings;
+    public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 
     [Header("Water Settings")]
     [Space(10)]
@@ -60,7 +62,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     const int chunkWidth = 241;
 
     HeightMapGenerator heightMapGenerator;
-    ForestGenerator forestGenerator;
+    ProceduralObjectGenerator proceduralObjectGenerator;
     HydraulicErosion hydraulicErosion;
 
     Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
@@ -85,19 +87,19 @@ public class TerrainMapGenerator : MonoBehaviour {
             }
         }
 
-        // Initialize Forest Generator
+        // Initialize Procedural Object Generator
         List<GameObject> trees = new List<GameObject>();
         foreach (KeyValuePair<Vector2, GameObject> chunkEntry in terrainChunks) {
-            Transform forestTransform = chunkEntry.Value.transform.Find("Forest");
+            Transform proceduralObjectsTransform = chunkEntry.Value.transform.Find("ProceduralObjects");
 
-            if (forestTransform != null) {
-                foreach (Transform treeTransform in forestTransform) {
-                    trees.Add(treeTransform.gameObject);
+            if (proceduralObjectsTransform != null) {
+                foreach (Transform objTransform in proceduralObjectsTransform) {
+                    trees.Add(objTransform.gameObject);
                 }   
             }
         }
 
-        forestGenerator.Init(trees, viewer, objectViewRange);
+        proceduralObjectGenerator.Init(trees, viewer, objectViewRange);
     }
 
     void OnValidate() {
@@ -106,8 +108,8 @@ public class TerrainMapGenerator : MonoBehaviour {
             heightMapGenerator = GetComponent<HeightMapGenerator>();
         }
 
-        if (forestGenerator == null) {
-            forestGenerator = GetComponent<ForestGenerator>();
+        if (proceduralObjectGenerator == null) {
+            proceduralObjectGenerator = GetComponent<ProceduralObjectGenerator>();
         }
 
         if (hydraulicErosion == null) {
@@ -123,8 +125,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         heightMapGenerator.averageMapDepth = averageMapDepth;
         heightMapGenerator.normalize = normalize;
         heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
-    
-        forestGenerator.settings = forestGeneratorSettings;
+
+        proceduralObjectGenerator.settings = proceduralObjectGeneratorSettings;
 
         hydraulicErosion.settings = hydraulicErosionSettings;
 
@@ -163,11 +165,11 @@ public class TerrainMapGenerator : MonoBehaviour {
                 else {
                     chunk = CreateTerrainChunk(info.position, info.meshData);
 
-                    if (createForest) {
+                    if (createProceduralObjects) {
                         Vector3[] normals = chunk.GetComponent<MeshFilter>().sharedMesh.normals;
-                        GameObject forestGameObject = CreateForest(info.heightMap, normals);
-                        forestGameObject.transform.parent = terrainChunks[info.position].transform;
-                        forestGameObject.transform.localPosition = new Vector3(0f, 0f, forestGameObject.transform.position.z);
+                        GameObject proceduralObjects = GenerateProceduralObjects(info.heightMap, normals);
+                        proceduralObjects.transform.parent = terrainChunks[info.position].transform;
+                        proceduralObjects.transform.localPosition = new Vector3(0f, 0f, proceduralObjects.transform.position.z);
                     }
                 }
 
@@ -222,12 +224,12 @@ public class TerrainMapGenerator : MonoBehaviour {
             DestroyImmediate(chunk, true);
         }
 
-        if (forestGenerator != null) {
-            forestGenerator.Clear();
+        if (proceduralObjectGenerator != null) {
+            proceduralObjectGenerator.Clear();
         }
 
-        if (is2D && tilemap != null) {
-            tilemap.ClearAllTiles();
+        if (groundTilemap != null) {
+            groundTilemap.ClearAllTiles();
         }
     }
 
@@ -292,13 +294,13 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    GameObject CreateForest(float[,] heightMap, Vector3[] terrainNormals) {
-        forestGenerator.Clear();
-        GameObject forestGameObject = forestGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
+    GameObject GenerateProceduralObjects(float[,] heightMap, Vector3[] terrainNormals) {
+        proceduralObjectGenerator.Clear();
+        GameObject proceduralObjects = proceduralObjectGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
 
-        forestGameObject.isStatic = true;
+        proceduralObjects.isStatic = true;
     
-        return forestGameObject;
+        return proceduralObjects;
     }
 
     void GenerateTilemap(float[,] heightMap) {
@@ -308,8 +310,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         for (int y = 0; y < tilemapHeight; y++) {
             for (int x = 0; x < tilemapWidth; x++) {
                 int height = (int)Mathf.Round(heightMap[x, y] * (tiles.Count - 1));
-                if (tilemap != null) {
-                    tilemap.SetTile(new Vector3Int(x, y, 0), tiles[height]);
+                if (groundTilemap != null) {
+                    groundTilemap.SetTile(new Vector3Int(x, y, 0), tiles[height]);
                 }
             }
         }

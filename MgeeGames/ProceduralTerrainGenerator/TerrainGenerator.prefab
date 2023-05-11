@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5871110956056948535}
   - component: {fileID: 3166721825118174603}
   - component: {fileID: 5871110956056948491}
-  - component: {fileID: 5871110956056948534}
+  - component: {fileID: 303051688672138238}
   m_Layer: 0
   m_Name: TerrainGenerator
   m_TagString: Untagged
@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -47,10 +48,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
-  mapWidth: 256
-  position: {x: 0, y: 0}
+  centerPosition: {x: 0, y: 0}
+  chunkGridWidth: 1
+  levelOfDetail: 0
   viewer: {fileID: 0}
+  chunkViewRange: 0
   objectViewRange: 300
+  is2D: 0
+  tilemapWidth: 0
+  groundTilemap: {fileID: 0}
+  foliageTilemap: {fileID: 0}
+  collisionTilemap: {fileID: 0}
+  tiles: []
   terrainColourGradient:
     serializedVersion: 2
     key0: {r: 0.7254902, g: 0.39607844, b: 0.36078432, a: 1}
@@ -83,8 +92,31 @@ MonoBehaviour:
   terrainMaterial: {fileID: 2100000, guid: 2a8e460f578b53142aec534fe04c10a4, type: 2}
   createForest: 1
   createWater: 1
+  averageMapDepth: 0
+  normalize: 0
+  heightMapSettingsList: []
+  hydraulicErosionSettings:
+    useHydraulicErosion: 0
+    iterations: 50000
+    inertia: 0.1
+    gravity: 4
+    minSlope: 0.01
+    capacityFactor: 8
+    depositionFactor: 0.1
+    erosionFactor: 0.1
+    evaporationFactor: 0.05
+    erosionRadius: 5
+    depositionRadius: 5
+    dropletLifetime: 30
+  proceduralObjectGeneratorSettings:
+    treePrefabs: []
+    density: 0
+    slopeThreshold: 0
+    verticalOffset: 0
   waterMaterial: {fileID: 2100000, guid: 73f651092fcd15c42a908fb2a1aeadd0, type: 2}
   waterLevel: 10
+  waveSpeed: 0
+  waveStrength: 0
 --- !u!114 &3166721825118174603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,15 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c57c3629ebf4478032ca893623057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noiseScale: 2
-  noiseOctaves: 5
-  persistence: 0.5
-  lacunarity: 1.6
-  mapDepth: 80
-  noiseRedistributionFactor: 2
-  normalizeLocal: 1
-  useFalloff: 0
-  useHydraulicErosion: 1
+  averageMapDepth: 0
+  normalize: 0
+  heightMapSettingsList: []
 --- !u!114 &5871110956056948491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,18 +144,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7e1380a6137cb343bc2655bd4075755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iterations: 50000
-  inertia: 0.1
-  gravity: 4
-  minSlope: 0.01
-  capacityFactor: 8
-  depositionFactor: 0.1
-  erosionFactor: 0.1
-  evaporationFactor: 0.05
-  erosionRadius: 5
-  depositionRadius: 5
-  dropletLifetime: 30
---- !u!114 &5871110956056948534
+  settings:
+    useHydraulicErosion: 0
+    iterations: 50000
+    inertia: 0.1
+    gravity: 4
+    minSlope: 0.01
+    capacityFactor: 8
+    depositionFactor: 0.1
+    erosionFactor: 0.1
+    evaporationFactor: 0.05
+    erosionRadius: 5
+    depositionRadius: 5
+    dropletLifetime: 30
+--- !u!114 &303051688672138238
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,12 +166,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f6e62711c7fea64ba126560df38479c, type: 3}
+  m_Script: {fileID: 11500000, guid: ca2dba0f666d2e44a840a380db5ab8df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefabs:
-  - {fileID: 5404429270751900361, guid: 266483bc3acb1334c90e019cbae77053, type: 3}
-  - {fileID: 3223038354055179910, guid: d8e8de4934bf1c74fa298146f992c65b, type: 3}
-  density: 0.7
-  slopeThreshold: 45
-  verticalOffset: -0.6
+  settings:
+    treePrefabs: []
+    density: 0
+    slopeThreshold: 0
+    verticalOffset: 0

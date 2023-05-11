@@ -13,14 +13,14 @@ public class TerrainMapEditor : Editor {
     TerrainMapGenerator terrainMapGenerator;
     HeightMapGenerator heightMapGenerator;
     HydraulicErosion hydraulicErosion;
-    ForestGenerator forestGenerator;
+    ProceduralObjectGenerator proceduralObjectGenerator;
 
 
     public override void OnInspectorGUI() {
         terrainMapGenerator = (TerrainMapGenerator) target;
         heightMapGenerator = terrainMapGenerator.GetComponent<HeightMapGenerator>();
         hydraulicErosion = terrainMapGenerator.GetComponent<HydraulicErosion>();
-        forestGenerator = terrainMapGenerator.GetComponent<ForestGenerator>();
+        proceduralObjectGenerator = terrainMapGenerator.GetComponent<ProceduralObjectGenerator>();
 
         DrawDefaultInspector();
 
@@ -102,12 +102,12 @@ public class TerrainMapEditor : Editor {
         terrainData.heightMapSettingsList = terrainMapGenerator.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator.waterLevel;
         terrainData.createWater = terrainMapGenerator.createWater;
-        terrainData.createForest = terrainMapGenerator.createForest;
+        terrainData.createProceduralObjects = terrainMapGenerator.createProceduralObjects;
         terrainData.terrainColourGradient = terrainMapGenerator.terrainColourGradient;
         terrainData.terrainMaterial = terrainMapGenerator.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator.waterMaterial;
         terrainData.hydraulicErosionSettings = terrainMapGenerator.hydraulicErosionSettings;
-        terrainData.forestGeneratorSettings = terrainMapGenerator.forestGeneratorSettings;
+        terrainData.proceduralObjectGeneratorSettings = terrainMapGenerator.proceduralObjectGeneratorSettings;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
         string directory = Application.persistentDataPath + "/worlds"; 
@@ -141,16 +141,16 @@ public class TerrainMapEditor : Editor {
         terrainMapGenerator.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator.waterLevel = terrainData.waterLevel;
         terrainMapGenerator.createWater = terrainData.createWater;
-        terrainMapGenerator.createForest = terrainData.createForest;
+        terrainMapGenerator.createProceduralObjects = terrainData.createProceduralObjects;
         terrainMapGenerator.terrainColourGradient = terrainData.terrainColourGradient;
         terrainMapGenerator.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator.waterMaterial = terrainData.waterMaterial;
         terrainMapGenerator.hydraulicErosionSettings = terrainData.hydraulicErosionSettings;
-        terrainMapGenerator.forestGeneratorSettings = terrainData.forestGeneratorSettings;
+        terrainMapGenerator.proceduralObjectGeneratorSettings = terrainData.proceduralObjectGeneratorSettings;
 
         EditorUtility.SetDirty(terrainMapGenerator);
         EditorUtility.SetDirty(heightMapGenerator);
         EditorUtility.SetDirty(hydraulicErosion);
-        EditorUtility.SetDirty(forestGenerator);
+        EditorUtility.SetDirty(proceduralObjectGenerator);
     }
 }
