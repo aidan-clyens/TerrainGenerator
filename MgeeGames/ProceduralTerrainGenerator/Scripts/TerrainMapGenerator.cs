@@ -4,6 +4,7 @@ using System.Threading;
 using System;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Tilemaps;
 
 [ExecuteInEditMode]
 public class TerrainMapGenerator : MonoBehaviour {
@@ -20,6 +21,13 @@ public class TerrainMapGenerator : MonoBehaviour {
     public GameObject viewer;
     public float chunkViewRange;
     public float objectViewRange;
+
+    [Header("2D Settings")]
+    [Space(10)]
+    public bool is2D = false;
+    public int tilemapWidth;
+    public Tilemap tilemap;
+    public Tile tile;
 
     [Header("Terrain Settings")]
     [Space(10)]
@@ -53,7 +61,6 @@ public class TerrainMapGenerator : MonoBehaviour {
     HeightMapGenerator heightMapGenerator;
     ForestGenerator forestGenerator;
     HydraulicErosion hydraulicErosion;
-
 
     Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
@@ -130,7 +137,15 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (heightMapDataThreadInfoQueue.Count > 0) {
             for (int i = 0; i < heightMapDataThreadInfoQueue.Count; i++) {
                 HeightMapThreadInfo info = heightMapDataThreadInfoQueue.Dequeue();
-                MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
+
+                if (is2D) {
+                    if (info.position == Vector2.zero) {
+                        GenerateTilemap(info.heightMap);
+                    }
+                }
+                else {
+                    MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
+                }
             }
         }
 
@@ -208,6 +223,10 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (forestGenerator != null) {
             forestGenerator.Clear();
         }
+
+        if (is2D && tilemap != null) {
+            tilemap.ClearAllTiles();
+        }
     }
 
     public void Randomize() {
@@ -250,13 +269,19 @@ public class TerrainMapGenerator : MonoBehaviour {
     }
 
     void RequestTerrainChunk(Vector2 position, bool loadAllObjects) {
-        heightMapGenerator.RequestHeightMapData(seed, chunkWidth, position, OnHeightMapDataReceived);
+        int width = chunkWidth;
+
+        if (is2D) {
+            width = tilemapWidth;
+        }
+
+        heightMapGenerator.RequestHeightMapData(seed, width, position, OnHeightMapDataReceived);
 
         if (createWater) {
-            float[,] heightMap = new float[chunkWidth, chunkWidth];
+            float[,] heightMap = new float[width, width];
 
-            for (int z = 0; z < chunkWidth; z++) {
-                for (int x = 0; x < chunkWidth; x++) {
+            for (int z = 0; z < width; z++) {
+                for (int x = 0; x < width; x++) {
                     heightMap[x, z] = waterLevel;
                 }
             }
@@ -272,6 +297,25 @@ public class TerrainMapGenerator : MonoBehaviour {
         forestGameObject.isStatic = true;
     
         return forestGameObject;
+    }
+
+    void GenerateTilemap(float[,] heightMap) {
+        int tilemapWidth = heightMap.GetLength(0);
+        int tilemapHeight = heightMap.GetLength(1);
+
+        float topLeftX = (tilemapWidth - 1) / -2f;
+        float topLeftZ = (tilemapHeight - 1) / 2f;
+
+        int index = 0;
+        for (int y = 0; y < tilemapHeight; y++) {
+            for (int x = 0; x < tilemapWidth; x++) {
+                if (tilemap != null) {
+                    tilemap.SetTile(new Vector3Int(x, y, 0), tile);
+                }
+
+                index++;
+            }
+        }
     }
 
     void OnHeightMapDataReceived(Vector2 position, float[,] heightMap) {
