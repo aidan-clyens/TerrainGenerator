@@ -27,7 +27,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     public bool is2D = false;
     public int tilemapWidth;
     public Tilemap tilemap;
-    public Tile tile;
+    public List<Tile> tiles;
 
     [Header("Terrain Settings")]
     [Space(10)]
@@ -39,6 +39,7 @@ public class TerrainMapGenerator : MonoBehaviour {
     [Header("Height Map Settings")]
     [Space(10)]
     public float averageMapDepth;
+    public bool normalize = false;
     public List<HeightMapSettings> heightMapSettingsList;
 
     [Header("Hydraulic Erosion Settings")]
@@ -120,6 +121,7 @@ public class TerrainMapGenerator : MonoBehaviour {
 
         // Update component settings
         heightMapGenerator.averageMapDepth = averageMapDepth;
+        heightMapGenerator.normalize = normalize;
         heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
     
         forestGenerator.settings = forestGeneratorSettings;
@@ -303,17 +305,12 @@ public class TerrainMapGenerator : MonoBehaviour {
         int tilemapWidth = heightMap.GetLength(0);
         int tilemapHeight = heightMap.GetLength(1);
 
-        float topLeftX = (tilemapWidth - 1) / -2f;
-        float topLeftZ = (tilemapHeight - 1) / 2f;
-
-        int index = 0;
         for (int y = 0; y < tilemapHeight; y++) {
             for (int x = 0; x < tilemapWidth; x++) {
+                int height = (int)Mathf.Round(heightMap[x, y] * (tiles.Count - 1));
                 if (tilemap != null) {
-                    tilemap.SetTile(new Vector3Int(x, y, 0), tile);
+                    tilemap.SetTile(new Vector3Int(x, y, 0), tiles[height]);
                 }
-
-                index++;
             }
         }
     }
