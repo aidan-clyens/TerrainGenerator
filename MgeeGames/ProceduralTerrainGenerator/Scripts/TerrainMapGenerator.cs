@@ -1,48 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using System;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.Tilemaps;
 
-[ExecuteInEditMode]
-public class TerrainMapGenerator : MonoBehaviour {
-    public const string VERSION = "1.3";
-
-    [Header("Generator Settings")]
-    [Space(10)]
-    public int seed;
-    public Vector2 centerPosition = new Vector2(0, 0);
-    [Range (1, 10)]
-    public int chunkGridWidth = 1;
-    [Range (0, 6)]
-    public int levelOfDetail;
-    public GameObject viewer;
-    public float chunkViewRange;
-    public float objectViewRange;
-
-    [Header("2D Settings")]
-    [Space(10)]
-    public bool is2D = false;
-    public int tilemapWidth;
-    public Tilemap groundTilemap;
-    public Tilemap foliageTilemap;
-    public Tilemap collisionTilemap;
-    public List<Tile> tiles;
-
+[RequireComponent(typeof(ProceduralObjectGenerator))]
+[RequireComponent(typeof(HydraulicErosion))]
+public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Header("Terrain Settings")]
     [Space(10)]
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public bool createProceduralObjects;
     public bool createWater;
-
-    [Header("Height Map Settings")]
-    [Space(10)]
-    public float averageMapDepth;
-    public bool normalize = false;
-    public List<HeightMapSettings> heightMapSettingsList;
 
     [Header("Hydraulic Erosion Settings")]
     [Space(10)]
@@ -59,26 +26,18 @@ public class TerrainMapGenerator : MonoBehaviour {
     public float waveSpeed;
     public float waveStrength;
 
-    const int chunkWidth = 241;
+    private int chunkWidth = 241;
 
-    HeightMapGenerator heightMapGenerator;
-    ProceduralObjectGenerator proceduralObjectGenerator;
-    HydraulicErosion hydraulicErosion;
+    private ProceduralObjectGenerator proceduralObjectGenerator;
+    private HydraulicErosion hydraulicErosion;
 
-    Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
+    private Dictionary<Vector2, GameObject> terrainChunks = new Dictionary<Vector2, GameObject>();
 
-    Queue<HeightMapThreadInfo> heightMapDataThreadInfoQueue = new Queue<HeightMapThreadInfo>();
-    Queue<MeshDataThreadInfo> meshDataThreadInfoQueue = new Queue<MeshDataThreadInfo>();
+    private Queue<MeshDataThreadInfo> meshDataThreadInfoQueue = new Queue<MeshDataThreadInfo>();
 
-    void OnEnable() {
-        EditorApplication.update += Update;
-    }
+    public override void Start() {
+        base.Start();
 
-    void OnDisable() {
-        EditorApplication.update -= Update;
-    }
-
-    void Start() {
         // Get all Terrain Chunks
         foreach (Transform child in transform) {
             Vector2 position = new Vector2(child.position.x / chunkWidth, child.position.z / chunkWidth);
@@ -102,11 +61,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         proceduralObjectGenerator.Init(trees, viewer, objectViewRange);
     }
 
-    void OnValidate() {
-        // Get components
-        if (heightMapGenerator == null) {
-            heightMapGenerator = GetComponent<HeightMapGenerator>();
-        }
+    public override void OnValidate() {
+        base.OnValidate();
 
         if (proceduralObjectGenerator == null) {
             proceduralObjectGenerator = GetComponent<ProceduralObjectGenerator>();
@@ -115,16 +71,6 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (hydraulicErosion == null) {
             hydraulicErosion = GetComponent<HydraulicErosion>();
         }
-
-        // Round chunk grid width to nearest odd number >= 1
-        if (chunkGridWidth % 2 == 0) {
-            chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
-        }
-
-        // Update component settings
-        heightMapGenerator.averageMapDepth = averageMapDepth;
-        heightMapGenerator.normalize = normalize;
-        heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
 
         proceduralObjectGenerator.settings = proceduralObjectGeneratorSettings;
 
@@ -136,22 +82,8 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    void Update() {
-        // Process height map data
-        if (heightMapDataThreadInfoQueue.Count > 0) {
-            for (int i = 0; i < heightMapDataThreadInfoQueue.Count; i++) {
-                HeightMapThreadInfo info = heightMapDataThreadInfoQueue.Dequeue();
-
-                if (is2D) {
-                    if (info.position == Vector2.zero) {
-                        GenerateTilemap(info.heightMap);
-                    }
-                }
-                else {
-                    MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
-                }
-            }
-        }
+    public override void Update() {
+        base.Update();
 
         // Process mesh data
         if (meshDataThreadInfoQueue.Count > 0) {
@@ -196,12 +128,12 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    public void Generate(bool loadAllObjects=false) {
+    public override void Generate() {
         // Generate grid of chunks
-        CreateChunkGrid(loadAllObjects);
+        CreateChunkGrid();
     }
 
-    public void Clear() {
+    public override void Clear() {
         // Make all chunks visible before clearing
         foreach (KeyValuePair<Vector2, GameObject> chunkEntry in terrainChunks) {
             GameObject chunk = chunkEntry.Value;
@@ -227,28 +159,15 @@ public class TerrainMapGenerator : MonoBehaviour {
         if (proceduralObjectGenerator != null) {
             proceduralObjectGenerator.Clear();
         }
-
-        if (groundTilemap != null) {
-            groundTilemap.ClearAllTiles();
-        }
     }
 
-    public void Randomize() {
-        seed = UnityEngine.Random.Range(0, 1000);
+    public override void Randomize() {
+        base.Randomize();
+
         waterLevel = UnityEngine.Random.Range(0, 30);
-
-        heightMapSettingsList.Clear();
-
-        int numLayers = UnityEngine.Random.Range(1, 4);
-        for (int i = 0; i < numLayers; i++) {
-            HeightMapSettings settings = new HeightMapSettings();
-            settings.Randomize();
-
-            heightMapSettingsList.Add(settings);
-        }
     }
 
-    void CreateChunkGrid(bool loadAllObjects) {
+    private void CreateChunkGrid(bool loadAllObjects = true) {
         int w = (int)Mathf.Round(chunkGridWidth / 2);
         for (int x = -w; x <= w; x++) {
             for (int y = -w; y <= w; y++) {
@@ -272,20 +191,14 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    void RequestTerrainChunk(Vector2 position, bool loadAllObjects) {
-        int width = chunkWidth;
-
-        if (is2D) {
-            width = tilemapWidth;
-        }
-
-        heightMapGenerator.RequestHeightMapData(seed, width, position, OnHeightMapDataReceived);
+    private void RequestTerrainChunk(Vector2 position, bool loadAllObjects) {
+        heightMapGenerator.RequestHeightMapData(seed, chunkWidth, position, OnHeightMapDataReceived);
 
         if (createWater) {
-            float[,] heightMap = new float[width, width];
+            float[,] heightMap = new float[chunkWidth, chunkWidth];
 
-            for (int z = 0; z < width; z++) {
-                for (int x = 0; x < width; x++) {
+            for (int z = 0; z < chunkWidth; z++) {
+                for (int x = 0; x < chunkWidth; x++) {
                     heightMap[x, z] = waterLevel;
                 }
             }
@@ -294,7 +207,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         }
     }
 
-    GameObject GenerateProceduralObjects(float[,] heightMap, Vector3[] terrainNormals) {
+    private GameObject GenerateProceduralObjects(float[,] heightMap, Vector3[] terrainNormals) {
         proceduralObjectGenerator.Clear();
         GameObject proceduralObjects = proceduralObjectGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
 
@@ -303,39 +216,23 @@ public class TerrainMapGenerator : MonoBehaviour {
         return proceduralObjects;
     }
 
-    void GenerateTilemap(float[,] heightMap) {
-        int tilemapWidth = heightMap.GetLength(0);
-        int tilemapHeight = heightMap.GetLength(1);
-
-        for (int y = 0; y < tilemapHeight; y++) {
-            for (int x = 0; x < tilemapWidth; x++) {
-                int height = (int)Mathf.Round(heightMap[x, y] * (tiles.Count - 1));
-                if (groundTilemap != null) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), tiles[height]);
-                }
-            }
-        }
+    public override void ProcessHeightMapData(HeightMapThreadInfo info) {
+        MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
     }
 
-    void OnHeightMapDataReceived(Vector2 position, float[,] heightMap) {
-        lock (heightMapDataThreadInfoQueue) {
-            heightMapDataThreadInfoQueue.Enqueue(new HeightMapThreadInfo(position, heightMap));
-        }
-    }
-
-    void OnTerrainMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
+    private void OnTerrainMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
         lock (meshDataThreadInfoQueue) {
             meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, heightMap, meshData, MeshType.Terrain));
         }
     }
 
-    void OnWaterMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
+    private void OnWaterMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
         lock (meshDataThreadInfoQueue) {
             meshDataThreadInfoQueue.Enqueue(new MeshDataThreadInfo(position, heightMap, meshData, MeshType.Water));
         }
     }
 
-    GameObject CreateTerrainChunk(Vector2 position, MeshData meshData) {
+    private GameObject CreateTerrainChunk(Vector2 position, MeshData meshData) {
         Mesh mesh = meshData.CreateMesh();
 
         GameObject terrainGameObject = new GameObject("Terrain");
@@ -352,7 +249,7 @@ public class TerrainMapGenerator : MonoBehaviour {
         return terrainGameObject;
     }
 
-    GameObject CreateWater(Vector2 position, MeshData meshData) {
+    private GameObject CreateWater(Vector2 position, MeshData meshData) {
         float offset = position.x * (chunkWidth - 1);
 
         Mesh mesh = meshData.CreateMesh();

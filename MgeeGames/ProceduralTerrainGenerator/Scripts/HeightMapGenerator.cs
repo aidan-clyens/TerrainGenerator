@@ -136,9 +136,11 @@ public class HeightMapGenerator : MonoBehaviour {
             falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
         }
 
-        bool useHydraulicErosion = hydraulicErosion.settings.useHydraulicErosion;
-        if (useHydraulicErosion && settings.mapDepth > 0) {
-            noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
+        if (hydraulicErosion) {
+            bool useHydraulicErosion = hydraulicErosion.settings.useHydraulicErosion;
+            if (useHydraulicErosion && settings.mapDepth > 0) {
+                noiseMap = hydraulicErosion.ErodeTerrain(noiseMap, seed);
+            }
         }
 
         float[,] heightMap = new float[mapWidth, mapWidth];
