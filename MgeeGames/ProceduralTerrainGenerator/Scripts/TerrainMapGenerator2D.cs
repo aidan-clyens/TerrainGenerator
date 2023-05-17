@@ -20,14 +20,15 @@ public enum TileTypeEnum {
     TileBottomRight
 }
 
-public class TerrainMapGenerator2D : TerrainMapGeneratorBase
-{
+public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     [Header("2D Settings")]
     [Space(10)]
     public int tilemapWidth;
-    public Tilemap groundTilemap;
+    public Grid grid;
     public bool smoothEdges = false;
     public List<TileData> tiles;
+
+    private List<GameObject> layers;
 
     public override void Update() {
         base.Update();
@@ -40,12 +41,16 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase
     }
 
     public override void Generate() {
+        Clear();
         RequestTilemap();
     }
 
     public override void Clear() {
-        if (groundTilemap != null)
-            groundTilemap.ClearAllTiles();
+        foreach (GameObject layer in layers) {
+            DestroyImmediate(layer, true);
+        }
+
+        layers.Clear();
     }
 
     public override void ProcessHeightMapData(HeightMapThreadInfo info) {
@@ -53,24 +58,41 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase
     }
 
     private void RequestTilemap() {
+        if (grid != null)
+            CreateLayers();
+
         heightMapGenerator.RequestHeightMapData(seed, tilemapWidth, Vector2.zero, OnHeightMapDataReceived);
     }
 
+    private void CreateLayers() {
+        for (int i = 0; i < tiles.Count; i++) {
+            GameObject layer = new GameObject("Layer " + i);
+            layer.AddComponent<Tilemap>();
+            layer.AddComponent<TilemapRenderer>();
+
+            layer.transform.parent = grid.transform;
+
+            layers.Add(layer);
+        }
+    }
+
     private void GenerateTilemap(float[,] heightMap) {
-        int tilemapWidth = heightMap.GetLength(0);
-        int tilemapHeight = heightMap.GetLength(1);
+        int mapWidth = heightMap.GetLength(0);
+        int mapHeight = heightMap.GetLength(1);
 
-        int[,] heightMapInt = new int[tilemapWidth, tilemapHeight];
+        int[,] heightMapInt = new int[mapWidth, mapHeight];
 
-        for (int y = 0; y < tilemapHeight; y++) {
-            for (int x = 0; x < tilemapWidth; x++) {
+        // Scale the normalized height map to an integer between 0 and the max height (determined by the number of tiles)
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
                 int height = (int)Mathf.Round(heightMap[x, y] * (tiles.Count - 1));
                 heightMapInt[x, y] = height;
             }
         }
 
-        for (int y = 1; y < tilemapHeight - 1; y++) {
-            for (int x = 1; x < tilemapWidth - 1; x++) {
+        // Determine the tile type given the height
+        for (int y = 1; y < mapHeight - 1; y++) {
+            for (int x = 1; x < mapWidth - 1; x++) {
                 int height = heightMapInt[x, y];
                 Tile tile;
 
@@ -104,17 +126,23 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase
                         break;
                 }
 
-                if (groundTilemap != null) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), tile);
-                } 
+                if (grid != null) {
+                    Tilemap tileMap = layers[height].GetComponent<Tilemap>();
+                    tileMap.SetTile(new Vector3Int(x, y, 0), tile);
+
+                    // Set a solid tile on the layer below
+                    if (type != TileTypeEnum.TileCenter) {
+                        if (height > 0) {
+                            Tilemap lowerTileMap = layers[height - 1].GetComponent<Tilemap>();
+                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), tiles[height - 1].center);
+                        }
+                    }
+                }
             }
         }
     }
 
     private TileTypeEnum GetTileType(int[,] heightMapInt, Vector2Int position) {
-        int tilemapWidth = heightMapInt.GetLength(0);
-        int tilemapHeight = heightMapInt.GetLength(1);
-
         int height = heightMapInt[position.x, position.y];
         int heightTop = heightMapInt[position.x, position.y + 1];
         int heightBottom = heightMapInt[position.x, position.y - 1];
@@ -126,19 +154,27 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase
         }
 
         if ((height != heightRight) && (height != heightBottom)) {
-            return TileTypeEnum.TileTopLeft;
+            if (height > heightRight) {
+                return TileTypeEnum.TileTopLeft;
+            }
         }
 
         if ((height != heightLeft) && (height != heightBottom)) {
-            return TileTypeEnum.TileTopRight;
+            if (height > heightLeft) {
+               return TileTypeEnum.TileTopRight;
+            }
         }
 
         if ((height != heightRight) && (height != heightTop)) {
-            return TileTypeEnum.TileBottomLeft;
+            if (height > heightRight) {
+                return TileTypeEnum.TileBottomLeft;
+            }
         }
 
         if ((height != heightLeft) && (height != heightTop)) {
-            return TileTypeEnum.TileBottomRight;
+            if (height > heightLeft) {
+                return TileTypeEnum.TileBottomRight;
+            }
         }
 
         return TileTypeEnum.TileCenter;
