@@ -72,6 +72,8 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
             hydraulicErosion = GetComponent<HydraulicErosion>();
         }
 
+        heightMapGenerator.normalize = false;
+
         proceduralObjectGenerator.settings = proceduralObjectGeneratorSettings;
 
         hydraulicErosion.settings = hydraulicErosionSettings;

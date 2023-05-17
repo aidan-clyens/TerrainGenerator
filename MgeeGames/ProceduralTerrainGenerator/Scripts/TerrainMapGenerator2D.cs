@@ -15,6 +15,12 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase
         base.Update();
     }
 
+    public override void OnValidate() {
+        base.OnValidate();
+
+        heightMapGenerator.normalize = true;
+    }
+
     public override void Generate() {
         RequestTilemap();
     }

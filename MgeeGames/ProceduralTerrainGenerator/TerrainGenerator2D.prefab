@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8689594226516716994
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8689594226516716992}
+  - component: {fileID: 8689594226516716993}
+  - component: {fileID: 8689594226516716999}
+  m_Layer: 0
+  m_Name: TerrainGenerator2D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8689594226516716992
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8689594226516716994}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 25.939796, y: 44.110634, z: -0.5800244}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8689594226516716993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8689594226516716994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d414ce49918958f4b8bb38d419c8c0a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 0
+  centerPosition: {x: 0, y: 0}
+  chunkGridWidth: 1
+  levelOfDetail: 0
+  viewer: {fileID: 0}
+  chunkViewRange: 0
+  objectViewRange: 0
+  averageMapDepth: 0
+  heightMapSettingsList: []
+  tilemapWidth: 0
+  groundTilemap: {fileID: 0}
+  tiles: []
+--- !u!114 &8689594226516716999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8689594226516716994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 410c57c3629ebf4478032ca893623057, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  averageMapDepth: 0
+  normalize: 1
+  heightMapSettingsList: []

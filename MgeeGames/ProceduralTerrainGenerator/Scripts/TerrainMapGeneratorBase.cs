@@ -24,7 +24,6 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     [Header("Height Map Settings")]
     [Space(10)]
     public float averageMapDepth;
-    public bool normalize = false;
     public List<HeightMapSettings> heightMapSettingsList;
 
     protected HeightMapGenerator heightMapGenerator;
@@ -58,7 +57,6 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
 
         // Update component settings
         heightMapGenerator.averageMapDepth = averageMapDepth;
-        heightMapGenerator.normalize = normalize;
         heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
     }
 
