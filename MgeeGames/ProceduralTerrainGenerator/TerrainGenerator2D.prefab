@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8689594226516716992}
-  - component: {fileID: 8689594226516716993}
+  - component: {fileID: -6686587977701253227}
   - component: {fileID: 8689594226516716999}
   m_Layer: 0
   m_Name: TerrainGenerator2D
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8689594226516716993
+--- !u!114 &-6686587977701253227
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,6 +56,7 @@ MonoBehaviour:
   heightMapSettingsList: []
   tilemapWidth: 0
   groundTilemap: {fileID: 0}
+  smoothEdges: 0
   tiles: []
 --- !u!114 &8689594226516716999
 MonoBehaviour:
