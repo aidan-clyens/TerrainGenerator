@@ -26,17 +26,28 @@ public class TerrainMapBaseEditor : Editor {
 
         // Buttons
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        ShowRandomizeButton();
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        ShowGenerateButton();
+        ShowClearButton();
+    }
+
+    protected void ShowRandomizeButton() {
         if (GUILayout.Button("Randomize")) {
             Randomize();
             terrainMapGenerator.Clear();
             terrainMapGenerator.Generate();
         }
+    }
 
-        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+    protected void ShowGenerateButton() {
         if (GUILayout.Button("Generate")) {
             terrainMapGenerator.Generate();
         }
+    }
 
+    protected void ShowClearButton() {
         if (GUILayout.Button("Clear")) {
             terrainMapGenerator.Clear();
         }
