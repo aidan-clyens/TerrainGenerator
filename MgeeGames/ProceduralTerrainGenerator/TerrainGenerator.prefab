@@ -44,7 +44,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5871110956056948488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d69b0101d8074584ba52c41fb6ada7f0, type: 3}
+  m_Script: {fileID: 11500000, guid: e3d6e0ad066a34541a0091c1e5ed85a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
@@ -53,17 +53,13 @@ MonoBehaviour:
   levelOfDetail: 0
   viewer: {fileID: 0}
   chunkViewRange: 0
-  objectViewRange: 300
-  is2D: 0
-  tilemapWidth: 0
-  groundTilemap: {fileID: 0}
-  foliageTilemap: {fileID: 0}
-  collisionTilemap: {fileID: 0}
-  tiles: []
+  objectViewRange: 0
+  averageMapDepth: 0
+  heightMapSettingsList: []
   terrainColourGradient:
     serializedVersion: 2
-    key0: {r: 0.7254902, g: 0.39607844, b: 0.36078432, a: 1}
-    key1: {r: 0.54901963, g: 0.44705883, b: 0.38039216, a: 1}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -89,12 +85,9 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  terrainMaterial: {fileID: 2100000, guid: 2a8e460f578b53142aec534fe04c10a4, type: 2}
-  createForest: 1
-  createWater: 1
-  averageMapDepth: 0
-  normalize: 0
-  heightMapSettingsList: []
+  terrainMaterial: {fileID: 0}
+  createProceduralObjects: 0
+  createWater: 0
   hydraulicErosionSettings:
     useHydraulicErosion: 0
     iterations: 50000
@@ -109,12 +102,12 @@ MonoBehaviour:
     depositionRadius: 5
     dropletLifetime: 30
   proceduralObjectGeneratorSettings:
-    treePrefabs: []
+    prefabs: []
     density: 0
     slopeThreshold: 0
     verticalOffset: 0
-  waterMaterial: {fileID: 2100000, guid: 73f651092fcd15c42a908fb2a1aeadd0, type: 2}
-  waterLevel: 10
+  waterMaterial: {fileID: 0}
+  waterLevel: 0
   waveSpeed: 0
   waveStrength: 0
 --- !u!114 &3166721825118174603
@@ -170,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    treePrefabs: []
+    prefabs: []
     density: 0
     slopeThreshold: 0
     verticalOffset: 0

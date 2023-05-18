@@ -42,7 +42,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8689594226516716994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d414ce49918958f4b8bb38d419c8c0a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8595df6547ed40c429dc185f1bbfddf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
   averageMapDepth: 0
   heightMapSettingsList: []
   tilemapWidth: 0
-  groundTilemap: {fileID: 0}
+  grid: {fileID: 0}
   smoothEdges: 0
   tiles: []
 --- !u!114 &8689594226516716999

@@ -28,7 +28,19 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public bool smoothEdges = false;
     public List<TileData> tiles;
 
-    private List<GameObject> layers;
+    private List<GameObject> layers = new List<GameObject>();
+
+    public override void Start() {
+        base.Start();
+
+        // Get all layers
+        foreach (Transform child in grid.transform) {
+            if (!layers.Contains(child.gameObject)) {
+                layers.Add(child.gameObject);
+            }
+            Debug.Log(layers.Count);
+        }
+    }
 
     public override void Update() {
         base.Update();
@@ -61,7 +73,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         if (grid != null)
             CreateLayers();
 
-        heightMapGenerator.RequestHeightMapData(seed, tilemapWidth, Vector2.zero, OnHeightMapDataReceived);
+        heightMapGenerator.RequestHeightMapData(seed, tilemapWidth + 2, Vector2.zero, OnHeightMapDataReceived);
     }
 
     private void CreateLayers() {
