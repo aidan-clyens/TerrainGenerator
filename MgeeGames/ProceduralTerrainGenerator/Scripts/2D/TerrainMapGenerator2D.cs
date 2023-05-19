@@ -43,6 +43,9 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public override void Start() {
         base.Start();
 
+        if (grid == null)
+            return;
+
         // Get all layers
         foreach (Transform child in grid.transform) {
             if (!layers.Contains(child.gameObject)) {
