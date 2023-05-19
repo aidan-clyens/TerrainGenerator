@@ -5,6 +5,7 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(HeightMapGenerator))]
+[RequireComponent(typeof(BiomeGenerator))]
 public abstract class TerrainMapGeneratorBase : MonoBehaviour
 {
     public const string VERSION = "1.4";
@@ -26,9 +27,17 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     public float averageMapDepth;
     public List<HeightMapSettings> heightMapSettingsList;
 
+    [Header("Biome Settings")]
+    [Space(10)]
+    public NoiseSettings temperatureNoiseSettings;
+    public NoiseSettings moistureNoiseSettings;
+
+    // Components
     protected HeightMapGenerator heightMapGenerator;
+    protected BiomeGenerator biomeGenerator;
 
     protected Queue<HeightMapThreadInfo> heightMapDataThreadInfoQueue = new Queue<HeightMapThreadInfo>();
+    protected Queue<BiomeThreadInfo> biomeDataThreadInfoQueue = new Queue<BiomeThreadInfo>();
 
     public virtual void Start() {
 
@@ -42,12 +51,24 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
                 ProcessHeightMapData(info);
             }
         }
+
+        // Process biome data
+        if (biomeDataThreadInfoQueue.Count > 0) {
+            for (int i = 0; i < biomeDataThreadInfoQueue.Count; i++) {
+                BiomeThreadInfo info = biomeDataThreadInfoQueue.Dequeue();
+                ProcessBiomeData(info);
+            }
+        }
     }
 
     public virtual void OnValidate() {
         // Get components
         if (heightMapGenerator == null) {
             heightMapGenerator = GetComponent<HeightMapGenerator>();
+        }
+
+        if (biomeGenerator == null) {
+            biomeGenerator = GetComponent<BiomeGenerator>();
         }
 
         // Round chunk grid width to nearest odd number >= 1
@@ -72,6 +93,10 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
 
     }
 
+    public virtual void ProcessBiomeData(BiomeThreadInfo info) {
+
+    }
+
     public virtual void Randomize() {
         seed = UnityEngine.Random.Range(0, 1000);
 
@@ -84,11 +109,20 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
 
             heightMapSettingsList.Add(settings);
         }
+
+        temperatureNoiseSettings.Randomize();
+        moistureNoiseSettings.Randomize();
     }
 
     protected void OnHeightMapDataReceived(Vector2 position, float[,] heightMap) {
         lock (heightMapDataThreadInfoQueue) {
             heightMapDataThreadInfoQueue.Enqueue(new HeightMapThreadInfo(position, heightMap));
+        }
+    }
+
+    protected void OnBiomeDataReceived(float[,] temperatureMap, float[,] moistureMap) {
+        lock (biomeDataThreadInfoQueue) {
+            biomeDataThreadInfoQueue.Enqueue(new BiomeThreadInfo(temperatureMap, moistureMap));
         }
     }
 

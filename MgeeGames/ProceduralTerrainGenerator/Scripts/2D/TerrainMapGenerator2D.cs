@@ -35,10 +35,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public bool smoothEdges = false;
     public List<TileData> tiles;
 
-    [Header("Biome Settings")]
-    [Space(10)]
-    public NoiseSettings biomeNoiseSettings;
-
     [Header("Procedural Tile Settings")]
     [Space(10)]
     public List<ProceduralTileData> tileData;
@@ -53,14 +49,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     private GameObject objectCollisionLayer;
 
     // Components
-    private BiomeGenerator2D biomeGenerator2D;
     private ProceduralTileGenerator2D proceduralTileGenerator2D;
 
     // Biomes
     private float[,] temperatureMap;
     private Dictionary<BiomeTypeEnum, List<TileData>> biomeTiles = new Dictionary<BiomeTypeEnum, List<TileData>>();
-
-    private Queue<BiomeThreadInfo> biomeDataThreadInfoQueue = new Queue<BiomeThreadInfo>();
 
     public override void Start() {
         base.Start();
@@ -76,24 +69,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         }
     }
 
-    public override void Update() {
-        base.Update();
-
-        // Process biome data
-        if (biomeDataThreadInfoQueue.Count > 0) {
-            for (int i = 0; i < biomeDataThreadInfoQueue.Count; i++) {
-                BiomeThreadInfo info = biomeDataThreadInfoQueue.Dequeue();
-                ProcessBiomeData(info);
-            }
-        }
-    }
-
     public override void OnValidate() {
         base.OnValidate();
-
-        if (biomeGenerator2D == null) {
-            biomeGenerator2D = GetComponent<BiomeGenerator2D>();
-        }
 
         if (proceduralTileGenerator2D == null) {
             proceduralTileGenerator2D = GetComponent<ProceduralTileGenerator2D>();
@@ -141,18 +118,12 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public override void ProcessHeightMapData(HeightMapThreadInfo info) {
         heightMap = info.heightMap;
 
-        biomeGenerator2D.RequestBiomeData(biomeNoiseSettings, tilemapWidth, OnBiomeDataReceived);
+        biomeGenerator.RequestBiomeData(temperatureNoiseSettings, moistureNoiseSettings, tilemapWidth, OnBiomeDataReceived);
     }
 
-    public void ProcessBiomeData(BiomeThreadInfo info) {
+    public override void ProcessBiomeData(BiomeThreadInfo info) {
         temperatureMap = info.temperatureMap;
         GenerateTilemap(heightMap);
-    }
-
-    private void OnBiomeDataReceived(float[,] temperatureMap, float[,] moistureMap) {
-        lock (biomeDataThreadInfoQueue) {
-            biomeDataThreadInfoQueue.Enqueue(new BiomeThreadInfo(temperatureMap, moistureMap));
-        }
     }
 
     private void RequestTilemap() {
