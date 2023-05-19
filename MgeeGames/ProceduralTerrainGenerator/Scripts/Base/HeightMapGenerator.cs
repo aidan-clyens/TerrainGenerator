@@ -31,11 +31,6 @@ public class HeightMapGenerator : MonoBehaviour {
 
     const int maxWidth = 256;
 
-    float biomeNoiseScale;
-    float biomeDepth;
-
-    Queue<HeightMapThreadInfo> heightMapDataThreadInfoQueue = new Queue<HeightMapThreadInfo>();
-
     void Start() {
         heightMapSettingsList = new List<HeightMapSettings>();
         heightMapSettingsList.Add(new HeightMapSettings());
