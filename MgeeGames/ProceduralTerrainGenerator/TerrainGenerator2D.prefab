@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8689594226516716992}
   - component: {fileID: -6686587977701253227}
   - component: {fileID: 8689594226516716999}
+  - component: {fileID: 80632745980238447}
   m_Layer: 0
   m_Name: TerrainGenerator2D
   m_TagString: Untagged
@@ -58,6 +59,7 @@ MonoBehaviour:
   grid: {fileID: 0}
   smoothEdges: 0
   tiles: []
+  tileData: []
 --- !u!114 &8689594226516716999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,3 +75,16 @@ MonoBehaviour:
   averageMapDepth: 0
   normalize: 1
   heightMapSettingsList: []
+--- !u!114 &80632745980238447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8689594226516716994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1bf78234d5a6154988d8fcbcf7a32af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileData: []

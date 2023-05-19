@@ -2,6 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class NoiseSettings {
+    public NoiseType noiseType;
+    public float scale;
+    public int octaves;
+    public float persistence;
+    public float lacunarity;
+    public float noiseRedistributionFactor;
+    public bool useFalloff;
+
+    public NoiseSettings() {
+        noiseType = NoiseType.Perlin;
+    }
+
+    public void Randomize() {
+        scale = UnityEngine.Random.Range(1f, 5f);
+        octaves = UnityEngine.Random.Range(1, 6);
+        persistence = UnityEngine.Random.Range(0.1f, 0.5f);
+        lacunarity = UnityEngine.Random.Range(1f, 2f);
+        noiseRedistributionFactor = UnityEngine.Random.Range(1f, 3f);
+    }
+}
+
 public enum NoiseType {
     Perlin,
     Simplex
@@ -22,7 +45,7 @@ public class Noise {
         simplexNoiseGenerator = new SimplexNoiseGenerator(seedArray);
     }
 
-    public static float[,] GenerateNoiseMap(NoiseType noiseType, int width, int height, float scale, int offsetX, int offsetY, int octaves, float persistence, float lacunarity, float noiseRedistributionFactor) {
+    public static float[,] GenerateNoiseMap(NoiseSettings settings, int width, int height, int offsetX, int offsetY) {
         float[,] noiseMap = new float[width, height];
 
         float maxPossibleHeight = 0f;
@@ -30,9 +53,9 @@ public class Noise {
         float frequency = 1;
 
         // Find max possible height to normalize heightmap globally
-        for (int i = 0; i < octaves; i++) {
+        for (int i = 0; i < settings.octaves; i++) {
             maxPossibleHeight += amplitude;
-            amplitude *= persistence;
+            amplitude *= settings.persistence;
         }
 
         for (int y = 0; y < height; y++) {
@@ -41,15 +64,15 @@ public class Noise {
                 amplitude = 1;
                 frequency = 1;
 
-                for (int i = 0; i < octaves; i++) {
-                    float sampleX = (float)(x + offsetX) / (float)width * scale * frequency;
-                    float sampleY = (float)(y + offsetY) / (float)height * scale * frequency;
+                for (int i = 0; i < settings.octaves; i++) {
+                    float sampleX = (float)(x + offsetX) / (float)width * settings.scale * frequency;
+                    float sampleY = (float)(y + offsetY) / (float)height * settings.scale * frequency;
 
                     float noiseValue;
-                    if (noiseType == NoiseType.Perlin) {
+                    if (settings.noiseType == NoiseType.Perlin) {
                         noiseValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
                     }
-                    else if (noiseType == NoiseType.Simplex) {
+                    else if (settings.noiseType == NoiseType.Simplex) {
                         noiseValue = simplexNoiseGenerator.noise(sampleX, sampleY, 0) * 2;
                     }
                     else {
@@ -58,8 +81,8 @@ public class Noise {
 
                     noiseHeight += noiseValue * amplitude;
 
-                    amplitude *= persistence;
-                    frequency *= lacunarity;
+                    amplitude *= settings.persistence;
+                    frequency *= settings.lacunarity;
                 }
 
                 noiseMap[x, y] = noiseHeight;
@@ -70,7 +93,7 @@ public class Noise {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 noiseMap[x, y] = Mathf.InverseLerp(-maxPossibleHeight, maxPossibleHeight, noiseMap[x, y]);
-                noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], noiseRedistributionFactor);
+                noiseMap[x, y] = Mathf.Pow(noiseMap[x, y], settings.noiseRedistributionFactor);
             }
         }
 

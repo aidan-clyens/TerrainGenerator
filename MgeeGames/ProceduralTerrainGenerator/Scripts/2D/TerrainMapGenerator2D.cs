@@ -20,6 +20,7 @@ public enum TileTypeEnum {
     TileBottomRight
 }
 
+[RequireComponent(typeof(ProceduralTileGenerator2D))]
 public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     [Header("2D Settings")]
     [Space(10)]
@@ -28,7 +29,15 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public bool smoothEdges = false;
     public List<TileData> tiles;
 
+    [Header("Procedural Tile Settings")]
+    [Space(10)]
+    public List<ProceduralTileData> tileData;
+    public NoiseSettings noiseSettings;
+
     private List<GameObject> layers = new List<GameObject>();
+    private GameObject objectLayer;
+
+    private ProceduralTileGenerator2D proceduralTileGenerator2D;
 
     public override void Start() {
         base.Start();
@@ -38,7 +47,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             if (!layers.Contains(child.gameObject)) {
                 layers.Add(child.gameObject);
             }
-            Debug.Log(layers.Count);
         }
     }
 
@@ -49,7 +57,16 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public override void OnValidate() {
         base.OnValidate();
 
+        if (proceduralTileGenerator2D == null) {
+            proceduralTileGenerator2D = GetComponent<ProceduralTileGenerator2D>();
+        }
+
+        // Height Map Generator settings
         heightMapGenerator.normalize = true;
+
+        // Procedural Tile Generator 2D settings
+        proceduralTileGenerator2D.tileData = tileData;
+        proceduralTileGenerator2D.noiseSettings = noiseSettings;
     }
 
     public override void Generate() {
@@ -63,6 +80,17 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         }
 
         layers.Clear();
+
+        if (objectLayer != null) {
+            Tilemap tilemap = objectLayer.GetComponent<Tilemap>();
+            tilemap.ClearAllTiles();
+        }
+    }
+
+    public override void Randomize() {
+        base.Randomize();
+
+        proceduralTileGenerator2D.Randomize();
     }
 
     public override void ProcessHeightMapData(HeightMapThreadInfo info) {
@@ -82,10 +110,24 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             layer.AddComponent<Tilemap>();
             layer.AddComponent<TilemapRenderer>();
 
+            TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
+            renderer.sortingOrder = i;
+
             layer.transform.parent = grid.transform;
 
             layers.Add(layer);
         }
+
+        if (objectLayer == null) {
+            objectLayer = new GameObject("Object Layer");
+            objectLayer.AddComponent<Tilemap>();
+            objectLayer.AddComponent<TilemapRenderer>();
+
+            objectLayer.transform.parent = grid.transform;
+        }
+
+        TilemapRenderer objectLayerRenderer = objectLayer.GetComponent<TilemapRenderer>();
+        objectLayerRenderer.sortingOrder = layers.Count;
     }
 
     private void GenerateTilemap(float[,] heightMap) {
@@ -152,6 +194,9 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 }
             }
         }
+
+        // Procedural tile settings
+        proceduralTileGenerator2D.Generate((Tilemap)objectLayer.GetComponent<Tilemap>(), heightMapInt, seed);
     }
 
     private TileTypeEnum GetTileType(int[,] heightMapInt, Vector2Int position) {

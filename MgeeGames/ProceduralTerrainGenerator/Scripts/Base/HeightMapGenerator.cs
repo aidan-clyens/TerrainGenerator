@@ -7,24 +7,14 @@ using UnityEngine;
 [System.Serializable]
 public class HeightMapSettings {
     public int mapDepth;
-    public NoiseType noiseType;
-    public float noiseScale;
-    public int noiseOctaves;
-    public float persistence;
-    public float lacunarity;
-    public float noiseRedistributionFactor;
-    public bool useFalloff;
+    public NoiseSettings noiseSettings;
 
     public HeightMapSettings() {
-        noiseType = NoiseType.Perlin;
+        noiseSettings = new NoiseSettings();
     }
 
     public void Randomize() {
-        noiseScale = UnityEngine.Random.Range(1f, 5f);
-        noiseOctaves = UnityEngine.Random.Range(1, 6);
-        persistence = UnityEngine.Random.Range(0.1f, 0.5f);
-        lacunarity = UnityEngine.Random.Range(1f, 2f);
-        noiseRedistributionFactor = UnityEngine.Random.Range(1f, 3f);
+        noiseSettings.Randomize();
         mapDepth = UnityEngine.Random.Range(30, 100);
     }
 }
@@ -119,20 +109,15 @@ public class HeightMapGenerator : MonoBehaviour {
     private float[,] CreateHeightMapLayer(HeightMapSettings settings, int seed, int mapWidth, int offsetX, int offsetY) {
         float widthFactor = (float)mapWidth / (float)maxWidth;
         float[,] noiseMap = Noise.GenerateNoiseMap(
-            settings.noiseType,
+            settings.noiseSettings,
             mapWidth,
             mapWidth,
-            settings.noiseScale * widthFactor,
             offsetX,
-            offsetY,
-            settings.noiseOctaves,
-            settings.persistence,
-            settings.lacunarity,
-            settings.noiseRedistributionFactor
+            offsetY
         );
 
         float[,] falloffMap = null;
-        if (settings.useFalloff) {
+        if (settings.noiseSettings.useFalloff) {
             falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapWidth);
         }
 
@@ -148,7 +133,7 @@ public class HeightMapGenerator : MonoBehaviour {
         // Determine map depth
         for (int z = 0; z < mapWidth; z++) {
             for (int x = 0; x < mapWidth; x++) {
-                if (settings.useFalloff && settings.mapDepth > 0) {
+                if (settings.noiseSettings.useFalloff && settings.mapDepth > 0) {
                     noiseMap[x, z] = Mathf.Clamp01(noiseMap[x, z] - falloffMap[x, z]);
                 }
 
