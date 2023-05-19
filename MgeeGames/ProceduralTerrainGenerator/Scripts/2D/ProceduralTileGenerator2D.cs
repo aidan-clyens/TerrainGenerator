@@ -11,6 +11,7 @@ public struct ProceduralTileData {
     public int maxLayer;
     [Range(0.0f, 1.0f)]
     public float threshold;
+    public bool collide;
 }
 
 public class ProceduralTileGenerator2D : MonoBehaviour {
@@ -21,7 +22,7 @@ public class ProceduralTileGenerator2D : MonoBehaviour {
 
     System.Random rng;
 
-    public void Generate(Tilemap tilemap, int[,] heightMap, int seed) {
+    public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, int seed) {
         int tilemapWidth = heightMap.GetLength(0);
         
         rng = new System.Random(seed);
@@ -40,7 +41,18 @@ public class ProceduralTileGenerator2D : MonoBehaviour {
                     // Only draw tile if height is in range
                     int height = heightMap[x, y];
                     if ((height >= data.minLayer) && (height < data.maxLayer)) {
-                        tilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                        if (data.collide) {
+                            // Collision object layer
+                            collisionTilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                            // If there is a tile on the non-collision object layer, overrite that tile
+                            if (tilemap.HasTile(new Vector3Int(x, y, 0))) {
+                                tilemap.SetTile(new Vector3Int(x, y, 0), null);
+                            }
+                        }
+                        else {
+                            // Non-collision object layer
+                            tilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                        }
                     }
                 }
             }

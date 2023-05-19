@@ -36,6 +36,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
     private List<GameObject> layers = new List<GameObject>();
     private GameObject objectLayer;
+    private GameObject objectCollisionLayer;
 
     private ProceduralTileGenerator2D proceduralTileGenerator2D;
 
@@ -85,6 +86,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             Tilemap tilemap = objectLayer.GetComponent<Tilemap>();
             tilemap.ClearAllTiles();
         }
+
+        if (objectCollisionLayer != null) {
+            Tilemap tilemap = objectCollisionLayer.GetComponent<Tilemap>();
+            tilemap.ClearAllTiles();
+        }
     }
 
     public override void Randomize() {
@@ -126,7 +132,19 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             objectLayer.transform.parent = grid.transform;
         }
 
+        if (objectCollisionLayer == null) {
+            objectCollisionLayer = new GameObject("Object Collision Layer");
+            objectCollisionLayer.AddComponent<Tilemap>();
+            objectCollisionLayer.AddComponent<TilemapRenderer>();
+            objectCollisionLayer.AddComponent<TilemapCollider2D>();
+
+            objectCollisionLayer.transform.parent = grid.transform;
+        }
+
         TilemapRenderer objectLayerRenderer = objectLayer.GetComponent<TilemapRenderer>();
+        objectLayerRenderer.sortingOrder = layers.Count;
+
+        objectLayerRenderer = objectCollisionLayer.GetComponent<TilemapRenderer>();
         objectLayerRenderer.sortingOrder = layers.Count;
     }
 
@@ -196,7 +214,9 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         }
 
         // Procedural tile settings
-        proceduralTileGenerator2D.Generate((Tilemap)objectLayer.GetComponent<Tilemap>(), heightMapInt, seed);
+        Tilemap objectTileMap = (Tilemap)objectLayer.GetComponent<Tilemap>();
+        Tilemap objectCollisionTileMap = (Tilemap)objectCollisionLayer.GetComponent<Tilemap>();
+        proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
     }
 
     private TileTypeEnum GetTileType(int[,] heightMapInt, Vector2Int position) {
