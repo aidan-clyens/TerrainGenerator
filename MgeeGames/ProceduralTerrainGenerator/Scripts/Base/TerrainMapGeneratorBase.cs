@@ -22,11 +22,15 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     public float chunkViewRange;
     public float objectViewRange;
 
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Height Map Settings")]
     [Space(10)]
     public float averageMapDepth;
     public List<HeightMapSettings> heightMapSettingsList;
 
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Biome Settings")]
     [Space(10)]
     public NoiseSettings temperatureNoiseSettings;

@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(ProceduralObjectGenerator))]
 [RequireComponent(typeof(HydraulicErosion))]
 public class TerrainMapGenerator : TerrainMapGeneratorBase {
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Terrain Settings")]
     [Space(10)]
     public Gradient terrainColourGradient;
@@ -11,14 +13,20 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     public bool createProceduralObjects;
     public bool createWater;
 
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Hydraulic Erosion Settings")]
     [Space(10)]
     public HydraulicErosionSettings hydraulicErosionSettings;
 
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Procedural Object Settings")]
     [Space(10)]
     public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Water Settings")]
     [Space(10)]
     public Material waterMaterial;
