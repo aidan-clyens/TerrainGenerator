@@ -11,19 +11,20 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     public const string VERSION = "1.4";
 
     [Header("Generator Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public int seed;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Height Map Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public float averageMapDepth;
     public List<HeightMapSettings> heightMapSettingsList;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Biome Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public NoiseSettings temperatureNoiseSettings;
     public NoiseSettings moistureNoiseSettings;

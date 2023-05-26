@@ -19,8 +19,8 @@ public enum BiomeTypeEnum {
 [RequireComponent(typeof(ProceduralTileGenerator2D))]
 public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("2D Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public int tilemapWidth;
     public Grid grid;
@@ -29,8 +29,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public List<Biome2D> biomeTiles;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Procedural Tile Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public List<ProceduralTileData> tileData;
     public NoiseSettings noiseSettings;

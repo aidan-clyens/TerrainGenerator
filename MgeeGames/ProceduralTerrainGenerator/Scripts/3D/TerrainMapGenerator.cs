@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(HydraulicErosion))]
 public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Terrain Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public Gradient terrainColourGradient;
     public Material terrainMaterial;
@@ -14,8 +14,8 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     public bool createWater;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Chunk Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public Vector2 centerPosition = new Vector2(0, 0);
     [Range(1, 10)]
@@ -26,21 +26,21 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     public float chunkViewRange;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Hydraulic Erosion Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public HydraulicErosionSettings hydraulicErosionSettings;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Procedural Object Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public float objectViewRange;
     public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 
     [Space(10)]
-    [CustomAttributes.HorizontalLine()]
     [Header("Water Settings")]
+    [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public Material waterMaterial;
     public float waterLevel;
