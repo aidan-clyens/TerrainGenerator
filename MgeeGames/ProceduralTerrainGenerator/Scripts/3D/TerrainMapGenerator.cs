@@ -15,6 +15,18 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
 
     [Space(10)]
     [CustomAttributes.HorizontalLine()]
+    [Header("Chunk Settings")]
+    [Space(10)]
+    public Vector2 centerPosition = new Vector2(0, 0);
+    [Range(1, 10)]
+    public int chunkGridWidth = 1;
+    [Range(0, 6)]
+    public int levelOfDetail;
+    public GameObject viewer;
+    public float chunkViewRange;
+
+    [Space(10)]
+    [CustomAttributes.HorizontalLine()]
     [Header("Hydraulic Erosion Settings")]
     [Space(10)]
     public HydraulicErosionSettings hydraulicErosionSettings;
@@ -23,6 +35,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [CustomAttributes.HorizontalLine()]
     [Header("Procedural Object Settings")]
     [Space(10)]
+    public float objectViewRange;
     public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 
     [Space(10)]
@@ -78,6 +91,11 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
 
         if (hydraulicErosion == null) {
             hydraulicErosion = GetComponent<HydraulicErosion>();
+        }
+
+        // Round chunk grid width to nearest odd number >= 1
+        if (chunkGridWidth % 2 == 0) {
+            chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
         }
 
         heightMapGenerator.normalize = false;

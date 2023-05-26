@@ -13,14 +13,6 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     [Header("Generator Settings")]
     [Space(10)]
     public int seed;
-    public Vector2 centerPosition = new Vector2(0, 0);
-    [Range(1, 10)]
-    public int chunkGridWidth = 1;
-    [Range(0, 6)]
-    public int levelOfDetail;
-    public GameObject viewer;
-    public float chunkViewRange;
-    public float objectViewRange;
 
     [Space(10)]
     [CustomAttributes.HorizontalLine()]
@@ -73,11 +65,6 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
 
         if (biomeGenerator == null) {
             biomeGenerator = GetComponent<BiomeGenerator>();
-        }
-
-        // Round chunk grid width to nearest odd number >= 1
-        if (chunkGridWidth % 2 == 0) {
-            chunkGridWidth = (int)Mathf.Round(chunkGridWidth / 2) * 2 + 1;
         }
 
         // Update component settings
