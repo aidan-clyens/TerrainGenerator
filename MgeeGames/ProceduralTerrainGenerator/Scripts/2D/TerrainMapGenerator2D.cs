@@ -49,6 +49,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     private List<GameObject> layers = new List<GameObject>();
     private GameObject objectLayer;
     private GameObject objectCollisionLayer;
+    private GameObject waterLayer;
 
     // Components
     private ProceduralTileGenerator2D proceduralTileGenerator2D;
@@ -106,6 +107,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
         if (objectCollisionLayer != null) {
             Tilemap tilemap = objectCollisionLayer.GetComponent<Tilemap>();
+            tilemap.ClearAllTiles();
+        }
+
+        if (waterLayer != null) {
+            Tilemap tilemap = waterLayer.GetComponent<Tilemap>();
             tilemap.ClearAllTiles();
         }
 
@@ -179,10 +185,22 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             objectCollisionLayer.transform.parent = grid.transform;
         }
 
+        if (waterLayer == null) {
+            waterLayer = new GameObject("Water Layer");
+            waterLayer.AddComponent<Tilemap>();
+            waterLayer.AddComponent<TilemapRenderer>();
+            waterLayer.AddComponent<TilemapCollider2D>();
+
+            waterLayer.transform.parent = grid.transform;
+        }
+
         TilemapRenderer objectLayerRenderer = objectLayer.GetComponent<TilemapRenderer>();
         objectLayerRenderer.sortingOrder = layers.Count;
 
         objectLayerRenderer = objectCollisionLayer.GetComponent<TilemapRenderer>();
+        objectLayerRenderer.sortingOrder = layers.Count;
+
+        objectLayerRenderer = waterLayer.GetComponent<TilemapRenderer>();
         objectLayerRenderer.sortingOrder = layers.Count;
     }
 
@@ -229,6 +247,12 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
                 if (grid != null) {
                     Tilemap tileMap = layers[height].GetComponent<Tilemap>();
+                    if (useWater) {
+                        if (height <= waterLevel) {
+                            tileMap = waterLayer.GetComponent<Tilemap>();
+                        }
+                    }
+
                     tileMap.SetTile(new Vector3Int(x, y, 0), tile);
 
                     // Set a solid tile on the layer below
