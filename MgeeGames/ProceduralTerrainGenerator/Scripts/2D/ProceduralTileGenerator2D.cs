@@ -22,7 +22,7 @@ public class ProceduralTileGenerator2D : MonoBehaviour {
 
     System.Random rng;
 
-    public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, int seed) {
+    public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, int seed, int waterLevel = -1) {
         int tilemapWidth = heightMap.GetLength(0);
         
         rng = new System.Random(seed);
@@ -40,18 +40,20 @@ public class ProceduralTileGenerator2D : MonoBehaviour {
                 if (value > data.threshold) {
                     // Only draw tile if height is in range
                     int height = heightMap[x, y];
-                    if ((height >= data.minLayer) && (height < data.maxLayer)) {
-                        if (data.collide) {
-                            // Collision object layer
-                            collisionTilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
-                            // If there is a tile on the non-collision object layer, overrite that tile
-                            if (tilemap.HasTile(new Vector3Int(x, y, 0))) {
-                                tilemap.SetTile(new Vector3Int(x, y, 0), null);
+                    if (height > waterLevel) {
+                        if ((height >= data.minLayer) && (height < data.maxLayer)) {
+                            if (data.collide) {
+                                // Collision object layer
+                                collisionTilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                                // If there is a tile on the non-collision object layer, overrite that tile
+                                if (tilemap.HasTile(new Vector3Int(x, y, 0))) {
+                                    tilemap.SetTile(new Vector3Int(x, y, 0), null);
+                                }
                             }
-                        }
-                        else {
-                            // Non-collision object layer
-                            tilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                            else {
+                                // Non-collision object layer
+                                tilemap.SetTile(new Vector3Int(x, y, 0), data.tile);
+                            }
                         }
                     }
                 }

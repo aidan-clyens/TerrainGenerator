@@ -35,6 +35,14 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public List<ProceduralTileData> tileData;
     public NoiseSettings noiseSettings;
 
+    [Space(10)]
+    [Header("Water Settings")]
+    [CustomAttributes.HorizontalLine()]
+    [Space(10)]
+    public bool useWater = false;
+    public int waterLevel;
+    public GroundTile2D waterTile;
+ 
     private float[,] heightMap;
 
     // Tilemaps
@@ -196,40 +204,27 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         for (int y = 1; y < mapHeight - 1; y++) {
             for (int x = 1; x < mapWidth - 1; x++) {
                 int height = heightMapInt[x, y];
+                Vector2Int position = new Vector2Int(x, y);
+                GroundTile2D tile2D;
                 Tile tile;
 
-                TileTypeEnum type;
-                string biomeType = GetBiomeType(new Vector2Int(x, y));
+                string biomeType = GetBiomeType(position);
                 if (!biomeTileMap.ContainsKey(biomeType)) {
                     continue;
                 }
 
-                if (smoothEdges) {
-                    type = GetTileType(heightMapInt, new Vector2Int(x, y));
-                }
-                else {
-                    type = TileTypeEnum.TileCenter;
+                tile2D = biomeTileMap[biomeType][height];
+                if (useWater) {
+                    if (height <= waterLevel) {
+                        tile2D = waterTile;
+                    }
                 }
 
-                switch (type) {
-                    case TileTypeEnum.TileCenter:
-                        tile = biomeTileMap[biomeType][height].center;
-                        break;
-                    case TileTypeEnum.TileTopLeft:
-                        tile = biomeTileMap[biomeType][height].topLeft;
-                        break;
-                    case TileTypeEnum.TileTopRight:
-                        tile = biomeTileMap[biomeType][height].topRight;
-                        break;
-                    case TileTypeEnum.TileBottomLeft:
-                        tile = biomeTileMap[biomeType][height].bottomLeft;
-                        break;
-                    case TileTypeEnum.TileBottomRight:
-                        tile = biomeTileMap[biomeType][height].bottomRight;
-                        break;
-                    default:
-                        tile = biomeTileMap[biomeType][height].center;
-                        break;
+                if (smoothEdges) {
+                    tile = GetTile(heightMapInt, tile2D, position);
+                }
+                else {
+                    tile = tile2D.center;
                 }
 
                 if (grid != null) {
@@ -237,11 +232,16 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                     tileMap.SetTile(new Vector3Int(x, y, 0), tile);
 
                     // Set a solid tile on the layer below
-                    if (type != TileTypeEnum.TileCenter) {
+                    if (!IsCenterTile(heightMapInt, position)) {
                         if (height > 0) {
                             Tilemap lowerTileMap = layers[height - 1].GetComponent<Tilemap>();
                             // TODO - Need to check lower layers biome type
-                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), biomeTileMap[biomeType][height - 1].center);
+                            GroundTile2D lowerTile2D = biomeTileMap[biomeType][height - 1];
+                            if (useWater && height - 1 <= waterLevel) {
+                                lowerTile2D = waterTile;
+                            }
+
+                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), lowerTile2D.center);
                         }
                     }
                 }
@@ -251,10 +251,16 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         // Procedural tile settings
         Tilemap objectTileMap = (Tilemap)objectLayer.GetComponent<Tilemap>();
         Tilemap objectCollisionTileMap = (Tilemap)objectCollisionLayer.GetComponent<Tilemap>();
-        proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
+
+        if (useWater) {
+            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed, waterLevel);
+        }
+        else {
+            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
+        }
     }
 
-    private TileTypeEnum GetTileType(int[,] heightMapInt, Vector2Int position) {
+    private Tile GetTile(int[,] heightMapInt, GroundTile2D tile, Vector2Int position) {
         int height = heightMapInt[position.x, position.y];
         int heightTop = heightMapInt[position.x, position.y + 1];
         int heightBottom = heightMapInt[position.x, position.y - 1];
@@ -262,34 +268,43 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         int heightRight = heightMapInt[position.x + 1, position.y];
 
         if ((heightTop == heightBottom) || (heightLeft == heightRight)) {
-            return TileTypeEnum.TileCenter;
+            return tile.center;
         }
 
         if ((height != heightRight) && (height != heightBottom)) {
             if (height > heightRight) {
-                return TileTypeEnum.TileTopLeft;
+                return tile.topLeft;
             }
         }
 
         if ((height != heightLeft) && (height != heightBottom)) {
             if (height > heightLeft) {
-               return TileTypeEnum.TileTopRight;
+               return tile.topRight;
             }
         }
 
         if ((height != heightRight) && (height != heightTop)) {
             if (height > heightRight) {
-                return TileTypeEnum.TileBottomLeft;
+                return tile.bottomLeft;
             }
         }
 
         if ((height != heightLeft) && (height != heightTop)) {
             if (height > heightLeft) {
-                return TileTypeEnum.TileBottomRight;
+                return tile.bottomRight;
             }
         }
 
-        return TileTypeEnum.TileCenter;
+        return tile.center;
+    }
+
+    private bool IsCenterTile(int[,] heightMapInt, Vector2Int position) {
+        int heightTop = heightMapInt[position.x, position.y + 1];
+        int heightBottom = heightMapInt[position.x, position.y - 1];
+        int heightLeft = heightMapInt[position.x - 1, position.y];
+        int heightRight = heightMapInt[position.x + 1, position.y];
+
+        return ((heightTop == heightBottom) || (heightLeft == heightRight));
     }
 
     private string GetBiomeType(Vector2Int position) {
