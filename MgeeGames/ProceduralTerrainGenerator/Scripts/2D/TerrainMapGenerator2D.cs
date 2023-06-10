@@ -26,6 +26,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public Grid grid;
     public bool smoothEdges = false;
     public int numLayers;
+    public string terrainSortingLayer;
+    public string collisionSortingLayer;
     public List<Biome2D> biomeTiles;
 
     [Space(10)]
@@ -161,6 +163,9 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             layer.AddComponent<TilemapRenderer>();
 
             TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
+            if (terrainSortingLayer.Length > 0) {
+                renderer.sortingLayerName = terrainSortingLayer;
+            }
             renderer.sortingOrder = i;
 
             layer.transform.parent = grid.transform;
@@ -195,12 +200,21 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         }
 
         TilemapRenderer objectLayerRenderer = objectLayer.GetComponent<TilemapRenderer>();
+        if (terrainSortingLayer.Length > 0) {
+            objectLayerRenderer.sortingLayerName = terrainSortingLayer;
+        }
         objectLayerRenderer.sortingOrder = layers.Count;
 
         objectLayerRenderer = objectCollisionLayer.GetComponent<TilemapRenderer>();
-        objectLayerRenderer.sortingOrder = layers.Count;
+        if (collisionSortingLayer.Length > 0) {
+            objectLayerRenderer.sortingLayerName = collisionSortingLayer;
+        }
+        objectLayerRenderer.sortingOrder = layers.Count + 1;
 
         objectLayerRenderer = waterLayer.GetComponent<TilemapRenderer>();
+        if (collisionSortingLayer.Length > 0) {
+            objectLayerRenderer.sortingLayerName = collisionSortingLayer;
+        }
         objectLayerRenderer.sortingOrder = layers.Count;
     }
 
