@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEditor;
 
 public enum TileTypeEnum {
     TileCenter,
@@ -9,11 +9,6 @@ public enum TileTypeEnum {
     TileTopRight,
     TileBottomLeft,
     TileBottomRight
-}
-
-public enum BiomeTypeEnum {
-    BiomeGrass,
-    BiomeSnow
 }
 
 [RequireComponent(typeof(ProceduralTileGenerator2D))]
@@ -138,6 +133,22 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         GenerateTilemap(heightMap);
     }
 
+    public TileMapData GetTileMapData() {
+        return (TileMapData)AssetDatabase.LoadAssetAtPath("Assets/Map.asset", typeof(TileMapData));
+    }
+
+    public TileData GetTileData(Vector2Int position) {
+        TileMapData tileMapData = GetTileMapData();
+
+        int index = position.y * tilemapWidth + position.x;
+        
+        if (index < tileMapData.tileData.Length) {
+            return tileMapData.tileData[index];
+        }
+
+        return new TileData();
+    }
+
     private void RequestTilemap() {
         if (grid != null)
             CreateLayers();
@@ -222,6 +233,10 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         int mapWidth = heightMap.GetLength(0);
         int mapHeight = heightMap.GetLength(1);
 
+        // Save tilemap data as a ScriptableObject
+        TileMapData tileMapData = ScriptableObject.CreateInstance<TileMapData>();
+        tileMapData.tileData = new TileData[mapWidth * mapHeight];
+
         int[,] heightMapInt = new int[mapWidth, mapHeight];
 
         // Scale the normalized height map to an integer between 0 and the max height (determined by the number of tiles)
@@ -229,6 +244,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             for (int x = 0; x < mapWidth; x++) {
                 int height = (int)Mathf.Round(heightMap[x, y] * (numLayers - 1));
                 heightMapInt[x, y] = height;
+
+                int index = y * mapWidth + x;
+                tileMapData.tileData[index] = new TileData();
+                tileMapData.tileData[index].position = new Vector2Int(x, y);
+                tileMapData.tileData[index].height = height;
             }
         }
 
@@ -244,6 +264,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 if (!biomeTileMap.ContainsKey(biomeType)) {
                     continue;
                 }
+
+                int index = y * mapWidth + x;
+                tileMapData.tileData[index].biome = biomeType;
+                tileMapData.tileData[index].temperature = temperatureMap[x, y];
+                tileMapData.tileData[index].moisture = moistureMap[x, y];
 
                 tile2D = biomeTileMap[biomeType][height];
                 if (useWater) {
@@ -296,6 +321,9 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         else {
             proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
         }
+
+        string path = "Assets/Map.asset";
+        AssetDatabase.CreateAsset(tileMapData, path);
     }
 
     private Tile GetTile(int[,] heightMapInt, GroundTile2D tile, Vector2Int position) {
