@@ -179,6 +179,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             }
             renderer.sortingOrder = i;
 
+            layer.transform.position = new Vector3(0, 0, 0);
             layer.transform.parent = grid.transform;
 
             layers.Add(layer);
@@ -189,6 +190,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             objectLayer.AddComponent<Tilemap>();
             objectLayer.AddComponent<TilemapRenderer>();
 
+            objectLayer.transform.position = new Vector3(0, 0, 0);
             objectLayer.transform.parent = grid.transform;
         }
 
@@ -198,6 +200,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             objectCollisionLayer.AddComponent<TilemapRenderer>();
             objectCollisionLayer.AddComponent<TilemapCollider2D>();
 
+            objectCollisionLayer.transform.position = new Vector3(0, 0, 0);
             objectCollisionLayer.transform.parent = grid.transform;
         }
 
@@ -207,6 +210,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             waterLayer.AddComponent<TilemapRenderer>();
             waterLayer.AddComponent<TilemapCollider2D>();
 
+            waterLayer.transform.position = new Vector3(0, 0, 0);
             waterLayer.transform.parent = grid.transform;
         }
 
