@@ -281,6 +281,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                     }
                 }
 
+                tileMapData.tileData[index].groundTile = tile2D;
+
                 if (smoothEdges) {
                     tile = GetTile(heightMapInt, tile2D, position);
                 }

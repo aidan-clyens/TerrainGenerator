@@ -8,6 +8,7 @@ public struct TileData {
     public string biome;
     public float temperature;
     public float moisture;
+    public GroundTile2D groundTile;
 }
 
 public class TileMapData : ScriptableObject {
