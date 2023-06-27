@@ -60,6 +60,7 @@ public class HeightMapGenerator : MonoBehaviour {
     }
 
     private float[,] CreateHeightMap(int seed, int mapWidth, int offsetX, int offsetY) {
+        Noise.CreateNewNoiseGenerator(seed);
         Noise.CreateNewSimplexNoiseGenerator(seed);
 
         float[,] heightMap = new float[mapWidth, mapWidth];
@@ -95,7 +96,7 @@ public class HeightMapGenerator : MonoBehaviour {
         }
 
         if (normalize) {
-            heightMap = NormalizeHeightMap(heightMap);
+            heightMap = Noise.NormalizeMap(heightMap);
         }
 
         return heightMap;
@@ -141,37 +142,7 @@ public class HeightMapGenerator : MonoBehaviour {
             }
         }
 
-        return heightMap;
-    }
-
-    private float[,] NormalizeHeightMap(float[,] heightMap) {
-        int width = heightMap.GetLength(0);
-        int height = heightMap.GetLength(1);
-
-        float minDepth = float.MaxValue;
-        float maxDepth = float.MinValue;
-
-        // Find max and min values
-        for (int z = 0; z < height; z++) {
-            for (int x = 0; x < width; x++) {
-                if (heightMap[x, z] < minDepth) {
-                    minDepth = heightMap[x, z];
-                }
-                
-                if (heightMap[x, z] > maxDepth) {
-                    maxDepth = heightMap[x, z];
-                }
-            }
-        }
-
-        // Normalize each value
-        for (int z = 0; z < height; z++) {
-            for (int x = 0; x < width; x++) {
-                heightMap[x, z] = (heightMap[x, z] - minDepth) / (maxDepth - minDepth);
-            }
-        }
-
-        return heightMap;
+        return Noise.NormalizeMap(heightMap);
     }
 }
 

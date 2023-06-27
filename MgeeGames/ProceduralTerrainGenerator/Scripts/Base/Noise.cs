@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class NoiseSettings {
     public NoiseType noiseType;
+    public int numberOfPoints;
     public float scale;
     public int octaves;
     public float persistence;
@@ -27,25 +28,75 @@ public class NoiseSettings {
 
 public enum NoiseType {
     Perlin,
-    Simplex
+    Simplex,
+    Voronoi
 };
 
 public class Noise {
 
     static SimplexNoiseGenerator simplexNoiseGenerator = new SimplexNoiseGenerator();
+    static System.Random rng;
 
     public static void CreateNewSimplexNoiseGenerator(int seed) {
         int[] seedArray = new int[8];
-        System.Random rand = new System.Random(seed);
+
+        if (rng == null)
+            rng = new System.Random(seed);
 
         for (int i = 0; i < 8; i++) {
-            seedArray[i] = rand.Next();
+            seedArray[i] = rng.Next();
         }
 
         simplexNoiseGenerator = new SimplexNoiseGenerator(seedArray);
     }
 
+    public static void CreateNewNoiseGenerator(int seed) {
+        rng = new System.Random(seed);
+    }
+
     public static float[,] GenerateNoiseMap(NoiseSettings settings, int width, int height, int offsetX, int offsetY) {
+        switch (settings.noiseType) {
+            case NoiseType.Perlin:
+            case NoiseType.Simplex:
+                return GeneratePerlinNoiseMap(settings, width, height, offsetX, offsetY);
+            case NoiseType.Voronoi:
+                return GenerateVoronoiNoiseMap(width, height, settings.numberOfPoints);
+            default:
+                return GeneratePerlinNoiseMap(settings, width, height, offsetX, offsetY);
+        }
+    }
+
+    public static float[,] NormalizeMap(float[,] noiseMap) {
+        int width = noiseMap.GetLength(0);
+        int height = noiseMap.GetLength(1);
+
+        float minDepth = float.MaxValue;
+        float maxDepth = float.MinValue;
+
+        // Find max and min values
+        for (int z = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                if (noiseMap[x, z] < minDepth) {
+                    minDepth = noiseMap[x, z];
+                }
+                
+                if (noiseMap[x, z] > maxDepth) {
+                    maxDepth = noiseMap[x, z];
+                }
+            }
+        }
+
+        // Normalize each value
+        for (int z = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                noiseMap[x, z] = (noiseMap[x, z] - minDepth) / (maxDepth - minDepth);
+            }
+        }
+
+        return noiseMap;
+    }
+
+    private static float[,] GeneratePerlinNoiseMap(NoiseSettings settings, int width, int height, int offsetX, int offsetY) {
         float[,] noiseMap = new float[width, height];
 
         float maxPossibleHeight = 0f;
@@ -97,6 +148,44 @@ public class Noise {
             }
         }
 
-        return noiseMap;
+        return Noise.NormalizeMap(noiseMap);
+    }
+
+    private static float[,] GenerateVoronoiNoiseMap(int width, int height, int numberOfPoints) {
+        float[,] noiseMap = new float[width, height];
+        Vector2Int[] points = new Vector2Int[numberOfPoints];
+
+        if (rng == null)
+            return noiseMap;
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            int x = rng.Next(0, width - 1);
+            int y = rng.Next(0, height - 1);
+
+            points[i] = new Vector2Int(x, y);
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                noiseMap[x, y] = Noise.FindClosestPoint(points, new Vector2Int(x, y));
+            }
+        }
+
+        return Noise.NormalizeMap(noiseMap);
+    }
+
+    private static int FindClosestPoint(Vector2Int[] points, Vector2Int point) {
+        float minDistance = float.MaxValue;
+        int closestPoint = 0;
+
+        for (int i = 0; i < points.Length; i++) {
+            float distance = Vector2Int.Distance(point, points[i]);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = i;
+            }
+        }
+
+        return closestPoint;
     }
 }
