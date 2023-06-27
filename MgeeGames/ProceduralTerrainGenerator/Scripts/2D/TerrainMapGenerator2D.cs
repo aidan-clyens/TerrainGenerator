@@ -252,7 +252,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 int index = y * mapWidth + x;
                 tileMapData.tileData[index] = new TileData();
                 tileMapData.tileData[index].position = new Vector2Int(x, y);
-                tileMapData.tileData[index].height = height;
             }
         }
 
@@ -261,8 +260,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             for (int x = 1; x < mapWidth - 1; x++) {
                 int height = heightMapInt[x, y];
                 Vector2Int position = new Vector2Int(x, y);
-                GroundTile2D tile2D;
-                Tile tile;
+                GroundTile2D tile;
 
                 string biomeType = GetBiomeType(position);
                 if (!biomeTileMap.ContainsKey(biomeType)) {
@@ -271,24 +269,19 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
                 int index = y * mapWidth + x;
                 tileMapData.tileData[index].biome = biomeType;
-                tileMapData.tileData[index].temperature = temperatureMap[x, y];
-                tileMapData.tileData[index].moisture = moistureMap[x, y];
 
-                tile2D = biomeTileMap[biomeType][height];
+                tile = biomeTileMap[biomeType][height];
+                tile.Height = height;
+                tile.Temperature = temperatureMap[x, y];
+                tile.Moisture = moistureMap[x, y];
+
                 if (useWater) {
                     if (height <= waterLevel) {
-                        tile2D = waterTile;
+                        tile = waterTile;
                     }
                 }
 
-                tileMapData.tileData[index].groundTile = tile2D;
-
-                if (smoothEdges) {
-                    tile = GetTile(heightMapInt, tile2D, position);
-                }
-                else {
-                    tile = tile2D.center;
-                }
+                tileMapData.tileData[index].groundTile = tile;
 
                 if (grid != null) {
                     Tilemap tileMap = layers[height].GetComponent<Tilemap>();
@@ -305,12 +298,12 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                         if (height > 0) {
                             Tilemap lowerTileMap = layers[height - 1].GetComponent<Tilemap>();
                             // TODO - Need to check lower layers biome type
-                            GroundTile2D lowerTile2D = biomeTileMap[biomeType][height - 1];
+                            GroundTile2D lowerTile = biomeTileMap[biomeType][height - 1];
                             if (useWater && height - 1 <= waterLevel) {
-                                lowerTile2D = waterTile;
+                                lowerTile = waterTile;
                             }
 
-                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), lowerTile2D.center);
+                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), lowerTile);
                         }
                     }
                 }
@@ -330,44 +323,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
         string path = "Assets/Map.asset";
         AssetDatabase.CreateAsset(tileMapData, path);
-    }
-
-    private Tile GetTile(int[,] heightMapInt, GroundTile2D tile, Vector2Int position) {
-        int height = heightMapInt[position.x, position.y];
-        int heightTop = heightMapInt[position.x, position.y + 1];
-        int heightBottom = heightMapInt[position.x, position.y - 1];
-        int heightLeft = heightMapInt[position.x - 1, position.y];
-        int heightRight = heightMapInt[position.x + 1, position.y];
-
-        if ((heightTop == heightBottom) || (heightLeft == heightRight)) {
-            return tile.center;
-        }
-
-        if ((height != heightRight) && (height != heightBottom)) {
-            if (height > heightRight) {
-                return tile.topLeft;
-            }
-        }
-
-        if ((height != heightLeft) && (height != heightBottom)) {
-            if (height > heightLeft) {
-               return tile.topRight;
-            }
-        }
-
-        if ((height != heightRight) && (height != heightTop)) {
-            if (height > heightRight) {
-                return tile.bottomLeft;
-            }
-        }
-
-        if ((height != heightLeft) && (height != heightTop)) {
-            if (height > heightLeft) {
-                return tile.bottomRight;
-            }
-        }
-
-        return tile.center;
     }
 
     private bool IsCenterTile(int[,] heightMapInt, Vector2Int position) {
