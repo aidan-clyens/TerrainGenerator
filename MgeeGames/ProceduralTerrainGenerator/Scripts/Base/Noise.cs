@@ -153,7 +153,7 @@ public class Noise {
             }
         }
 
-        return Noise.NormalizeMap(noiseMap);
+        return noiseMap;
     }
 
     private static float[,] GenerateVoronoiNoiseMap(int width, int height, int numberOfPoints) {

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System;
@@ -142,7 +142,7 @@ public class HeightMapGenerator : MonoBehaviour {
             }
         }
 
-        return Noise.NormalizeMap(heightMap);
+        return heightMap;
     }
 }
 
