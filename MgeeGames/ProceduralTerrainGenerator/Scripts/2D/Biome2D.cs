@@ -5,13 +5,13 @@ using UnityEngine;
 public class Biome2D : ScriptableObject {
 	// public BiomeTypeEnum biome;
     // public string biome;
-	[Range(0.0f, 1.0f)]
+	[Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]
 	public float minTemperature;
-    [Range(0.0f, 1.0f)]
+    [Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]
     public float maxTemperature;
-    [Range(0.0f, 1.0f)]
+    [Range(BiomeGenerator.MIN_MOISTURE, BiomeGenerator.MAX_MOISTURE)]
     public float minMoisture;
-    [Range(0.0f, 1.0f)]
+    [Range(BiomeGenerator.MIN_MOISTURE, BiomeGenerator.MAX_MOISTURE)]
     public float maxMoisture;
 	public List<GroundTile2D> tiles;
 }

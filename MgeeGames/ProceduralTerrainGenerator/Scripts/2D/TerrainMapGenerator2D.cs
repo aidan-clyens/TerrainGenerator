@@ -339,8 +339,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         float moisture = moistureMap[position.x, position.y];
 
         foreach (Biome2D biome in biomeTiles) {
-            if ((temp > biome.minTemperature && temp < biome.maxTemperature)
-                && (moisture > biome.minMoisture && moisture < biome.maxMoisture)) {
+            if ((temp >= biome.minTemperature && temp <= biome.maxTemperature)
+                && (moisture >= biome.minMoisture && moisture <= biome.maxMoisture)) {
                 return biome.name;
             }
         }
