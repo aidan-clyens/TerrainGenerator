@@ -1,16 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class NoiseSettings {
     public NoiseType noiseType;
+    [MyBox.ConditionalField(nameof(noiseType), false, NoiseType.Voronoi)]
     public int numberOfPoints;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public float scale;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public int octaves;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public float persistence;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public float lacunarity;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public float noiseRedistributionFactor;
+    [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public bool useFalloff;
 
     public NoiseSettings() {

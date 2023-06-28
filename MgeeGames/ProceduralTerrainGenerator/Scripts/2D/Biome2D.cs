@@ -3,8 +3,6 @@ using UnityEngine;
 
 [CreateAssetMenu]
 public class Biome2D : ScriptableObject {
-	// public BiomeTypeEnum biome;
-    // public string biome;
 	[Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]
 	public float minTemperature;
     [Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]

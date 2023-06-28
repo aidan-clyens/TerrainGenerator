@@ -1,0 +1,3 @@
+[submodule "MgeeGames/ProceduralTerrainGenerator/ThirdParty/MyBox"]
+	path = MgeeGames/ProceduralTerrainGenerator/ThirdParty/MyBox
+	url = git@github.com:Deadcows/MyBox.git
