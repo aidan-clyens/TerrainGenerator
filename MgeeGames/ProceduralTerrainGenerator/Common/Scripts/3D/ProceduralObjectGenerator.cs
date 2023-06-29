@@ -50,9 +50,12 @@ public class ProceduralObjectGenerator : MonoBehaviour {
         }
     }
 
-    public GameObject Generate(float[,] heightMap, Vector3[] normals, float waterLevel, int seed) {
+    public GameObject Generate(float[,] heightMap, Vector3[] normals, bool useWater, float waterLevel, int seed) {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
+
+        if (!useWater)
+            waterLevel = float.MinValue;
 
         // Get area of land above water level (number of vertices)
         int areaAboveWater = 0;

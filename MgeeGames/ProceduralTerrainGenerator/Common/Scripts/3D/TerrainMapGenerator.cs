@@ -238,7 +238,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
 
     private GameObject GenerateProceduralObjects(float[,] heightMap, Vector3[] terrainNormals) {
         proceduralObjectGenerator.Clear();
-        GameObject proceduralObjects = proceduralObjectGenerator.Generate(heightMap, terrainNormals, waterLevel, seed);
+        GameObject proceduralObjects = proceduralObjectGenerator.Generate(heightMap, terrainNormals, useWater, waterLevel, seed);
 
         proceduralObjects.isStatic = true;
     
