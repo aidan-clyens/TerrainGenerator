@@ -12,21 +12,21 @@ public enum MeshType {
 
 public static class MeshGenerator {
 
-    public static void RequestMeshData(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
+    public static void RequestMeshData(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback) {
         ThreadStart threadStart = delegate {
-            MeshDataThread(position, heightMap, levelOfDetail, callback, gradient);
+            MeshDataThread(position, heightMap, levelOfDetail, callback);
         };
 
         new Thread(threadStart).Start();
     }
 
-    static void MeshDataThread(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback, Gradient gradient=null) {
-        MeshData meshData = Generate(heightMap, levelOfDetail, gradient);
+    static void MeshDataThread(Vector2 position, float[,] heightMap, int levelOfDetail, Action<Vector2, float[,], MeshData> callback) {
+        MeshData meshData = Generate(heightMap, levelOfDetail);
 
         callback(position, heightMap, meshData);
     }
 
-    static MeshData Generate(float[,] heightMap, int levelOfDetail, Gradient gradient=null) {
+    static MeshData Generate(float[,] heightMap, int levelOfDetail) {
         int meshWidth = heightMap.GetLength(0);
         int meshHeight = heightMap.GetLength(1);
 
@@ -65,19 +65,6 @@ public static class MeshGenerator {
                 meshData.uvs[index] = new Vector2(x / (float)meshWidth, z / (float)meshHeight);
 
                 index++;
-            }
-        }
-
-        index = 0;
-        if (gradient != null) {
-            for (int z = 0; z < verticesPerLine; z++) {
-                for (int x = 0; x < verticesPerLine; x++) {
-                    // Set vertex colour
-                    float y = Mathf.InverseLerp(minDepth, maxDepth, meshData.vertices[index].y);
-                    meshData.colours[index] = gradient.Evaluate(y);
-                
-                    index++;
-                }
             }
         }
 

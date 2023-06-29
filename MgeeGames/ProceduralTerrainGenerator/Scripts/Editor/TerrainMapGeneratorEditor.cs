@@ -56,7 +56,6 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainData.waterLevel = terrainMapGenerator3D.waterLevel;
         terrainData.createWater = terrainMapGenerator3D.createWater;
         terrainData.createProceduralObjects = terrainMapGenerator3D.createProceduralObjects;
-        terrainData.terrainColourGradient = terrainMapGenerator3D.terrainColourGradient;
         terrainData.terrainMaterial = terrainMapGenerator3D.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator3D.waterMaterial;
         terrainData.hydraulicErosionSettings = terrainMapGenerator3D.hydraulicErosionSettings;
@@ -95,7 +94,6 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainMapGenerator3D.waterLevel = terrainData.waterLevel;
         terrainMapGenerator3D.createWater = terrainData.createWater;
         terrainMapGenerator3D.createProceduralObjects = terrainData.createProceduralObjects;
-        terrainMapGenerator3D.terrainColourGradient = terrainData.terrainColourGradient;
         terrainMapGenerator3D.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator3D.waterMaterial = terrainData.waterMaterial;
         terrainMapGenerator3D.hydraulicErosionSettings = terrainData.hydraulicErosionSettings;

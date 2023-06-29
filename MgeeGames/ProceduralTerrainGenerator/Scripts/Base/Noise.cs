@@ -6,14 +6,18 @@ public class NoiseSettings {
     [MyBox.ConditionalField(nameof(noiseType), false, NoiseType.Voronoi)]
     public int numberOfPoints;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
+    [Range(1.0f, 5.0f)]
     public float scale;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public int octaves;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
+    [Range(0.1f, 0.5f)]
     public float persistence;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
+    [Range(1.0f, 2.0f)]
     public float lacunarity;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
+    [Range(1.0f, 5.0f)]
     public float noiseRedistributionFactor;
     [MyBox.ConditionalField(nameof(noiseType), true, NoiseType.Voronoi)]
     public bool useFalloff;
@@ -27,7 +31,7 @@ public class NoiseSettings {
         octaves = UnityEngine.Random.Range(1, 6);
         persistence = UnityEngine.Random.Range(0.1f, 0.5f);
         lacunarity = UnityEngine.Random.Range(1f, 2f);
-        noiseRedistributionFactor = UnityEngine.Random.Range(1f, 3f);
+        noiseRedistributionFactor = UnityEngine.Random.Range(1f, 5f);
     }
 }
 

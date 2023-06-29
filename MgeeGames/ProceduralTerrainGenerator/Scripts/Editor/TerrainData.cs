@@ -20,7 +20,6 @@ class TerrainData {
     public float waterLevel;
     public bool createWater;
     public bool createProceduralObjects;
-    public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public Material waterMaterial;
 

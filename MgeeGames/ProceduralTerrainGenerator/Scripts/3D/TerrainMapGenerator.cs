@@ -8,7 +8,6 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Header("Terrain Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
-    public Gradient terrainColourGradient;
     public Material terrainMaterial;
     public bool createProceduralObjects;
     public bool createWater;
@@ -245,7 +244,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     }
 
     public override void ProcessHeightMapData(HeightMapThreadInfo info) {
-        MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived, terrainColourGradient);
+        MeshGenerator.RequestMeshData(info.position, info.heightMap, levelOfDetail, OnTerrainMeshDataReceived);
     }
 
     private void OnTerrainMeshDataReceived(Vector2 position, float[,] heightMap, MeshData meshData) {
