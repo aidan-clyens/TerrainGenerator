@@ -18,8 +18,8 @@ class TerrainData {
 
     // Terrain Settings
     public float waterLevel;
-    public bool createWater;
-    public bool createProceduralObjects;
+    public bool useWater;
+    public bool useProceduralObjects;
     public Material terrainMaterial;
     public Material waterMaterial;
 

@@ -54,8 +54,8 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainData.averageMapDepth = terrainMapGenerator3D.averageMapDepth;
         terrainData.heightMapSettingsList = terrainMapGenerator3D.heightMapSettingsList;
         terrainData.waterLevel = terrainMapGenerator3D.waterLevel;
-        terrainData.createWater = terrainMapGenerator3D.createWater;
-        terrainData.createProceduralObjects = terrainMapGenerator3D.createProceduralObjects;
+        terrainData.useWater = terrainMapGenerator3D.useWater;
+        terrainData.useProceduralObjects = terrainMapGenerator3D.useProceduralObjects;
         terrainData.terrainMaterial = terrainMapGenerator3D.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator3D.waterMaterial;
         terrainData.hydraulicErosionSettings = terrainMapGenerator3D.hydraulicErosionSettings;
@@ -92,8 +92,8 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainMapGenerator3D.averageMapDepth = terrainData.averageMapDepth;
         terrainMapGenerator3D.heightMapSettingsList = terrainData.heightMapSettingsList;
         terrainMapGenerator3D.waterLevel = terrainData.waterLevel;
-        terrainMapGenerator3D.createWater = terrainData.createWater;
-        terrainMapGenerator3D.createProceduralObjects = terrainData.createProceduralObjects;
+        terrainMapGenerator3D.useWater = terrainData.useWater;
+        terrainMapGenerator3D.useProceduralObjects = terrainData.useProceduralObjects;
         terrainMapGenerator3D.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator3D.waterMaterial = terrainData.waterMaterial;
         terrainMapGenerator3D.hydraulicErosionSettings = terrainData.hydraulicErosionSettings;

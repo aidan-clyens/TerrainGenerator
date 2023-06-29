@@ -8,9 +8,8 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Header("Terrain Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
+    public GameObject terrain;
     public Material terrainMaterial;
-    public bool createProceduralObjects;
-    public bool createWater;
 
     [Space(10)]
     [Header("Chunk Settings")]
@@ -34,6 +33,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Header("Procedural Object Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
+    public bool useProceduralObjects;
     public float objectViewRange;
     public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
 
@@ -41,6 +41,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Header("Water Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
+    public bool useWater = false;
     public Material waterMaterial;
     public float waterLevel;
     public float waveSpeed;
@@ -58,8 +59,11 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     public override void Start() {
         base.Start();
 
+        if (terrain == null)
+            return;
+
         // Get all Terrain Chunks
-        foreach (Transform child in transform) {
+        foreach (Transform child in terrain.transform) {
             Vector2 position = new Vector2(child.position.x / chunkWidth, child.position.z / chunkWidth);
             if (!terrainChunks.ContainsKey(position)) {
                 terrainChunks.Add(position, child.gameObject);
@@ -124,7 +128,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
                 else {
                     chunk = CreateTerrainChunk(info.position, info.meshData);
 
-                    if (createProceduralObjects) {
+                    if (useProceduralObjects) {
                         Vector3[] normals = chunk.GetComponent<MeshFilter>().sharedMesh.normals;
                         GameObject proceduralObjects = GenerateProceduralObjects(info.heightMap, normals);
                         proceduralObjects.transform.parent = terrainChunks[info.position].transform;
@@ -156,6 +160,9 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     }
 
     public override void Generate() {
+        if (terrain == null)
+            return;
+
         // Generate grid of chunks
         CreateChunkGrid();
     }
@@ -167,16 +174,11 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
             chunk.SetActive(true);
         }
 
-        Transform[] chunkTransforms = GetComponentsInChildren<Transform>();
-        GameObject[] chunks = new GameObject[chunkTransforms.Length - 1];
         terrainChunks.Clear();
 
-        int index = 0;
-        foreach (Transform chunk in chunkTransforms) {
-            if (chunk != transform) {
-                chunks[index] = chunk.gameObject;
-                index++;
-            }
+        List<GameObject> chunks = new List<GameObject>();
+        foreach (Transform child in terrain.transform) {
+            chunks.Add(child.gameObject);
         }
 
         foreach (GameObject chunk in chunks) {
@@ -202,7 +204,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
                 GameObject chunk = new GameObject("TerrainChunk");
 
                 chunk.isStatic = true;
-                chunk.transform.parent = transform;
+                chunk.transform.parent = terrain.transform;
                 chunk.transform.position = new Vector3(pos.x * (chunkWidth - 1), 0f, -pos.y * (chunkWidth - 1));
 
                 if (terrainChunks.ContainsKey(pos)) {
@@ -221,7 +223,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     private void RequestTerrainChunk(Vector2 position, bool loadAllObjects) {
         heightMapGenerator.RequestHeightMapData(seed, chunkWidth, position, OnHeightMapDataReceived);
 
-        if (createWater) {
+        if (useWater) {
             float[,] heightMap = new float[chunkWidth, chunkWidth];
 
             for (int z = 0; z < chunkWidth; z++) {
