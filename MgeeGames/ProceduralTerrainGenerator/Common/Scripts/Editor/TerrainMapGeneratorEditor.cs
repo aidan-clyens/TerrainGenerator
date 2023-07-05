@@ -59,7 +59,7 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainData.terrainMaterial = terrainMapGenerator3D.terrainMaterial;
         terrainData.waterMaterial = terrainMapGenerator3D.waterMaterial;
         terrainData.hydraulicErosionSettings = terrainMapGenerator3D.hydraulicErosionSettings;
-        terrainData.proceduralObjectGeneratorSettings = terrainMapGenerator3D.proceduralObjectGeneratorSettings;
+        terrainData.proceduralObjectData = terrainMapGenerator3D.proceduralObjectData;
 
         string terrainDataJson = JsonUtility.ToJson(terrainData);
         string directory = Application.persistentDataPath + "/worlds"; 
@@ -97,7 +97,7 @@ public class TerrainMapGeneratorEditor : TerrainMapGeneratorBaseEditor {
         terrainMapGenerator3D.terrainMaterial = terrainData.terrainMaterial;
         terrainMapGenerator3D.waterMaterial = terrainData.waterMaterial;
         terrainMapGenerator3D.hydraulicErosionSettings = terrainData.hydraulicErosionSettings;
-        terrainMapGenerator3D.proceduralObjectGeneratorSettings = terrainData.proceduralObjectGeneratorSettings;
+        terrainMapGenerator3D.proceduralObjectData = terrainData.proceduralObjectData;
 
         EditorUtility.SetDirty(terrainMapGenerator);
         EditorUtility.SetDirty(heightMapGenerator);

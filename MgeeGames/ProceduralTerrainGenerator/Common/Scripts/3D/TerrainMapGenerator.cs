@@ -35,7 +35,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
     [Space(10)]
     public bool useProceduralObjects;
     public float objectViewRange;
-    public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
+    public List<ProceduralObjectData> proceduralObjectData;
 
     [Space(10)]
     [Header("Water Settings")]
@@ -103,7 +103,7 @@ public class TerrainMapGenerator : TerrainMapGeneratorBase {
 
         heightMapGenerator.normalize = false;
 
-        proceduralObjectGenerator.settings = proceduralObjectGeneratorSettings;
+        proceduralObjectGenerator.objectData = proceduralObjectData;
 
         hydraulicErosion.settings = hydraulicErosionSettings;
 

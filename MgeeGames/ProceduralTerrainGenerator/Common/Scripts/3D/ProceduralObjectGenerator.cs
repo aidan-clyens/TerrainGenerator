@@ -3,24 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ProceduralObjectGeneratorSettings {
-    public List<GameObject> prefabs = new List<GameObject>();
-    public float density;
+public class ProceduralObjectData : ProceduralObjectDataBase {
+    public GameObject prefab;
+    [Range(0.0f, 90.0f)]
     public float slopeThreshold;
     public float verticalOffset;
 }
 
-public class ProceduralObjectGenerator : MonoBehaviour {
+public class ProceduralObjectGenerator : ProceduralObjectGeneratorBase {
     [HideInInspector]
-    public ProceduralObjectGeneratorSettings settings;
+    public List<ProceduralObjectData> objectData;
 
-    List<GameObject> objects = new List<GameObject>();
+    private List<GameObject> objects = new List<GameObject>();
 
-    System.Random rng;
-
-    GameObject viewer;
-    float viewRange;
-
+    private GameObject viewer;
+    private float viewRange;
 
     public void Init(GameObject view, float range) {
         viewer = view;
@@ -54,55 +51,50 @@ public class ProceduralObjectGenerator : MonoBehaviour {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
 
+        GameObject parentGameObject = new GameObject("ProceduralObjects");
+        if (objectData.Count == 0) {
+            return parentGameObject; 
+        }
+
         if (!useWater)
             waterLevel = float.MinValue;
 
         // Get area of land above water level (number of vertices)
-        int areaAboveWater = 0;
-        for (int z = 0; z < height; z++) {
-            for (int x = 0; x < width; x++) {
-                if (heightMap[z, x] > waterLevel) {
-                    areaAboveWater++;
-                }
-            }
-        }
-        
-        // Calculate number of objects based on area and density
-        int numobjects = (int)((areaAboveWater / 100f) * settings.density);
+        float areaAboveWater = CalculateMapArea(heightMap, waterLevel);
 
         rng = new System.Random(seed);
-
-        GameObject parentGameObject = new GameObject("ProceduralObjects");
-
-        if (settings.prefabs.Count == 0) {
-            return parentGameObject; 
-        }
 
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
 
-        while (objects.Count < numobjects) {
-            int x = rng.Next(0, width - 1);
-            int z = rng.Next(0, height - 1);
-            float y = heightMap[x, z] + settings.verticalOffset;
+        foreach (ProceduralObjectData data in objectData) {
+            // Calculate number of objects based on area and density
+            int numObjects = (int)((areaAboveWater / 100f) * data.density);
+            int objectCount = 0;
 
-            Vector3 normal = normals[(int)(z*width + x)];
-            float angle = Vector3.Angle(normal, new Vector3(0, 1, 0));
+            while (objectCount < numObjects) {
+                int x = rng.Next(0, width - 1);
+                int z = rng.Next(0, height - 1);
+                float y = heightMap[x, z] + data.verticalOffset;
 
-            x = (int)topLeftX + x;
-            z = (int)topLeftZ - z;
+                Vector3 normal = normals[(int)(z*width + x)];
+                float angle = Vector3.Angle(normal, new Vector3(0, 1, 0));
 
-            if (y > waterLevel + 5 && angle < settings.slopeThreshold) {
-                Vector3 position = new Vector3(x, y, z);
-                GameObject prefab = settings.prefabs[rng.Next(0, settings.prefabs.Count)];
-                GameObject obj = Instantiate(prefab, position, Quaternion.identity, parentGameObject.transform);
+                x = (int)topLeftX + x;
+                z = (int)topLeftZ - z;
 
-                float scale = (float)rng.NextDouble() + 1f;
-                obj.transform.localScale = new Vector3(scale, scale, scale);
+                if (y > waterLevel + 5 && angle < data.slopeThreshold) {
+                    Vector3 position = new Vector3(x, y, z);
+                    GameObject obj = Instantiate(data.prefab, position, Quaternion.identity, parentGameObject.transform);
 
-                obj.isStatic = true;
+                    float scale = (float)rng.NextDouble() + 1f;
+                    obj.transform.localScale = new Vector3(scale, scale, scale);
 
-                objects.Add(obj);
+                    obj.isStatic = true;
+
+                    objects.Add(obj);
+                    objectCount++;
+                }
             }
         }
 

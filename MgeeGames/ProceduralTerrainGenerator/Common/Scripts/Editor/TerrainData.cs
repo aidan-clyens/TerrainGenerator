@@ -27,5 +27,5 @@ class TerrainData {
     public HydraulicErosionSettings hydraulicErosionSettings;
 
     // Forest Generator Settings
-    public ProceduralObjectGeneratorSettings proceduralObjectGeneratorSettings;
+    public List<ProceduralObjectData> proceduralObjectData;
 }

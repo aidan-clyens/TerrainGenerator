@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [System.Serializable]
-public struct ProceduralTileData {
+public class ProceduralTileData : ProceduralObjectDataBase {
     public Tile tile;
-    public float density;
     public int minLayer;
     public int maxLayer;
     [Range(0.0f, 1.0f)]
@@ -14,22 +13,25 @@ public struct ProceduralTileData {
     public bool collide;
 }
 
-public class ProceduralTileGenerator2D : MonoBehaviour {
+public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
     [HideInInspector]
     public List<ProceduralTileData> tileData;
     [HideInInspector]
     public NoiseSettings noiseSettings;
 
-    System.Random rng;
-
     public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, int seed, int waterLevel = -1) {
         int tilemapWidth = heightMap.GetLength(0);
         
         rng = new System.Random(seed);
-        float[,] noiseMap = GeneratePerlinNoiseMap(tilemapWidth);
+        float[,] noiseMap = GenerateNoiseMap(tilemapWidth);
+
+        if (waterLevel == -1)
+            waterLevel = int.MinValue;
+
+        int areaAboveWater = CalculateMapArea(heightMap, waterLevel);
 
         foreach (ProceduralTileData data in tileData) {
-            int numTiles = (int)Mathf.Round(data.density);
+            int numTiles = (int)(areaAboveWater * data.density);
 
             for (int i = 0; i < numTiles; i++) {
                 int x = rng.Next(0, tilemapWidth - 1);
@@ -65,7 +67,7 @@ public class ProceduralTileGenerator2D : MonoBehaviour {
         noiseSettings.Randomize();
     }
 
-    private float[,] GeneratePerlinNoiseMap(int tilemapWidth) {
+    private float[,] GenerateNoiseMap(int tilemapWidth) {
         return Noise.GenerateNoiseMap(
             noiseSettings,
             tilemapWidth,
