@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 namespace CustomAttributes {
 
     [CustomPropertyDrawer(typeof(HorizontalLineAttribute))]
@@ -18,3 +19,4 @@ namespace CustomAttributes {
         }
     }
 }
+#endif

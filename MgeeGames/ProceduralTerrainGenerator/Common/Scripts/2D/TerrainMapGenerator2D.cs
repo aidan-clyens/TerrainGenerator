@@ -56,6 +56,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     private float[,] moistureMap;
     private Dictionary<string, List<GroundTile2D>> biomeTileMap = new Dictionary<string, List<GroundTile2D>>();
 
+    private MapData2D mapData2D;
+
     public override void Start() {
         base.Start();
 
@@ -77,6 +79,10 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             proceduralTileGenerator2D = GetComponent<ProceduralTileGenerator2D>();
         }
 
+        if (mapData is MapData2D) {
+            mapData2D = (MapData2D)mapData;
+        }
+
         // Height Map Generator settings
         heightMapGenerator.normalize = true;
 
@@ -86,6 +92,11 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     }
 
     public override void Generate() {
+        if (mapData2D == null) {
+            Debug.LogWarning("Error: Missing MapData scriptable object. Failed to Generate.");
+            return;
+        }
+
         Clear();
         RequestTilemap();
     }
@@ -133,17 +144,17 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         GenerateTilemap(heightMap);
     }
 
-    public TileMapData GetTileMapData() {
-        return (TileMapData)AssetDatabase.LoadAssetAtPath("Assets/Map.asset", typeof(TileMapData));
+    public MapData2D GetMapData2D() {
+        return mapData2D;
     }
 
     public TileData GetTileData(Vector2Int position) {
-        TileMapData tileMapData = GetTileMapData();
+        MapData2D mapData2D = GetMapData2D();
 
         int index = position.y * tilemapWidth + position.x;
         
-        if (index < tileMapData.tileData.Length) {
-            return tileMapData.tileData[index];
+        if (index < mapData2D.tileData.Length) {
+            return mapData2D.tileData[index];
         }
 
         return new TileData();
@@ -237,9 +248,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         int mapWidth = heightMap.GetLength(0);
         int mapHeight = heightMap.GetLength(1);
 
-        // Save tilemap data as a ScriptableObject
-        TileMapData tileMapData = ScriptableObject.CreateInstance<TileMapData>();
-        tileMapData.tileData = new TileData[mapWidth * mapHeight];
+        mapData2D.tileData = new TileData[mapWidth * mapHeight];
 
         int[,] heightMapInt = new int[mapWidth, mapHeight];
 
@@ -250,8 +259,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 heightMapInt[x, y] = height;
 
                 int index = y * mapWidth + x;
-                tileMapData.tileData[index] = new TileData();
-                tileMapData.tileData[index].position = new Vector2Int(x, y);
+                mapData2D.tileData[index] = new TileData();
+                mapData2D.tileData[index].position = new Vector2Int(x, y);
             }
         }
 
@@ -268,7 +277,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 }
 
                 int index = y * mapWidth + x;
-                tileMapData.tileData[index].biome = biomeType;
+                mapData2D.tileData[index].biome = biomeType;
 
                 tile = biomeTileMap[biomeType][height];
                 tile.Height = height;
@@ -281,7 +290,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                     }
                 }
 
-                tileMapData.tileData[index].groundTile = tile;
+                mapData2D.tileData[index].groundTile = tile;
 
                 if (grid != null) {
                     Tilemap tileMap = layers[height].GetComponent<Tilemap>();
@@ -320,9 +329,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         else {
             proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
         }
-
-        string path = "Assets/Map.asset";
-        AssetDatabase.CreateAsset(tileMapData, path);
     }
 
     private bool IsCenterTile(int[,] heightMapInt, Vector2Int position) {

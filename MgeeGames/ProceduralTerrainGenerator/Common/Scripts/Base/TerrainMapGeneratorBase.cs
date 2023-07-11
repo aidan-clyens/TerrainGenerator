@@ -14,6 +14,7 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
     public int seed;
+    public MapData mapData;
 
     [Space(10)]
     [Header("Height Map Settings")]
@@ -118,6 +119,7 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     private void OnEnable() {
         EditorApplication.update += Update;
     }
@@ -125,4 +127,5 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     private void OnDisable() {
         EditorApplication.update -= Update;
     }
+#endif
 }
