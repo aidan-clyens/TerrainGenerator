@@ -3,14 +3,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEditor;
 
-public enum TileTypeEnum {
-    TileCenter,
-    TileTopLeft,
-    TileTopRight,
-    TileBottomLeft,
-    TileBottomRight
-}
-
 [RequireComponent(typeof(ProceduralTileGenerator2D))]
 public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     [Space(10)]
