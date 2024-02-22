@@ -257,42 +257,39 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             for (int x = 0; x < mapWidth; x++) {
                 int height = (int)Mathf.Round(heightMap[x, y] * (numLayers - 1));
                 heightMapInt[x, y] = height;
-
-                int index = y * mapWidth + x;
-                mapData2D.tileData[index] = new TileData();
-                mapData2D.tileData[index].position = new Vector2Int(x, y);
             }
         }
 
         // Determine the tile type given the height
         for (int y = 1; y < mapHeight - 1; y++) {
             for (int x = 1; x < mapWidth - 1; x++) {
+                int index = y * mapWidth + x;
                 int height = heightMapInt[x, y];
                 Vector2Int position = new Vector2Int(x, y);
-                GroundTile2D tile;
 
                 string biomeType = GetBiomeType(position);
                 if (!biomeTileMap.ContainsKey(biomeType)) {
                     continue;
                 }
 
-                int index = y * mapWidth + x;
+                mapData2D.tileData[index] = new TileData();
+                mapData2D.tileData[index].position = position;
                 mapData2D.tileData[index].biome = biomeType;
+                mapData2D.tileData[index].groundTile = GetTile(position, biomeType, height); ;
+            }
+        }
 
-                tile = biomeTileMap[biomeType][height];
-                tile.Height = height;
-                tile.Temperature = temperatureMap[x, y];
-                tile.Moisture = moistureMap[x, y];
+        // Render tilemaps
+        if (grid != null) {
+            for (int y = 1; y < mapHeight - 1; y++) {
+                for (int x = 1; x < mapWidth - 1; x++) {
+                    int index = y * mapWidth + x;
+                    int height = heightMapInt[x, y];
+                    Vector2Int position = new Vector2Int(x, y);
 
-                if (useWater) {
-                    if (height <= waterLevel) {
-                        tile = waterTile;
-                    }
-                }
+                    GroundTile2D tile = mapData2D.tileData[index].groundTile;
+                    string biomeType = mapData2D.tileData[index].biome;
 
-                mapData2D.tileData[index].groundTile = tile;
-
-                if (grid != null) {
                     Tilemap tileMap = layers[height].GetComponent<Tilemap>();
                     if (useWater) {
                         if (height <= waterLevel) {
@@ -306,8 +303,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                     if (!IsCenterTile(heightMapInt, position)) {
                         if (height > 0) {
                             Tilemap lowerTileMap = layers[height - 1].GetComponent<Tilemap>();
-                            // TODO - Need to check lower layers biome type
-                            GroundTile2D lowerTile = biomeTileMap[biomeType][height - 1];
+                            GroundTile2D lowerTile = GetTile(position, biomeType, height - 1);
                             if (useWater && height - 1 <= waterLevel) {
                                 lowerTile = waterTile;
                             }
@@ -329,6 +325,29 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         else {
             proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
         }
+    }
+
+    private GroundTile2D GetTile(Vector2Int position, string biome, int height) {
+        if (biomeTileMap.ContainsKey(biome)) {
+            if (height < biomeTileMap[biome].Count) {
+                GroundTile2D tile = biomeTileMap[biome][height];
+                tile.Height = height;
+                tile.Temperature = temperatureMap[position.x, position.y];
+                tile.Moisture = moistureMap[position.x, position.y];
+
+                tile.SetSmoothEdges(smoothEdges);
+
+                if (useWater) {
+                    if (height <= waterLevel) {
+                        tile = waterTile;
+                    }
+                }
+
+                return tile;
+            }
+        }
+
+        return new GroundTile2D();
     }
 
     private bool IsCenterTile(int[,] heightMapInt, Vector2Int position) {

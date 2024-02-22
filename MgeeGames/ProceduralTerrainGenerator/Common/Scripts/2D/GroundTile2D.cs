@@ -12,6 +12,8 @@ public class GroundTile2D : Tile {
     public float Temperature { get; set; }
     public float Moisture { get; set; }
 
+    private bool smoothEdges = false;
+
     enum GroundTileRotation {
         Center,
         TopRight,
@@ -32,7 +34,13 @@ public class GroundTile2D : Tile {
     }
 
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref UnityEngine.Tilemaps.TileData tileData) {
-        GroundTileRotation rotation = GetTileRotation(position, tilemap);
+        GroundTileRotation rotation;
+        if (smoothEdges) {
+            rotation = GetTileRotation(position, tilemap);
+        }
+        else {
+            rotation = GroundTileRotation.Center;
+        }
 
         tileData.color = Color.white;
         tileData.colliderType = ColliderType.None;
@@ -48,6 +56,10 @@ public class GroundTile2D : Tile {
         }
 
         tileData.flags = TileFlags.LockTransform;
+    }
+
+    public void SetSmoothEdges(bool smoothEdges) {
+        this.smoothEdges = smoothEdges;
     }
 
     private bool HasGroundTile(ITilemap tilemap, Vector3Int position) {
