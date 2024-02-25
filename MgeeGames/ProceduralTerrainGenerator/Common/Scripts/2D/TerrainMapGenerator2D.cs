@@ -36,6 +36,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
     // Tilemaps
     private List<GameObject> layers = new List<GameObject>();
+    private Dictionary<string, List<GameObject>> biomeLayers = new Dictionary<string, List<GameObject>>(); 
     private GameObject objectLayer;
     private GameObject objectCollisionLayer;
     private GameObject waterLayer;
@@ -99,6 +100,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         }
 
         layers.Clear();
+        biomeLayers.Clear();
 
         if (objectLayer != null) {
             Tilemap tilemap = objectLayer.GetComponent<Tilemap>();
@@ -171,21 +173,36 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     }
 
     private void CreateLayers() {
-        for (int i = 0; i < numLayers; i++) {
-            GameObject layer = new GameObject("Layer " + i);
-            layer.AddComponent<Tilemap>();
-            layer.AddComponent<TilemapRenderer>();
+        for (int n = 0; n < biomeTiles.Count; n++) {
+            GameObject biomeLayer = new GameObject("Biome " + biomeTiles[n].name);
+            biomeLayer.transform.position = new Vector3(0, 0, 0);
+            biomeLayer.transform.parent = grid.transform;
 
-            TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
-            if (terrainSortingLayer.Length > 0) {
-                renderer.sortingLayerName = terrainSortingLayer;
+            layers.Add(biomeLayer);
+            biomeLayers[biomeTiles[n].name] = new List<GameObject>();
+
+            for (int i = 0; i < numLayers; i++) {
+                GameObject layer = new GameObject(biomeTiles[n].name + " Layer " + i);
+                layer.AddComponent<Tilemap>();
+                layer.AddComponent<TilemapRenderer>();
+                layer.AddComponent<TilemapCollider2D>();
+                layer.AddComponent<CompositeCollider2D>();
+
+                layer.GetComponent<TilemapCollider2D>().usedByComposite = true;
+                layer.GetComponent<CompositeCollider2D>().isTrigger = true;
+                layer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+
+                TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
+                if (terrainSortingLayer.Length > 0) {
+                    renderer.sortingLayerName = terrainSortingLayer;
+                }
+                renderer.sortingOrder = i;
+
+                layer.transform.position = new Vector3(0, 0, 0);
+                layer.transform.parent = biomeLayer.transform;
+
+                biomeLayers[biomeTiles[n].name].Add(layer);
             }
-            renderer.sortingOrder = i;
-
-            layer.transform.position = new Vector3(0, 0, 0);
-            layer.transform.parent = grid.transform;
-
-            layers.Add(layer);
         }
 
         if (objectLayer == null) {
@@ -221,19 +238,19 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         if (terrainSortingLayer.Length > 0) {
             objectLayerRenderer.sortingLayerName = terrainSortingLayer;
         }
-        objectLayerRenderer.sortingOrder = layers.Count;
+        objectLayerRenderer.sortingOrder = biomeLayers.Count;
 
         objectLayerRenderer = objectCollisionLayer.GetComponent<TilemapRenderer>();
         if (collisionSortingLayer.Length > 0) {
             objectLayerRenderer.sortingLayerName = collisionSortingLayer;
         }
-        objectLayerRenderer.sortingOrder = layers.Count + 1;
+        objectLayerRenderer.sortingOrder = biomeLayers.Count + 1;
 
         objectLayerRenderer = waterLayer.GetComponent<TilemapRenderer>();
         if (collisionSortingLayer.Length > 0) {
             objectLayerRenderer.sortingLayerName = collisionSortingLayer;
         }
-        objectLayerRenderer.sortingOrder = layers.Count;
+        objectLayerRenderer.sortingOrder = biomeLayers.Count;
     }
 
     private void GenerateTilemap(float[,] heightMap) {
@@ -282,7 +299,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                     GroundTile2D tile = mapData2D.tileData[index].groundTile;
                     string biomeType = mapData2D.tileData[index].biome;
 
-                    Tilemap tileMap = layers[height].GetComponent<Tilemap>();
+                    Tilemap tileMap = biomeLayers[biomeType][height].GetComponent<Tilemap>();
                     if (useWater) {
                         if (height <= waterLevel) {
                             tileMap = waterLayer.GetComponent<Tilemap>();
@@ -291,16 +308,18 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
                     tileMap.SetTile(new Vector3Int(x, y, 0), tile);
 
-                    // Set a solid tile on the layer below
-                    if (!IsCenterTile(heightMapInt, position)) {
-                        if (height > 0) {
-                            Tilemap lowerTileMap = layers[height - 1].GetComponent<Tilemap>();
-                            GroundTile2D lowerTile = GetTile(position, biomeType, height - 1);
-                            if (useWater && height - 1 <= waterLevel) {
-                                lowerTile = waterTile;
-                            }
+                    if (smoothEdges) {
+                        // Set a solid tile on the layer below
+                        if (!IsCenterTile(heightMapInt, position)) {
+                            if (height > 0) {
+                                Tilemap lowerTileMap = biomeLayers[biomeType][height - 1].GetComponent<Tilemap>();
+                                GroundTile2D lowerTile = GetTile(position, biomeType, height - 1);
+                                if (useWater && height - 1 <= waterLevel) {
+                                    lowerTile = waterTile;
+                                }
 
-                            lowerTileMap.SetTile(new Vector3Int(x, y, 0), lowerTile);
+                                lowerTileMap.SetTile(new Vector3Int(x, y, 0), lowerTile);
+                            }
                         }
                     }
                 }
