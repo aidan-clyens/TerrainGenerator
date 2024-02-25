@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -43,7 +43,7 @@ public class GroundTile2D : Tile {
         }
 
         tileData.color = Color.white;
-        tileData.colliderType = ColliderType.None;
+        tileData.colliderType = ColliderType.Sprite;
 
         if (rotation == GroundTileRotation.Center) {
             tileData.sprite = center;
