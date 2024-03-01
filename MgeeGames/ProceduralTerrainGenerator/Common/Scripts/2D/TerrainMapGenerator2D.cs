@@ -336,6 +336,8 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         else {
             proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
         }
+
+        EditorUtility.SetDirty(mapData2D);
     }
 
     private GroundTile2D GetTile(Vector2Int position, string biome, int height) {
