@@ -2,14 +2,6 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Biome2D : ScriptableObject {
-	[Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]
-	public float minTemperature;
-    [Range(BiomeGenerator.MIN_TEMPERATURE, BiomeGenerator.MAX_TEMPERATURE)]
-    public float maxTemperature;
-    [Range(BiomeGenerator.MIN_MOISTURE, BiomeGenerator.MAX_MOISTURE)]
-    public float minMoisture;
-    [Range(BiomeGenerator.MIN_MOISTURE, BiomeGenerator.MAX_MOISTURE)]
-    public float maxMoisture;
+public class Biome2D : Biome {
 	public List<GroundTile2D> tiles;
 }

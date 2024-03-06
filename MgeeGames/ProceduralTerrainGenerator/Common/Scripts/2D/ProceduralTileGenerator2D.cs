@@ -11,6 +11,7 @@ public class ProceduralTileData : ProceduralObjectDataBase {
     [Range(0.0f, 1.0f)]
     public float threshold;
     public bool collide;
+    public string biome = "";
 }
 
 public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
@@ -19,7 +20,7 @@ public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
     [HideInInspector]
     public NoiseSettings noiseSettings;
 
-    public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, int seed, int waterLevel = -1) {
+    public void Generate(Tilemap tilemap, Tilemap collisionTilemap, int[,] heightMap, string[,] biomeMap, int seed, int waterLevel = -1) {
         int tilemapWidth = heightMap.GetLength(0);
         
         rng = new System.Random(seed);
@@ -42,8 +43,12 @@ public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
                 if (value > data.threshold) {
                     // Only draw tile if height is in range
                     int height = heightMap[x, y];
+                    string biome = biomeMap[x, y];
                     if (height > waterLevel) {
                         if ((height >= data.minLayer) && (height < data.maxLayer)) {
+                            if (data.biome != "" && data.biome != biome)
+                                continue;
+
                             if (data.collide) {
                                 // Collision object layer
                                 collisionTilemap.SetTile(new Vector3Int(x, y, 0), data.tile);

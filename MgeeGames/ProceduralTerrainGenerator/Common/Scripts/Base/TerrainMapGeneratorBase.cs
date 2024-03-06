@@ -27,7 +27,14 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
     [Header("Biome Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
+    public bool useBiomes;
+    [MyBox.ConditionalField(nameof(useBiomes), false, true)]
+    public Biome defaultBiome;
+    [MyBox.ConditionalField(nameof(useBiomes), false, true)]
+    public BiomeList biomes;
+    [MyBox.ConditionalField(nameof(useBiomes), false, true)]
     public NoiseSettings temperatureNoiseSettings;
+    [MyBox.ConditionalField(nameof(useBiomes), false, true)]
     public NoiseSettings moistureNoiseSettings;
 
     // Components
@@ -72,6 +79,9 @@ public abstract class TerrainMapGeneratorBase : MonoBehaviour
         // Update component settings
         heightMapGenerator.averageMapDepth = averageMapDepth;
         heightMapGenerator.heightMapSettingsList = heightMapSettingsList;
+
+        // Biome Generator settings
+        biomeGenerator.biomes = biomes;
     }
 
     public virtual void Generate() {

@@ -15,7 +15,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public int numLayers;
     public string terrainSortingLayer;
     public string collisionSortingLayer;
-    public List<Biome2D> biomeTiles;
 
     [Space(10)]
     [Header("Procedural Tile Settings")]
@@ -32,7 +31,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public int waterLevel;
     public GroundTile2D waterTile;
  
-    private float[,] heightMap;
+    private int[,] heightMap;
 
     // Tilemaps
     private List<GameObject> layers = new List<GameObject>();
@@ -45,8 +44,6 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     private ProceduralTileGenerator2D proceduralTileGenerator2D;
 
     // Biomes
-    private float[,] temperatureMap;
-    private float[,] moistureMap;
     private Dictionary<string, List<GroundTile2D>> biomeTileMap = new Dictionary<string, List<GroundTile2D>>();
 
     private MapData2D mapData2D;
@@ -127,15 +124,23 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     }
 
     public override void ProcessHeightMapData(HeightMapThreadInfo info) {
-        heightMap = info.heightMap;
+        int mapWidth = info.heightMap.GetLength(0);
+        int mapHeight = info.heightMap.GetLength(1);
+
+        heightMap = new int[mapWidth, mapHeight];
+
+        // Scale the normalized height map to an integer between 0 and the max height (determined by the number of tiles)
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                heightMap[x, y] = (int)Mathf.Round(info.heightMap[x, y] * (numLayers - 1));
+            }
+        }
 
         biomeGenerator.RequestBiomeData(temperatureNoiseSettings, moistureNoiseSettings, tilemapWidth, OnBiomeDataReceived);
     }
 
     public override void ProcessBiomeData(BiomeThreadInfo info) {
-        temperatureMap = info.temperatureMap;
-        moistureMap = info.moistureMap;
-        GenerateTilemap(heightMap);
+        GenerateTilemap();
     }
 
     public MapData2D GetMapData2D() {
@@ -158,14 +163,17 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         if (grid != null)
             CreateLayers();
 
-        foreach (Biome2D biome in biomeTiles) {
-            if (biome.tiles.Count > numLayers) {
-                Debug.LogWarning("Each Biome must have a number of Tiles less than or equal the number of layers.");
-                return;
-            }
+        foreach (Biome biome in biomes.biomes) {
+            if (biome is Biome2D) {
+                Biome2D biome2D = biome as Biome2D;
+                if (biome2D.tiles.Count > numLayers) {
+                    Debug.LogWarning("Each Biome must have a number of Tiles less than or equal the number of layers.");
+                    return;
+                }
 
-            if (!biomeTileMap.ContainsKey(biome.name)) {
-                biomeTileMap[biome.name] = biome.tiles;
+                if (!biomeTileMap.ContainsKey(biome2D.name)) {
+                    biomeTileMap[biome2D.name] = biome2D.tiles;
+                }
             }
         }
 
@@ -173,16 +181,20 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     }
 
     private void CreateLayers() {
-        for (int n = 0; n < biomeTiles.Count; n++) {
-            GameObject biomeLayer = new GameObject("Biome " + biomeTiles[n].name);
+        List<Biome> allBiomeTiles = new List<Biome>();
+        allBiomeTiles.AddRange(biomes.biomes);
+        allBiomeTiles.Add(defaultBiome);
+
+        for (int n = 0; n < allBiomeTiles.Count; n++) {
+            GameObject biomeLayer = new GameObject("Biome " + allBiomeTiles[n].name);
             biomeLayer.transform.position = new Vector3(0, 0, 0);
             biomeLayer.transform.parent = grid.transform;
 
             layers.Add(biomeLayer);
-            biomeLayers[biomeTiles[n].name] = new List<GameObject>();
+            biomeLayers[allBiomeTiles[n].name] = new List<GameObject>();
 
             for (int i = 0; i < numLayers; i++) {
-                GameObject layer = new GameObject(biomeTiles[n].name + " Layer " + i);
+                GameObject layer = new GameObject(allBiomeTiles[n].name + " Layer " + i);
                 layer.AddComponent<Tilemap>();
                 layer.AddComponent<TilemapRenderer>();
                 layer.AddComponent<TilemapCollider2D>();
@@ -201,7 +213,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
                 layer.transform.position = new Vector3(0, 0, 0);
                 layer.transform.parent = biomeLayer.transform;
 
-                biomeLayers[biomeTiles[n].name].Add(layer);
+                biomeLayers[allBiomeTiles[n].name].Add(layer);
             }
         }
 
@@ -253,38 +265,29 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         objectLayerRenderer.sortingOrder = biomeLayers.Count;
     }
 
-    private void GenerateTilemap(float[,] heightMap) {
+    private void GenerateTilemap() {
         int mapWidth = heightMap.GetLength(0);
         int mapHeight = heightMap.GetLength(1);
+        string[,] biomeMap = new string[mapWidth, mapHeight];
 
         mapData2D.tileData = new TileData[mapWidth * mapHeight];
-
-        int[,] heightMapInt = new int[mapWidth, mapHeight];
-
-        // Scale the normalized height map to an integer between 0 and the max height (determined by the number of tiles)
-        for (int y = 0; y < mapHeight; y++) {
-            for (int x = 0; x < mapWidth; x++) {
-                int height = (int)Mathf.Round(heightMap[x, y] * (numLayers - 1));
-                heightMapInt[x, y] = height;
-            }
-        }
 
         // Determine the tile type given the height
         for (int y = 1; y < mapHeight - 1; y++) {
             for (int x = 1; x < mapWidth - 1; x++) {
                 int index = y * mapWidth + x;
-                int height = heightMapInt[x, y];
+                int height = heightMap[x, y];
                 Vector2Int position = new Vector2Int(x, y);
 
-                string biomeType = GetBiomeType(position);
+                string biomeType = biomeGenerator.GetBiomeType(position);
                 if (!biomeTileMap.ContainsKey(biomeType)) {
-                    continue;
+                    biomeType = defaultBiome.name;
                 }
 
                 mapData2D.tileData[index] = new TileData();
                 mapData2D.tileData[index].position = position;
                 mapData2D.tileData[index].biome = biomeType;
-                mapData2D.tileData[index].groundTile = GetTile(position, biomeType, height); ;
+                mapData2D.tileData[index].groundTile = GetTile(position, biomeType, height);
             }
         }
 
@@ -293,11 +296,16 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             for (int y = 1; y < mapHeight - 1; y++) {
                 for (int x = 1; x < mapWidth - 1; x++) {
                     int index = y * mapWidth + x;
-                    int height = heightMapInt[x, y];
+                    int height = heightMap[x, y];
                     Vector2Int position = new Vector2Int(x, y);
 
                     GroundTile2D tile = mapData2D.tileData[index].groundTile;
                     string biomeType = mapData2D.tileData[index].biome;
+
+                    if (biomeType == null)
+                        continue;
+
+                    biomeMap[x, y] = biomeType;
 
                     Tilemap tileMap = biomeLayers[biomeType][height].GetComponent<Tilemap>();
                     if (useWater) {
@@ -310,7 +318,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
 
                     if (smoothEdges) {
                         // Set a solid tile on the layer below
-                        if (!IsCenterTile(heightMapInt, position)) {
+                        if (!IsCenterTile(position)) {
                             if (height > 0) {
                                 Tilemap lowerTileMap = biomeLayers[biomeType][height - 1].GetComponent<Tilemap>();
                                 GroundTile2D lowerTile = GetTile(position, biomeType, height - 1);
@@ -331,58 +339,47 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
         Tilemap objectCollisionTileMap = (Tilemap)objectCollisionLayer.GetComponent<Tilemap>();
 
         if (useWater) {
-            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed, waterLevel);
+            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMap, biomeMap, seed, waterLevel);
         }
         else {
-            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMapInt, seed);
+            proceduralTileGenerator2D.Generate(objectTileMap, objectCollisionTileMap, heightMap, biomeMap, seed);
         }
 
         EditorUtility.SetDirty(mapData2D);
     }
 
     private GroundTile2D GetTile(Vector2Int position, string biome, int height) {
+        List<GroundTile2D> tiles = (defaultBiome as Biome2D).tiles;
         if (biomeTileMap.ContainsKey(biome)) {
-            if (height < biomeTileMap[biome].Count) {
-                GroundTile2D tile = biomeTileMap[biome][height];
-                tile.Height = height;
-                tile.Temperature = temperatureMap[position.x, position.y];
-                tile.Moisture = moistureMap[position.x, position.y];
+            tiles = biomeTileMap[biome];
+        }
 
-                tile.SetSmoothEdges(smoothEdges);
+        if (height < tiles.Count) {
+            GroundTile2D tile = tiles[height];
+            tile.Height = height;
+            tile.Temperature = biomeGenerator.GetTemperature(position);
+            tile.Moisture = biomeGenerator.GetMoisture(position);
 
-                if (useWater) {
-                    if (height <= waterLevel) {
-                        tile = waterTile;
-                    }
+            tile.SetSmoothEdges(smoothEdges);
+
+            if (useWater) {
+                if (height <= waterLevel) {
+                    tile = waterTile;
                 }
-
-                return tile;
             }
+
+            return tile;
         }
 
         return new GroundTile2D();
     }
 
-    private bool IsCenterTile(int[,] heightMapInt, Vector2Int position) {
-        int heightTop = heightMapInt[position.x, position.y + 1];
-        int heightBottom = heightMapInt[position.x, position.y - 1];
-        int heightLeft = heightMapInt[position.x - 1, position.y];
-        int heightRight = heightMapInt[position.x + 1, position.y];
+    private bool IsCenterTile(Vector2Int position) {
+        int heightTop = heightMap[position.x, position.y + 1];
+        int heightBottom = heightMap[position.x, position.y - 1];
+        int heightLeft = heightMap[position.x - 1, position.y];
+        int heightRight = heightMap[position.x + 1, position.y];
 
         return ((heightTop == heightBottom) || (heightLeft == heightRight));
-    }
-
-    private string GetBiomeType(Vector2Int position) {
-        float temp = temperatureMap[position.x, position.y];
-        float moisture = moistureMap[position.x, position.y];
-
-        foreach (Biome2D biome in biomeTiles) {
-            if ((temp >= biome.minTemperature && temp <= biome.maxTemperature)
-                && (moisture >= biome.minMoisture && moisture <= biome.maxMoisture)) {
-                return biome.name;
-            }
-        }
-
-        return "";
     }
 }

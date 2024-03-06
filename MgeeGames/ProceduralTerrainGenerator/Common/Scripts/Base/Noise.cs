@@ -65,11 +65,10 @@ public class Noise {
 
     public static float[,] GenerateNoiseMap(NoiseSettings settings, int width, int height, int offsetX, int offsetY) {
         switch (settings.noiseType) {
-            case NoiseType.Perlin:
-            case NoiseType.Simplex:
-                return GeneratePerlinNoiseMap(settings, width, height, offsetX, offsetY);
             case NoiseType.Voronoi:
                 return GenerateVoronoiNoiseMap(width, height, settings.numberOfPoints);
+            case NoiseType.Perlin:
+            case NoiseType.Simplex:
             default:
                 return GeneratePerlinNoiseMap(settings, width, height, offsetX, offsetY);
         }
