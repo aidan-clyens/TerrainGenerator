@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEditor;
@@ -14,6 +14,7 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     public bool smoothEdges = false;
     public int numLayers;
     public string terrainSortingLayer;
+    public string objectSortingLayer;
     public string collisionSortingLayer;
 
     [Space(10)]
@@ -197,75 +198,50 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
             biomeLayers[allBiomeTiles[n].name] = new List<GameObject>();
 
             for (int i = 0; i < numLayers; i++) {
-                GameObject layer = new GameObject(allBiomeTiles[n].name + " Layer " + i);
-                layer.AddComponent<Tilemap>();
-                layer.AddComponent<TilemapRenderer>();
-                layer.AddComponent<TilemapCollider2D>();
-                layer.AddComponent<CompositeCollider2D>();
-
-                layer.GetComponent<TilemapCollider2D>().usedByComposite = true;
-                layer.GetComponent<CompositeCollider2D>().isTrigger = true;
-                layer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-
-                TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
-                if (terrainSortingLayer.Length > 0) {
-                    renderer.sortingLayerName = terrainSortingLayer;
-                }
-                renderer.sortingOrder = i;
-
-                layer.transform.position = new Vector3(0, 0, 0);
-                layer.transform.parent = biomeLayer.transform;
-
+                GameObject layer = CreateLayerObject(allBiomeTiles[n].name + " Layer " + i, terrainSortingLayer, i, biomeLayer.transform, collision: true, trigger: true);
                 biomeLayers[allBiomeTiles[n].name].Add(layer);
             }
         }
 
         if (objectLayer == null) {
-            objectLayer = new GameObject("Object Layer");
-            objectLayer.AddComponent<Tilemap>();
-            objectLayer.AddComponent<TilemapRenderer>();
-
-            objectLayer.transform.position = new Vector3(0, 0, 0);
-            objectLayer.transform.parent = grid.transform;
+	        objectLayer = CreateLayerObject("Object Layer", objectSortingLayer, biomeLayers.Count, grid.transform, collision: false, renderer_mode: TilemapRenderer.Mode.Individual);
         }
 
         if (objectCollisionLayer == null) {
-            objectCollisionLayer = new GameObject("Object Collision Layer");
-            objectCollisionLayer.AddComponent<Tilemap>();
-            objectCollisionLayer.AddComponent<TilemapRenderer>();
-            objectCollisionLayer.AddComponent<TilemapCollider2D>();
-
-            objectCollisionLayer.transform.position = new Vector3(0, 0, 0);
-            objectCollisionLayer.transform.parent = grid.transform;
+	        objectCollisionLayer = CreateLayerObject("Object Collision Layer", collisionSortingLayer, biomeLayers.Count + 1, grid.transform, collision: true, renderer_mode: TilemapRenderer.Mode.Individual);
         }
 
         if (waterLayer == null) {
-            waterLayer = new GameObject("Water Layer");
-            waterLayer.AddComponent<Tilemap>();
-            waterLayer.AddComponent<TilemapRenderer>();
-            waterLayer.AddComponent<TilemapCollider2D>();
+            waterLayer = CreateLayerObject("Water Layer", objectSortingLayer, biomeLayers.Count, grid.transform, collision: true);
+            layers.Add(waterLayer);
+        }
+    }
 
-            waterLayer.transform.position = new Vector3(0, 0, 0);
-            waterLayer.transform.parent = grid.transform;
+	private GameObject CreateLayerObject(string name, string sortingLayerName, int sortingOrder, Transform parent, bool collision = false, bool trigger = false, TilemapRenderer.Mode renderer_mode = TilemapRenderer.Mode.Chunk) {
+        GameObject layer = new GameObject(name);
+        layer.AddComponent<Tilemap>();
+        layer.AddComponent<TilemapRenderer>();
+
+        if (collision) {
+            layer.AddComponent<TilemapCollider2D>();
+            layer.AddComponent<CompositeCollider2D>();
+
+            layer.GetComponent<TilemapCollider2D>().usedByComposite = true;
+            layer.GetComponent<CompositeCollider2D>().isTrigger = trigger;
+            layer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         }
 
-        TilemapRenderer objectLayerRenderer = objectLayer.GetComponent<TilemapRenderer>();
-        if (terrainSortingLayer.Length > 0) {
-            objectLayerRenderer.sortingLayerName = terrainSortingLayer;
+        TilemapRenderer renderer = layer.GetComponent<TilemapRenderer>();
+        if (sortingLayerName.Length > 0) {
+            renderer.sortingLayerName = sortingLayerName;
         }
-        objectLayerRenderer.sortingOrder = biomeLayers.Count;
 
-        objectLayerRenderer = objectCollisionLayer.GetComponent<TilemapRenderer>();
-        if (collisionSortingLayer.Length > 0) {
-            objectLayerRenderer.sortingLayerName = collisionSortingLayer;
-        }
-        objectLayerRenderer.sortingOrder = biomeLayers.Count + 1;
+		renderer.mode = renderer_mode;
 
-        objectLayerRenderer = waterLayer.GetComponent<TilemapRenderer>();
-        if (collisionSortingLayer.Length > 0) {
-            objectLayerRenderer.sortingLayerName = collisionSortingLayer;
-        }
-        objectLayerRenderer.sortingOrder = biomeLayers.Count;
+        layer.transform.position = new Vector3(0, 0, 0);
+        layer.transform.parent = parent;
+
+        return layer;
     }
 
     private void GenerateTilemap() {
