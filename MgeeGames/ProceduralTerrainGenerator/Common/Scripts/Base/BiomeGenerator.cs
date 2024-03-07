@@ -48,8 +48,8 @@ public class BiomeGenerator : MonoBehaviour {
     }
 
     public string GetBiomeType(Vector2 position) {
-        float temperature = temperatureMap[(int)position.x, (int)position.y];
-        float moisture = moistureMap[(int)position.x, (int)position.y];
+        float temperature = GetTemperature(position);
+        float moisture = GetMoisture(position);
         float latitude = position.y;
 
         foreach (Biome biome in biomes.biomes) {
@@ -90,7 +90,7 @@ public class BiomeGenerator : MonoBehaviour {
     }
 
     private void BiomeDataThread(NoiseSettings temperatureNoiseSettings, NoiseSettings moistureNoiseSettings, int mapWidth, Action<float[,], float[,]> callback) {
-        float[,] temperatureMap = Noise.GenerateNoiseMap(temperatureNoiseSettings, mapWidth, mapWidth, 0, 0);
+        temperatureMap = Noise.GenerateNoiseMap(temperatureNoiseSettings, mapWidth, mapWidth, 0, 0);
         temperatureMap = Noise.NormalizeMap(temperatureMap);
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapWidth; y++) {
@@ -98,7 +98,7 @@ public class BiomeGenerator : MonoBehaviour {
             }
         }
 
-        float[,] moistureMap = Noise.GenerateNoiseMap(moistureNoiseSettings, mapWidth, mapWidth, 0, 0);
+        moistureMap = Noise.GenerateNoiseMap(moistureNoiseSettings, mapWidth, mapWidth, 0, 0);
         moistureMap = Noise.NormalizeMap(moistureMap);
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapWidth; y++) {
