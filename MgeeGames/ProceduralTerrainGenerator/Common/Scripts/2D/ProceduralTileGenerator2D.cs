@@ -4,19 +4,13 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [System.Serializable]
-public class ProceduralTileData : ProceduralObjectDataBase {
-    public Tile tile;
-    public int minLayer;
-    public int maxLayer;
-    [Range(0.0f, 1.0f)]
-    public float threshold;
-    public bool collide;
-    public string biome = "";
+public class ProceduralTileDataList {
+    public List<ProceduralTileData2D> tiles;
 }
 
 public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
     [HideInInspector]
-    public List<ProceduralTileData> tileData;
+    public ProceduralTileDataList tileData;
     [HideInInspector]
     public NoiseSettings noiseSettings;
 
@@ -31,7 +25,7 @@ public class ProceduralTileGenerator2D : ProceduralObjectGeneratorBase {
 
         int areaAboveWater = CalculateMapArea(heightMap, waterLevel);
 
-        foreach (ProceduralTileData data in tileData) {
+        foreach (ProceduralTileData2D data in tileData.tiles) {
             int numTiles = (int)(areaAboveWater * data.density);
 
             for (int i = 0; i < numTiles; i++) {

@@ -1,11 +1,5 @@
 using UnityEngine;
 
-[System.Serializable]
-public class ProceduralObjectDataBase {
-    [Range(0.0f, 1.0f)]
-    public float density;
-}
-
 public class ProceduralObjectGeneratorBase : MonoBehaviour {
     protected System.Random rng;
 

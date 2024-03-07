@@ -20,7 +20,10 @@ public class TerrainMapGenerator2D : TerrainMapGeneratorBase {
     [Header("Procedural Tile Settings")]
     [CustomAttributes.HorizontalLine()]
     [Space(10)]
-    public List<ProceduralTileData> tileData;
+    public bool useProceduralTiles;
+    [MyBox.ConditionalField(nameof(useProceduralTiles), false, true)]
+    public ProceduralTileDataList tileData;
+    [MyBox.ConditionalField(nameof(useProceduralTiles), false, true)]
     public NoiseSettings noiseSettings;
 
     [Space(10)]
