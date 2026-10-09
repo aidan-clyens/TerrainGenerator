@@ -1,0 +1,49 @@
+diff --git a/MgeeGames/ProceduralTerrainGenerator/Models/rocks.fbx.meta b/MgeeGames/ProceduralTerrainGenerator/Models/rocks.fbx.meta
+index 4269d40..092b7e8 100644
+--- a/MgeeGames/ProceduralTerrainGenerator/Models/rocks.fbx.meta
++++ b/MgeeGames/ProceduralTerrainGenerator/Models/rocks.fbx.meta
+@@ -36,7 +36,7 @@ ModelImporter:
+     extraExposedTransformPaths: []
+     extraUserProperties: []
+     clipAnimations: []
+-    isReadable: 0
++    isReadable: 1
+   meshes:
+     lODScreenPercentages: []
+     globalScale: 1
+diff --git a/MgeeGames/ProceduralTerrainGenerator/Models/tree.fbx.meta b/MgeeGames/ProceduralTerrainGenerator/Models/tree.fbx.meta
+index 19c0aab..3c88d81 100644
+--- a/MgeeGames/ProceduralTerrainGenerator/Models/tree.fbx.meta
++++ b/MgeeGames/ProceduralTerrainGenerator/Models/tree.fbx.meta
+@@ -41,7 +41,7 @@ ModelImporter:
+     extraExposedTransformPaths: []
+     extraUserProperties: []
+     clipAnimations: []
+-    isReadable: 0
++    isReadable: 1
+   meshes:
+     lODScreenPercentages: []
+     globalScale: 1
+diff --git a/README.md b/README.md
+index 3e937f7..34f06a7 100644
+--- a/README.md
++++ b/README.md
+@@ -10,6 +10,8 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
+ 1. Create a new empty Unity 3D project.
+ 2. Clone into Unity project with `git clone https://github.com/aidan-clyens/TerrainGenerator.git` in the Assets folder.
+ 
++Updated for Unity 6.6. The sample `tree` and `rocks` models have Read/Write enabled because their prefabs use Mesh Colliders, and Unity 6.6 no longer enables Read/Write automatically at build time. If you add your own models with Mesh Colliders (for example as forest prefabs), enable **Read/Write** in their Model import settings.
++
+ ### Setup Universal Render Pipeline (Optional but required to use sample materials and shaders)
+ 1. Install the Universal Render Pipeline and ShaderGraph to use sample materials and shaders.
+ 2. Create a new Universal Render Pipeline Asset with Depth Texture and Opaque Texture enabled (this is included under the "Settings" folder).
+@@ -71,6 +73,9 @@ This is a Procedural Terrain Generator for use in Unity projects. Using random n
+ - Make all settings objects serializable
+ - **WARNING:** Previously saved Level files will not be compatible with v1.3 of the TerrainMapGenerator
+ 
++### Unreleased
++- Unity 6.6 compatibility: enable Read/Write on the sample `tree` and `rocks` models so their Mesh Colliders work in builds
++
+ ## Credit
+ - Simplex Noise Generator provided by [jstanden](https://gist.github.com/jstanden/1489447)
+ 
